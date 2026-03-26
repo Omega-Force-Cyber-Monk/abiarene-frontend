@@ -1,13 +1,14 @@
 // AdminSidebar.tsx
 import logoIcon from "@/assets/primepos/logo/logo.svg";
+import user from "@/assets/primepos/logo/user.svg";
 import { Badge } from "@/components/ui/badge";
 
 import { ChevronDown } from "lucide-react";
 import { Link, useLocation } from "react-router-dom";
 import { useState } from "react";
 import { IconType } from "react-icons";
-import { IoSettingsOutline } from "react-icons/io5";
-import { FiPieChart } from "react-icons/fi";
+
+import { FiLogOut, FiPieChart } from "react-icons/fi";
 import { LuUsers } from "react-icons/lu";
 import { MdOutlineAddCircleOutline } from "react-icons/md";
 
@@ -186,6 +187,32 @@ const AdminSidebar: React.FC<SidebarProps> = ({
           })}
         </div>
       </nav>
+      {/* Help & Support */}
+      <div
+        // onClick={handleLogout}
+        className="flex items-center justify-between p-4 m-4 bg-[#F8F9FA] border border-[#CED4DA] rounded-2xl hover:shadow-sm transition-all duration-200 cursor-pointer"
+      >
+        {/* Left Side */}
+        <div className="flex items-center gap-3">
+          <img
+            src={user}
+            alt="User"
+            className="w-12 h-12 rounded-full object-cover border"
+          />
+
+          <div>
+            <h2 className="text-base font-semibold text-gray-800">
+              Olivia Rhye
+            </h2>
+            <p className="text-sm text-gray-500">olivia@gmail.com</p>
+          </div>
+        </div>
+
+        {/* Right Side */}
+        <button className="p-2 rounded-full hover:bg-red-100 transition">
+          <FiLogOut className="text-red-600 text-lg" />
+        </button>
+      </div>
     </div>
   );
 };

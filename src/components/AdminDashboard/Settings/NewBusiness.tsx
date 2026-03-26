@@ -30,7 +30,7 @@ export default function NewBusiness() {
   };
 
   return (
-    <div className="w-full mx-auto bg-white p-6 rounded-2xl shadow-md">
+    <div className="w-full mx-auto  ">
       {/* Header */}
       <h1 className="text-xl font-semibold mb-6">
         Register New Clientele Level Business
@@ -41,14 +41,14 @@ export default function NewBusiness() {
         <div>
           <label className="text-sm text-gray-600">Business Name</label>
           <input
-            className="w-full mt-1 border border-[#D5D7DA] rounded-lg px-3 py-2 focus:outline-none focus:ring-2 focus:ring-[#052350]"
+            className="w-full mt-1 border border-[#D5D7DA] rounded-full px-3 py-2 focus:outline-none focus:ring-2 focus:ring-[#052350]"
             placeholder="e.g. Le Bistro Douala"
           />
         </div>
 
         <div>
           <label className="text-sm text-gray-600">Industry Type</label>
-          <select className="w-full mt-1 border border-[#D5D7DA] rounded-lg px-3 py-2 focus:outline-none focus:ring-2 focus:ring-[#052350]">
+          <select className="w-full mt-1 border border-[#D5D7DA] rounded-full px-3 py-2 focus:outline-none focus:ring-2 focus:ring-[#052350]">
             <option>Server</option>
             <option>Restaurant</option>
             <option>Retail</option>
@@ -60,7 +60,7 @@ export default function NewBusiness() {
             Monthly Subscription Fee
           </label>
           <input
-            className="w-full mt-1 border border-[#D5D7DA] rounded-lg px-3 py-2 focus:outline-none focus:ring-2 focus:ring-[#052350]"
+            className="w-full mt-1 border border-[#D5D7DA] rounded-full px-3 py-2 focus:outline-none focus:ring-2 focus:ring-[#052350]"
             placeholder="$ Scan or enter code"
           />
         </div>
@@ -92,7 +92,7 @@ export default function NewBusiness() {
             return (
               <div
                 key={role.value}
-                className="flex items-center justify-between border border-[#D5D7DA] rounded-xl px-4 py-3"
+                className="flex items-center justify-between border  border-[#D5D7DA] rounded-full px-4 py-3"
               >
                 <label className="flex items-center gap-3 cursor-pointer">
                   <input
@@ -172,14 +172,14 @@ export default function NewBusiness() {
 //         <div>
 //           <label className="text-sm text-gray-600">Business Name</label>
 //           <input
-//             className="w-full mt-1 border rounded-lg px-3 py-2 focus:outline-none focus:ring-2 focus:ring-blue-500"
+//             className="w-full mt-1 border rounded-full px-3 py-2 focus:outline-none focus:ring-2 focus:ring-blue-500"
 //             placeholder="e.g. Le Bistro Douala"
 //           />
 //         </div>
 
 //         <div>
 //           <label className="text-sm text-gray-600">Industry Type</label>
-//           <select className="w-full mt-1 border rounded-lg px-3 py-2">
+//           <select className="w-full mt-1 border rounded-full px-3 py-2">
 //             <option>Server</option>
 //             <option>Restaurant</option>
 //             <option>Retail</option>
@@ -191,7 +191,7 @@ export default function NewBusiness() {
 //             Monthly Subscription Fee
 //           </label>
 //           <input
-//             className="w-full mt-1 border rounded-lg px-3 py-2"
+//             className="w-full mt-1 border rounded-full px-3 py-2"
 //             placeholder="$ Scan or enter code"
 //           />
 //         </div>
