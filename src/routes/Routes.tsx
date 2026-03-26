@@ -2,16 +2,13 @@ import { createBrowserRouter } from "react-router-dom";
 import App from "../App";
 import NotFound from "../pages/NotFound";
 import Home from "../pages/Home";
-// import Login from "@/pages/Login";
 import Signup from "@/pages/Signup";
-
 import AdminLayout from "@/Layout/AdminLayout";
-
 import AdminDashboardPage from "@/pages/Admin/AdminDashboardPage";
-import SettingsPage from "@/pages/Admin/SettingsPage";
-import UsersPage from "@/pages/Admin/TenantsPage";
 import ConversationsPage from "@/pages/Admin/ConversationsPage";
 import TicketQueuePage from "@/pages/Admin/TicketQueuePage";
+import NewBusinessPage from "@/pages/Admin/NewBusinessPage";
+import TenantsPage from "@/pages/Admin/TenantsPage";
 
 const routes = createBrowserRouter([
   {
@@ -47,9 +44,9 @@ const routes = createBrowserRouter([
       { index: true, element: <AdminDashboardPage /> },
       { path: "dashboard", element: <AdminDashboardPage /> },
       { path: "ticket-queue", element: <TicketQueuePage /> },
-      { path: "tenants", element: <UsersPage /> },
+      { path: "tenants", element: <TenantsPage /> },
       { path: "conversations", element: <ConversationsPage /> },
-      { path: "settings", element: <SettingsPage /> },
+      { path: "new-business", element: <NewBusinessPage /> },
     ],
   },
 

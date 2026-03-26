@@ -96,7 +96,7 @@ const AdminDashboardNavBar: React.FC<NavbarProps> = ({
             <input
               type="text"
               placeholder="Search by name, email, or role..."
-              className="w-full pl-10 pr-3 py-3 shadow-2xl  rounded-full outline-none focus:ring-2 focus:ring-blue-400"
+              className="w-full pl-10 pr-3 py-3 shadow-2xl border border-[#F5F5F5]  rounded-full outline-none focus:ring-2 focus:ring-blue-400"
             />
             <CiSearch className="w-4 h-4 absolute left-3 top-1/2 -translate-y-1/2 text-gray-500" />
           </div>

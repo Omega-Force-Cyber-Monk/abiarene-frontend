@@ -62,8 +62,9 @@ const initialData: Item[] = [
     status: "open",
   },
 ];
-const TicketQueue = () => {
-  const [data] = useState(initialData);
+
+const SupportQueueDashboard = () => {
+  const [data] = useState(initialData.slice(0, 4)); // only 4 cards
 
   const getStatusBadge = (status: Status) => {
     return status === "closed" ? (
@@ -74,19 +75,18 @@ const TicketQueue = () => {
   };
 
   return (
-    <div className="bg-white rounded-2xl shadow-md w-full  mx-auto">
+    <div className="bg-white rounded-2xl shadow-md w-full mx-auto">
       {/* Header */}
-      <div className="p-5  flex items-center justify-between">
+      <div className="p-5 flex items-center justify-between">
         <h2 className="text-lg font-semibold text-gray-700">Support Queue</h2>
 
-        {/* COUNT BADGE */}
         <span className="bg-purple-100 text-purple-600 text-sm font-semibold px-3 py-1 rounded-full">
           {data.length}
         </span>
       </div>
 
-      {/* List */}
-      <div className="p-4 space-y-3">
+      {/* GRID: 2 LEFT, 2 RIGHT */}
+      <div className="p-4 grid grid-cols-1 md:grid-cols-2 gap-3">
         {data.map((item) => (
           <div
             key={item.id}
@@ -97,18 +97,13 @@ const TicketQueue = () => {
               <p className="text-sm font-semibold text-gray-700">
                 {item.title}
               </p>
-
               <p className="text-sm text-gray-400">{item.description}</p>
-
               <div className="mt-1">{getStatusBadge(item.status)}</div>
             </div>
 
             {/* RIGHT SIDE */}
             <div className="flex flex-col items-end">
-              {/* Time */}
               <span className="text-sm text-gray-400">{item.time}</span>
-
-              {/* Arrow */}
               <ChevronRight className="w-5 h-5 text-gray-400 mt-2" />
             </div>
           </div>
@@ -118,4 +113,4 @@ const TicketQueue = () => {
   );
 };
 
-export default TicketQueue;
+export default SupportQueueDashboard;

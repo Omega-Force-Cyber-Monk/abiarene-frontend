@@ -46,8 +46,8 @@ const defaultSidebarItems: SidebarItem[] = [
 
   {
     icon: IoSettingsOutline,
-    label: "Settings",
-    href: "/admin-dashboard/settings",
+    label: "New Business",
+    href: "/admin-dashboard/new-business",
   },
 ];
 
