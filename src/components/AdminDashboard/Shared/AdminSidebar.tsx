@@ -9,6 +9,7 @@ import { IconType } from "react-icons";
 import { IoSettingsOutline } from "react-icons/io5";
 import { FiPieChart } from "react-icons/fi";
 import { LuUsers } from "react-icons/lu";
+import { MdOutlineAddCircleOutline } from "react-icons/md";
 
 // Types
 export interface SidebarItem {
@@ -26,7 +27,6 @@ export interface SidebarProps {
 
 // Sidebar Items
 const defaultSidebarItems: SidebarItem[] = [
-  // { icon: RxDashboard, label: "Dashboard", href: "/admin-dashboard/dashboard" },
   {
     icon: FiPieChart,
     label: "Overview",
@@ -45,7 +45,7 @@ const defaultSidebarItems: SidebarItem[] = [
   },
 
   {
-    icon: IoSettingsOutline,
+    icon: MdOutlineAddCircleOutline,
     label: "New Business",
     href: "/admin-dashboard/new-business",
   },
@@ -64,7 +64,7 @@ const AdminSidebar: React.FC<SidebarProps> = ({
 
   return (
     <div
-      className="flex flex-col h-full"
+      className="flex flex-col h-full rounded-b-3xl rounded-t-3xl bg-[#E6E7EB]"
       style={{ boxShadow: "3px 4px 42.3px 0px #0000001A" }}
     >
       {/* Logo */}

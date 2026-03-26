@@ -57,7 +57,7 @@ const AdminDashboardNavBar: React.FC<NavbarProps> = ({
     "admin-dashboard": "Overview",
     "ticket-queue": "Ticket Queue",
     tenants: "Tenants",
-    settings: "Settings",
+    "new-business": "New Business",
   };
   const segments = location.pathname.split("/").filter(Boolean);
   const segmentAfterBase = segments[1] || segments[0];
