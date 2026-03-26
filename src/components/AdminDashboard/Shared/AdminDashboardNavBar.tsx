@@ -12,7 +12,7 @@ import { Link, useLocation, useNavigate } from "react-router-dom";
 import { useEffect, useRef, useState } from "react";
 import { useDispatch } from "react-redux";
 import { logOut } from "@/redux/features/auth/authSlice";
-import NotificationPanel from "./NotificationPanel";
+import { CiSearch } from "react-icons/ci";
 // import { useAuthMeQuery } from "@/redux/features/auth/authApi";
 
 export interface NavbarProps {
@@ -63,7 +63,7 @@ const AdminDashboardNavBar: React.FC<NavbarProps> = ({
   const segmentAfterBase = segments[1] || segments[0];
   const pageTitle = pathTitleMap[segmentAfterBase] || "Unknown";
   return (
-    <div className="bg-white">
+    <div className="bg-[#FFFFFF]">
       <header
         className={`flex items-center justify-between h-16 px-4 md:px-8 mb-2 ${
           isSidebarOpen ? "max-w-350 mx-auto" : ""
@@ -91,23 +91,17 @@ const AdminDashboardNavBar: React.FC<NavbarProps> = ({
 
         {/* Right Section */}
         <div className="flex items-center space-x-4">
-          {/* Dashboard Icon */}
-          <div className="relative" ref={dropdownRef}>
-            <button
-              // onClick={() => setIsOpen(!isOpen)}
-              className="p-2 rounded-lg transition-colors relative cursor-pointer hover:p-2 hover:bg-gray-100 duration-200"
-              aria-label="Notifications"
-            >
-              <Bell className="w-5 h-5 text-foreground" />
-              <span className="absolute top-1 right-1 w-2 h-2 bg-destructive rounded-full" />
-            </button>
-
-            {isOpen && (
-              <div className="absolute -right-5 lg:right-0 mt-2 z-10">
-                <NotificationPanel />
-              </div>
-            )}
+          {/* Search Bar */}
+          <div className="relative w-80 hidden md:block">
+            <input
+              type="text"
+              placeholder="Search by name, email, or role..."
+              className="w-full pl-10 pr-3 py-3 shadow-2xl  rounded-full outline-none focus:ring-2 focus:ring-blue-400"
+            />
+            <CiSearch className="w-4 h-4 absolute left-3 top-1/2 -translate-y-1/2 text-gray-500" />
           </div>
+
+          {/* User Dropdown */}
           <DropdownMenu>
             <DropdownMenuTrigger asChild>
               <Button
@@ -119,7 +113,7 @@ const AdminDashboardNavBar: React.FC<NavbarProps> = ({
                   <img
                     src={imgUrl}
                     alt="User"
-                    className="w-6 h-6 rounded-full object-cover"
+                    className="w-8 h-8 rounded-full object-cover"
                   />
                 ) : (
                   <User className="w-6 h-6" />
@@ -129,26 +123,25 @@ const AdminDashboardNavBar: React.FC<NavbarProps> = ({
 
             <DropdownMenuContent
               align="end"
-              className="bg-[#75029B] text-black w-60 shadow-2xl rounded-3xl border border-gray-200 backdrop-blur-md overflow-hidden animate-fadeIn"
+              className="bg-[#75029B] text-black w-60 shadow-2xl rounded-3xl border border-gray-200 overflow-hidden"
             >
               <Link to="/admin-dashboard">
-                <DropdownMenuItem className="flex items-center gap-3 px-4 py-2 rounded-3xl hover:bg-[linear-gradient(180deg,#A503A3_0%,#3F0193_100%)] hover:brightness-110 hover:text-white transition-colors cursor-pointer">
-                  <span className="font-medium">Home</span>
+                <DropdownMenuItem className="px-4 py-2 hover:text-white hover:bg-purple-700 rounded-2xl">
+                  Home
                 </DropdownMenuItem>
               </Link>
 
               <Link to="/admin-dashboard/settings">
-                <DropdownMenuItem className="flex items-center gap-3 px-4 py-2 rounded-3xl hover:bg-[linear-gradient(180deg,#A503A3_0%,#3F0193_100%)] hover:brightness-110 hover:text-white transition-colors cursor-pointer">
-                  <span className="font-medium">Settings</span>
+                <DropdownMenuItem className="px-4 py-2 hover:text-white hover:bg-purple-700 rounded-2xl">
+                  Settings
                 </DropdownMenuItem>
               </Link>
 
               <DropdownMenuItem
                 onClick={handleLogout}
-                className="flex items-center gap-3 px-4 py-2 rounded-3xl hover:bg-red-600 hover:text-black transition-colors cursor-pointer"
+                className="px-4 py-2 hover:bg-red-600 hover:text-white rounded-2xl"
               >
-                {/* <RiLogoutBoxRLine className="text-red-500" /> */}
-                <span className="font-medium">Sign Out</span>
+                Sign Out
               </DropdownMenuItem>
             </DropdownMenuContent>
           </DropdownMenu>
