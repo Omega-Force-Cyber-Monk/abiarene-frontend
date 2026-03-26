@@ -9,6 +9,8 @@ import ConversationsPage from "@/pages/Admin/ConversationsPage";
 import TicketQueuePage from "@/pages/Admin/TicketQueuePage";
 import NewBusinessPage from "@/pages/Admin/NewBusinessPage";
 import TenantsPage from "@/pages/Admin/TenantsPage";
+import ManagerDashboardPage from "@/pages/Manager/ManagerDashboardPage";
+import ManagerLayout from "@/Layout/ManagerLayout";
 
 const routes = createBrowserRouter([
   {
@@ -48,6 +50,24 @@ const routes = createBrowserRouter([
       { path: "conversations", element: <ConversationsPage /> },
       { path: "new-business", element: <NewBusinessPage /> },
     ],
+  },
+  /* ManagerLayout Dashboard */
+  {
+    path: "/manager-dashboard",
+    element: (
+      // <ManagerRoute>
+      <ManagerLayout />
+      // </ManagerRoute>
+    ),
+    children: [
+      { index: true, element: <ManagerDashboardPage /> },
+      { path: "dashboard", element: <ManagerDashboardPage /> },
+      { path: "ticket-queue", element: <TicketQueuePage /> },
+      { path: "tenants", element: <TenantsPage /> },
+      { path: "conversations", element: <ConversationsPage /> },
+      { path: "new-business", element: <NewBusinessPage /> },
+    ],
+    // </AdminRoute>
   },
 
   {

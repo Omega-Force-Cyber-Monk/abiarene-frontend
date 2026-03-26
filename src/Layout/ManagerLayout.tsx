@@ -1,10 +1,10 @@
-import AdminDashboardNavBar from "@/components/AdminDashboard/Shared/AdminDashboardNavBar";
-import AdminSidebar from "@/components/AdminDashboard/Shared/AdminSidebar";
+import ManagerDashboardNavbar from "@/components/ManagerDashboard/Shared/ManagerDashboardNavbar";
+import ManagerSidebar from "@/components/ManagerDashboard/Shared/ManagerSidebar";
 import { Sheet, SheetContent, SheetTrigger } from "@/components/ui/sheet";
 import { useEffect, useState } from "react";
 import { Outlet, useLocation } from "react-router-dom";
 
-const ClientLayout = () => {
+const ManagerLayout = () => {
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
   const [isSidebarOpen, setIsSidebarOpen] = useState(false);
 
@@ -71,11 +71,11 @@ const ClientLayout = () => {
   };
 
   return (
-    <div className="flex h-screen overflow-hidden bg-gradient-to-r from-[#052318] via-[#0A1C19] to-[#0F131B]">
+    <div className="flex h-screen overflow-hidden ">
       {/* Sidebar - Fixed on Desktop */}
       {!shouldHideSidebar() && (
-        <div className="hidden lg:flex w-72 flex-col fixed inset-y-0 z-30  bg-[#052218]">
-          <AdminSidebar />
+        <div className="hidden lg:flex w-72 flex-col fixed inset-y-0 z-30  ">
+          <ManagerSidebar />
         </div>
       )}
 
@@ -88,7 +88,7 @@ const ClientLayout = () => {
         {/* Navbar */}
         {!shouldHideNavbar && (
           <div className="fixed top-0 left-0 right-0 z-20 bg-white ">
-            <AdminDashboardNavBar
+            <ManagerDashboardNavbar
               onMobileMenuToggle={handleMobileMenuToggle}
               notificationCount={3}
               isSidebarOpen={isSidebarOpen}
@@ -102,13 +102,13 @@ const ClientLayout = () => {
             <div className="hidden" />
           </SheetTrigger>
           <SheetContent side="left" className="w-72 p-0 bg-[#FFFFFF]">
-            <AdminSidebar onItemClick={() => setIsMobileMenuOpen(false)} />
+            <ManagerSidebar onItemClick={() => setIsMobileMenuOpen(false)} />
           </SheetContent>
         </Sheet>
 
         {/* Scrollable Page Content */}
         <main
-          className={`flex-1 overflow-y-auto mt-16 text-black bg-[#EBE8E3] ${
+          className={`flex-1 overflow-y-auto mt-16 text-black bg-white ${
             isSidebarOpen ? "pt-4 md:pt-10" : "p-4 md:p-10"
           }`}
         >
@@ -119,4 +119,4 @@ const ClientLayout = () => {
   );
 };
 
-export default ClientLayout;
+export default ManagerLayout;
