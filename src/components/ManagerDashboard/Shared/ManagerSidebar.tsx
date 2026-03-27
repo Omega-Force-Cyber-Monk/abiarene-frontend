@@ -9,8 +9,12 @@ import { useState } from "react";
 import { IconType } from "react-icons";
 
 import { FiLogOut, FiPieChart } from "react-icons/fi";
-import { LuUsers } from "react-icons/lu";
+import { LuTicketPercent, LuUsers } from "react-icons/lu";
 import { MdOutlineAddCircleOutline } from "react-icons/md";
+import { BsBoxSeam } from "react-icons/bs";
+import { AiOutlineScan } from "react-icons/ai";
+import { HiOutlineSupport } from "react-icons/hi";
+import { IoSettingsOutline } from "react-icons/io5";
 
 // Types
 export interface SidebarItem {
@@ -31,39 +35,39 @@ const defaultSidebarItems: SidebarItem[] = [
   {
     icon: FiPieChart,
     label: "Overview",
-    href: "/admin-dashboard",
+    href: "/manager-dashboard",
   },
 
   {
-    icon: LuUsers,
+    icon: BsBoxSeam,
     label: "Inventory",
-    href: "/admin-dashboard/inventory",
+    href: "/manager-dashboard/inventory",
   },
   {
     icon: LuUsers,
     label: "Employees",
-    href: "/admin-dashboard/employees",
+    href: "/manager-dashboard/employees",
   },
 
   {
-    icon: MdOutlineAddCircleOutline,
+    icon: LuTicketPercent,
     label: "Approvals",
-    href: "/admin-dashboard/approvals",
+    href: "/manager-dashboard/approvals",
   },
   {
-    icon: MdOutlineAddCircleOutline,
+    icon: AiOutlineScan,
     label: "Scan",
-    href: "/admin-dashboard/scan",
+    href: "/manager-dashboard/scan",
   },
   {
-    icon: MdOutlineAddCircleOutline,
+    icon: HiOutlineSupport,
     label: "Support",
-    href: "/admin-dashboard/support",
+    href: "/manager-dashboard/support",
   },
   {
-    icon: MdOutlineAddCircleOutline,
+    icon: IoSettingsOutline,
     label: "Settings",
-    href: "/admin-dashboard/settings",
+    href: "/manager-dashboard/settings",
   },
 ];
 
@@ -87,7 +91,7 @@ const ManagerSidebar: React.FC<SidebarProps> = ({
       <div className="flex items-center justify-start pl-6 lg:pl-10 pt-5 pb-5 w-full">
         {/* Desktop (lg+) → icon top, text bottom */}
         <Link
-          to="/admin-dashboard"
+          to="/manager-dashboard"
           className="hidden lg:flex flex-col items-center gap-2"
         >
           <img src={logoIcon} alt="Logo Icon" />
@@ -95,7 +99,7 @@ const ManagerSidebar: React.FC<SidebarProps> = ({
         </Link>
 
         <Link
-          to={"/admin-dashboard"}
+          to={"/manager-dashboard"}
           className="lg:hidden flex flex-col items-center gap-2"
         >
           <img src={logoIcon} alt="Logo Icon" />
@@ -268,36 +272,36 @@ export default ManagerSidebar;
 
 // // Sidebar Items
 // const defaultSidebarItems: SidebarItem[] = [
-//   { icon: RxDashboard, label: "Dashboard", href: "/admin-dashboard/dashboard" },
+//   { icon: RxDashboard, label: "Dashboard", href: "/manager-dashboard/dashboard" },
 //   {
 //     icon: FaUsers,
 //     label: "User Management",
-//     href: "/admin-dashboard/user-management",
+//     href: "/manager-dashboard/user-management",
 //   },
 //   {
 //     icon: HiOutlineUserMinus,
 //     label: "Patients",
-//     href: "/admin-dashboard/patients",
+//     href: "/manager-dashboard/patients",
 //   },
 //   {
 //     icon: FaUserPlus,
 //     label: "Patient Assignment",
-//     href: "/admin-dashboard/patient-assignment",
+//     href: "/manager-dashboard/patient-assignment",
 //   },
 //   {
 //     icon: BiSolidUserBadge,
 //     label: "Protocol Management",
-//     href: "/admin-dashboard/protocol-management",
+//     href: "/manager-dashboard/protocol-management",
 //   },
 //   {
 //     icon: TbCalendarUser,
 //     label: "Audit Log",
-//     href: "/admin-dashboard/audit-log",
+//     href: "/manager-dashboard/audit-log",
 //   },
 //   {
 //     icon: IoSettingsOutline,
 //     label: "Settings",
-//     href: "/admin-dashboard/settings",
+//     href: "/manager-dashboard/settings",
 //   },
 // ];
 
@@ -318,7 +322,7 @@ export default ManagerSidebar;
 //       style={{ boxShadow: "3px 4px 42.3px 0px #0000001A" }}
 //     >
 //       {/* Logo */}
-//       <Link to="/admin-dashboard/dashboard">
+//       <Link to="/manager-dashboard/dashboard">
 //         <div className="flex items-center justify-center p-2 sm:p-3 border-b border-[#C9C6C3] mt-1">
 //           <div className="flex justify-center mb-1">
 //             <img src={logo} alt="Logo" className="h-8 w-35" />

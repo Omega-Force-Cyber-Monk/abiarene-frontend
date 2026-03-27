@@ -1,7 +1,9 @@
-import React from "react";
-
 const ManagerDashboardPage = () => {
-  return <div>ManagerDashboardPage</div>;
+  return (
+    <div>
+      <h1>ManagerDashboardPage</h1>
+    </div>
+  );
 };
 
 export default ManagerDashboardPage;

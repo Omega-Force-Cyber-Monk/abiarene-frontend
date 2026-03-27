@@ -11,6 +11,12 @@ import NewBusinessPage from "@/pages/Admin/NewBusinessPage";
 import TenantsPage from "@/pages/Admin/TenantsPage";
 import ManagerDashboardPage from "@/pages/Manager/ManagerDashboardPage";
 import ManagerLayout from "@/Layout/ManagerLayout";
+import InventoryPage from "@/pages/Manager/InventoryPage";
+import EmployeesPage from "@/pages/Manager/EmployeesPage";
+import ApprovalsPage from "@/pages/Manager/ApprovalsPage";
+import ScanPage from "@/pages/Manager/ScanPage";
+import SupportPage from "@/pages/Manager/SupportPage";
+import SettingsPage from "@/pages/Manager/SettingsPage";
 
 const routes = createBrowserRouter([
   {
@@ -62,10 +68,12 @@ const routes = createBrowserRouter([
     children: [
       { index: true, element: <ManagerDashboardPage /> },
       { path: "dashboard", element: <ManagerDashboardPage /> },
-      { path: "ticket-queue", element: <TicketQueuePage /> },
-      { path: "tenants", element: <TenantsPage /> },
-      { path: "conversations", element: <ConversationsPage /> },
-      { path: "new-business", element: <NewBusinessPage /> },
+      { path: "inventory", element: <InventoryPage /> },
+      { path: "employees", element: <EmployeesPage /> },
+      { path: "approvals", element: <ApprovalsPage /> },
+      { path: "scan", element: <ScanPage /> },
+      { path: "support", element: <SupportPage /> },
+      { path: "settings", element: <SettingsPage /> },
     ],
     // </AdminRoute>
   },
