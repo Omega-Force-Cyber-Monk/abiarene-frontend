@@ -1,7 +1,9 @@
+import Inventory from "@/components/ManagerDashboard/Inventory/Inventory";
+
 const InventoryPage = () => {
   return (
     <div>
-      <h1>InventoryPage</h1>
+      <Inventory />
     </div>
   );
 };

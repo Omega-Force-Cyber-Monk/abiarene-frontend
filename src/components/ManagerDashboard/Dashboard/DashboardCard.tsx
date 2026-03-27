@@ -1,110 +1,110 @@
-import { FaArrowUp } from "react-icons/fa";
+import { TrendingUp } from "lucide-react";
+import { FiDollarSign } from "react-icons/fi";
+import { LuUserCheck } from "react-icons/lu";
 
-import activestaff from "@/assets/Logo/activestaff.svg";
-import totalpatients from "@/assets/Logo/totalpatients.svg";
-import warningerror from "@/assets/Logo/warningerror.svg";
-import success from "@/assets/Logo/success.svg";
+interface StatCardProps {
+  icon: React.ReactNode;
+  iconBgColor: string;
+  bgColor: string;
+  borderColor: string;
+  label: string;
+  value: string;
+  valueColor: string;
+  change: string;
+}
 
-const DashboardCard = () => {
-  const statusData = [
-    {
-      title: "Active Staff",
-      amount: "23",
-      change: "30",
-      unit: "Total",
-      icon: activestaff,
-    },
-    {
-      title: "Total Patients",
-      amount: "148",
-      change: "",
-      unit: "Patients",
-      icon: totalpatients,
-    },
-    {
-      title: "CRITICAL: Unsigned Notes",
-      amount: "7",
-      change: "",
-      unit: "Notes Pending Signature",
-      icon: warningerror,
-    },
-    {
-      title: "Last Audit",
-      amount: "Successful",
-      change: "2",
-      unit: "hours ago",
-      icon: success,
-    },
-  ];
+const stats = [
+  {
+    icon: <TrendingUp className="w-7 h-7 text-emerald-500" />,
+    iconBgColor: "bg-[#D3F8DF]",
+    bgColor: "bg-[#D3F8DF]",
+    borderColor: "border-l-[#22C55E]",
+    label: "Daily Sales",
+    value: "$4280.50",
+    valueColor: "text-emerald-600",
+    change: "+12",
+  },
+  {
+    icon: <LuUserCheck className="w-7 h-7 text-[#429AFE]" />,
+    iconBgColor: "bg-[#E0F2FE]",
+    bgColor: "bg-[#E0F2FE]",
+    borderColor: "border-l-[#3B82F6]",
+    label: "Total Transactions",
+    value: "142",
+    valueColor: "text-[#429AFE]",
+    change: "+5.2%",
+  },
+  {
+    icon: <FiDollarSign className="w-7 h-7 text-violet-500" />,
+    iconBgColor: "bg-[#EBE9FE]",
+    bgColor: "bg-[#EBE9FE]",
+    borderColor: "border-l-[#8B5CF6]",
+    label: "Active Terminals",
+    value: "4",
+    valueColor: "text-violet-600",
+    change: "Stable",
+  },
+];
 
-  const colors = ["#767676", "#767676", "#F3AA4B", "#4CAF50"];
-
+function StatCard({
+  icon,
+  iconBgColor,
+  bgColor,
+  borderColor,
+  label,
+  value,
+  valueColor,
+  change,
+}: StatCardProps) {
   return (
-    <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-2 xl:grid-cols-3 2xl:grid-cols-4 gap-5 w-full">
-      {statusData.map((single, index) => {
-        const isNegative = single.change.includes("-");
-        const changeColor = isNegative ? "#E35A5F" : "#12CC1E";
+    <div
+      className={`
+        rounded-3xl p-5 shadow-sm border-l-4
+        transition-all duration-300 ease-out
+        hover:shadow-md hover:-translate-y-0.5
+        text-center sm:text-left
+        ${bgColor}
+        ${borderColor}
+      `}
+    >
+      {/* Header */}
+      <div className="flex flex-col sm:flex-row items-center gap-4 mb-6">
+        <div
+          className={`
+            w-11 h-11 rounded-lg flex items-center justify-center
+            transition-transform duration-300
+            ${iconBgColor}
+          `}
+        >
+          {icon}
+        </div>
 
-        // Determine color for amount
-        let amountColor = "#000000";
-        if (single.amount === "Successful") amountColor = "#4CAF50";
-        if (single.amount === "7") amountColor = "#F3AA4B";
+        <span className="text-[#1D2028] text-sm font-medium">{label}</span>
+      </div>
 
-        return (
-          <div
-            key={single.title}
-            className="w-full h-[198px] p-5 sm:p-6 bg-white rounded-[16px] flex flex-col justify-between shadow-sm space-y-4"
-          >
-            {/* Top Row */}
-            <div className="space-y-2">
-              <div className="bg-[#F9F8F6] border-[#F6F4F2] w-[48px] h-[48px] rounded-[12px] p-[12px] flex items-center justify-center">
-                <img
-                  src={single.icon}
-                  alt={single.title}
-                  className="w-6 h-6 object-contain"
-                />
-              </div>
+      {/* Value */}
+      <div className="text-3xl font-semibold mb-6">{value}</div>
 
-              <h1
-                className="text-[18px] leading-[160%] font-sans font-medium"
-                style={{ color: colors[index] }}
-              >
-                {single.title}
-              </h1>
-            </div>
-
-            {/* Centered Amount */}
-            <div className="space-y-1">
-              <div className="flex items-center justify-start">
-                <h2
-                  className="text-xl sm:text-2xl md:text-3xl font-semibold font-Robot tracking-[-0.68px]"
-                  style={{ color: amountColor }}
-                >
-                  {single.amount}
-                </h2>
-              </div>
-
-              {/* Bottom Row */}
-              <div className="flex items-center justify-start gap-1 text-sm font-Robot">
-                {single.change && (
-                  <>
-                    <FaArrowUp
-                      style={{
-                        color: changeColor,
-                        transform: isNegative ? "rotate(180deg)" : "none",
-                      }}
-                    />
-                    <span style={{ color: changeColor }}>{single.change}</span>
-                  </>
-                )}
-                <span className="text-[#767676] ml-1">{single.unit}</span>
-              </div>
-            </div>
-          </div>
-        );
-      })}
+      {/* Change badge */}
+      <div
+        className={`
+          flex items-center gap-1 px-3 py-1.5 w-fit
+          rounded-md mx-auto sm:mx-0
+          ${iconBgColor}
+        `}
+      >
+        <span className={`text-sm font-medium ${valueColor}`}>{change}</span>
+      </div>
     </div>
   );
-};
+}
 
-export default DashboardCard;
+export default function DashboardCard() {
+  return (
+    <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3  gap-4">
+      {stats.map((stat) => (
+        <StatCard key={stat.label} {...stat} />
+      ))}
+    </div>
+  );
+}

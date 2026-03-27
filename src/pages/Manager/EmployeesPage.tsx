@@ -1,7 +1,9 @@
+import Employees from "@/components/ManagerDashboard/Employees/Employees";
+
 const EmployeesPage = () => {
   return (
     <div>
-      <h1>EmployeesPage</h1>
+      <Employees />
     </div>
   );
 };
