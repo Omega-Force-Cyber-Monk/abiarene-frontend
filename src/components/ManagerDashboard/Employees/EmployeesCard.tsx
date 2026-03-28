@@ -34,6 +34,32 @@ const users: User[] = [
     role: "Cashier",
     image: "https://i.pravatar.cc/100?img=4",
   },
+
+  // new 4 users
+  {
+    id: 5,
+    name: "Emily Watson",
+    role: "Server",
+    image: "https://i.pravatar.cc/100?img=5",
+  },
+  {
+    id: 6,
+    name: "David Khan",
+    role: "Manager",
+    image: "https://i.pravatar.cc/100?img=6",
+  },
+  {
+    id: 7,
+    name: "Ayaan Rahman",
+    role: "Kitchen",
+    image: "https://i.pravatar.cc/100?img=7",
+  },
+  {
+    id: 8,
+    name: "Sophia Lee",
+    role: "Cashier",
+    image: "https://i.pravatar.cc/100?img=8",
+  },
 ];
 
 const roleColors: Record<string, string> = {
@@ -48,7 +74,7 @@ const StaffCard = ({ user }: { user: User }) => {
     <div className="bg-white rounded-2xl shadow-md p-5 flex flex-col justify-between hover:shadow-lg transition">
       {/* Top Section */}
       <div className="flex items-start justify-between">
-        <div className="flex items-center gap-3">
+        <div className="space-y-3 gap-3">
           <img
             src={user.image}
             alt={user.name}
@@ -72,12 +98,12 @@ const StaffCard = ({ user }: { user: User }) => {
       {/* Bottom Section */}
       <div className="flex items-center justify-between mt-6">
         {/* Delete Button */}
-        <button className="w-10 h-10 flex items-center justify-center rounded-full bg-yellow-100 text-yellow-600 hover:bg-yellow-200 transition">
+        <button className="w-10 cursor-pointer h-10 flex items-center justify-center rounded-full bg-yellow-100 text-yellow-600 hover:bg-yellow-200 transition">
           <FaRegTrashAlt />
         </button>
 
         {/* Edit Button */}
-        <button className="flex items-center gap-2 px-5 py-2 border border-gray-300 rounded-full text-sm font-medium text-gray-700 hover:bg-gray-100 transition">
+        <button className="flex cursor-pointer items-center gap-2 px-5 py-2 border border-gray-300 rounded-full text-sm font-medium text-gray-700 hover:bg-gray-100 transition">
           <FiEdit />
           Edit Profile
         </button>

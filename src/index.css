@@ -25,6 +25,12 @@
   --color-card-background: linear-gradient(...), rgba(12, 16, 34, 0.6);
 }
 
+.dashed-line {
+  border: none;
+  border-top: 2px dashed #a4a7ae;
+  margin: 20px 0;
+}
+
 @layer base {
   body {
     @apply font-sans;

@@ -1,7 +1,12 @@
 import React, { useState, useRef, useEffect } from "react";
-import { FaBoxOpen, FaCamera, FaStop } from "react-icons/fa";
+import { FaCamera, FaStop } from "react-icons/fa";
 import { FiAlertTriangle } from "react-icons/fi";
 import Webcam from "react-webcam";
+
+import Scanner from "@/assets/primepos/photo/scanner.svg";
+import { BsBoxSeam } from "react-icons/bs";
+import { HiOutlineExclamationTriangle } from "react-icons/hi2";
+import { LuRefreshCcw } from "react-icons/lu";
 
 // Types
 interface ProductInfo {
@@ -247,340 +252,277 @@ const Scann: React.FC = () => {
   };
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-gray-50 via-gray-100 to-gray-200 p-4 md:p-6 lg:p-8">
+    <div className="p-4 md:p-6 lg:p-8">
       <div className="max-w-7xl mx-auto">
         {/* Header */}
-        <div className="text-center mb-8">
-          <h1 className="text-3xl md:text-4xl font-bold bg-gradient-to-r from-green-600 to-blue-600 bg-clip-text text-transparent mb-2">
-            Barcode Scanner
-          </h1>
-          <p className="text-gray-600 text-sm md:text-base">
-            Scan products instantly and manage your inventory efficiently
-          </p>
-        </div>
 
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 md:gap-8">
           {/* LEFT CARD - Camera Section */}
-          <div className="bg-white rounded-2xl shadow-xl overflow-hidden transition-all duration-300 hover:shadow-2xl">
-            <div className="bg-gradient-to-r from-green-500 to-green-600 px-5 py-4 md:px-6 md:py-4">
-              <h2 className="text-white text-lg md:text-xl font-semibold flex items-center gap-2">
-                <FaCamera className="text-white" />
-                Camera Scanner
-              </h2>
-              <p className="text-green-100 text-xs md:text-sm mt-1">
-                Position any product barcode within the frame for instant
-                scanning
-              </p>
-            </div>
-
+          <div className="bg-[#F6FEF9] rounded-2xl shadow-xl overflow-hidden transition-all duration-300 hover:shadow-2xl">
             <div className="p-5 md:p-6">
-              {!isCameraActive ? (
-                <div className="flex flex-col items-center justify-center py-8 md:py-12">
-                  <div className="h-48 w-48 md:h-64 md:w-64 mb-6 bg-gradient-to-br from-gray-100 to-gray-200 rounded-full flex items-center justify-center shadow-inner">
-                    <FaCamera size={60} className="text-gray-400 md:text-80" />
-                  </div>
-                  <button
-                    onClick={requestCameraPermission}
-                    className="px-6 py-3 bg-gradient-to-r from-green-500 to-green-600 text-white rounded-full text-sm md:text-base font-semibold hover:from-green-600 hover:to-green-700 transition-all duration-200 shadow-md hover:shadow-lg transform hover:scale-105"
-                  >
-                    📷 Enable Camera Access
-                  </button>
-                  <p className="text-gray-500 text-xs mt-4 text-center max-w-xs">
-                    Camera access is required for barcode scanning. Your privacy
-                    is important to us.
-                  </p>
-                  {error && error.includes("Camera permission") && (
-                    <div className="mt-4 bg-red-50 border border-red-200 rounded-lg p-3 max-w-xs">
-                      <p className="text-red-600 text-xs text-center">
-                        {error}
-                      </p>
+              <div className="p-6">
+                {!isCameraActive ? (
+                  <div className="flex flex-col items-center justify-center py-8 md:py-12">
+                    <p>Request Camera Permissions Scan an Image File</p>
+                    <div>
+                      <img src={Scanner} alt="" />
                     </div>
-                  )}
-                </div>
-              ) : (
-                <div className="space-y-4">
-                  {/* Camera Preview */}
-                  <div className="relative bg-gray-900 rounded-xl overflow-hidden">
-                    {cameraStreamRef.current && (
-                      <Webcam
-                        ref={webcamRef}
-                        audio={false}
-                        screenshotFormat="image/jpeg"
-                        videoConstraints={{
-                          deviceId: selectedDeviceId || undefined,
-                          width: { ideal: 1280 },
-                          height: { ideal: 720 },
-                          facingMode: { ideal: "environment" },
-                        }}
-                        className="w-full h-80 md:h-96 object-cover"
-                      />
-                    )}
-
-                    {/* Scanner Overlay */}
-                    <div className="absolute inset-0 pointer-events-none">
-                      <div className="absolute inset-0 bg-black bg-opacity-40"></div>
-                      <div className="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2">
-                        <div className="w-56 h-56 md:w-64 md:h-64 border-2 border-green-500 rounded-lg relative">
-                          {/* Corner brackets */}
-                          <div className="absolute top-0 left-0 w-6 h-6 md:w-8 md:h-8 border-t-2 border-l-2 border-green-500"></div>
-                          <div className="absolute top-0 right-0 w-6 h-6 md:w-8 md:h-8 border-t-2 border-r-2 border-green-500"></div>
-                          <div className="absolute bottom-0 left-0 w-6 h-6 md:w-8 md:h-8 border-b-2 border-l-2 border-green-500"></div>
-                          <div className="absolute bottom-0 right-0 w-6 h-6 md:w-8 md:h-8 border-b-2 border-r-2 border-green-500"></div>
-
-                          {/* Scanning line */}
-                          {isScanning && (
-                            <div className="absolute inset-0 flex items-center justify-center">
-                              <div className="h-0.5 w-full bg-green-500 animate-pulse shadow-lg shadow-green-500"></div>
-                            </div>
-                          )}
-                        </div>
-                      </div>
-                    </div>
-
-                    {/* Camera Controls Overlay */}
-                    <div className="absolute bottom-4 left-1/2 transform -translate-x-1/2 flex gap-2 md:gap-3">
-                      <button
-                        onClick={handleManualCapture}
-                        className="px-3 py-1.5 md:px-4 md:py-2 bg-white bg-opacity-95 rounded-full text-xs md:text-sm font-semibold text-gray-700 hover:bg-opacity-100 transition-all shadow-lg hover:shadow-xl"
-                      >
-                        📸 Capture
-                      </button>
-                      {devices.length > 1 && (
-                        <select
-                          value={selectedDeviceId || ""}
-                          onChange={(e) => setSelectedDeviceId(e.target.value)}
-                          className="px-2 py-1.5 md:px-3 md:py-2 bg-white bg-opacity-95 rounded-full text-xs md:text-sm text-gray-700"
-                        >
-                          {devices.map((device) => (
-                            <option
-                              key={device.deviceId}
-                              value={device.deviceId}
-                            >
-                              {device.label}
-                            </option>
-                          ))}
-                        </select>
-                      )}
-                    </div>
-                  </div>
-
-                  {/* Scan Controls */}
-                  <div className="flex flex-wrap gap-3 justify-center">
-                    {!isScanning ? (
-                      <button
-                        onClick={startScanning}
-                        className="px-5 py-2 md:px-6 md:py-2.5 bg-green-600 text-white rounded-full text-sm md:text-base font-semibold hover:bg-green-700 transition-all flex items-center gap-2 shadow-md"
-                      >
-                        <FaCamera size={14} />
-                        Start Auto-Scan
-                      </button>
-                    ) : (
-                      <button
-                        onClick={stopScanning}
-                        className="px-5 py-2 md:px-6 md:py-2.5 bg-red-600 text-white rounded-full text-sm md:text-base font-semibold hover:bg-red-700 transition-all flex items-center gap-2 shadow-md"
-                      >
-                        <FaStop size={14} />
-                        Stop Scanning
-                      </button>
-                    )}
                     <button
-                      onClick={stopCamera}
-                      className="px-5 py-2 md:px-6 md:py-2.5 bg-gray-600 text-white rounded-full text-sm md:text-base font-semibold hover:bg-gray-700 transition-all shadow-md"
+                      onClick={requestCameraPermission}
+                      className="inline-flex items-center rounded-full gap-2 px-5 py-2.5 bg-[#ECFDF3] border border-[#067647] text-[#067647] text-sm font-medium shadow-sm hover:bg-[#dff7e7] transition"
                     >
-                      Close Camera
+                      <LuRefreshCcw className="text-[#067647]" />
+                      Camera Active
                     </button>
+                    <p className="text-gray-500 text-xs mt-4 text-center max-w-xs">
+                      Position any product barcode within the frame to
+                      automatically search your inventory.
+                    </p>
+                    {error && error.includes("Camera permission") && (
+                      <div className="mt-4 bg-red-50 border border-red-200 rounded-lg p-3 max-w-xs">
+                        <p className="text-red-600 text-xs text-center">
+                          {error}
+                        </p>
+                      </div>
+                    )}
                   </div>
-
-                  {/* Scanned Results */}
-                  {scannedData && (
-                    <div className="mt-4 bg-gradient-to-r from-green-50 to-emerald-50 border border-green-200 rounded-xl p-4 animate-slideIn">
-                      <div className="flex justify-between items-start mb-3">
-                        <h4 className="text-sm md:text-base font-semibold text-green-800 flex items-center gap-2">
-                          <span className="text-lg">✅</span> Scan Successful!
-                        </h4>
-                        <button
-                          onClick={() => setScannedData(null)}
-                          className="text-gray-400 hover:text-gray-600 text-xs md:text-sm"
-                        >
-                          ✕
-                        </button>
-                      </div>
-                      <div className="space-y-2 text-sm">
-                        <div className="grid grid-cols-2 gap-2">
-                          <span className="font-medium text-gray-600">
-                            Barcode:
-                          </span>
-                          <span className="text-gray-800 font-mono text-xs break-all">
-                            {scannedData.barcode}
-                          </span>
-                        </div>
-                        <div className="grid grid-cols-2 gap-2">
-                          <span className="font-medium text-gray-600">
-                            Product:
-                          </span>
-                          <span className="text-gray-800 font-semibold">
-                            {scannedData.product.name}
-                          </span>
-                        </div>
-                        <div className="grid grid-cols-2 gap-2">
-                          <span className="font-medium text-gray-600">
-                            SKU:
-                          </span>
-                          <span className="text-gray-800">
-                            {scannedData.product.sku}
-                          </span>
-                        </div>
-                        <div className="grid grid-cols-2 gap-2">
-                          <span className="font-medium text-gray-600">
-                            Price:
-                          </span>
-                          <span className="text-green-600 font-bold">
-                            ${scannedData.product.price.toFixed(2)}
-                          </span>
-                        </div>
-                        <div className="grid grid-cols-2 gap-2">
-                          <span className="font-medium text-gray-600">
-                            Stock:
-                          </span>
-                          <span
-                            className={`font-semibold ${scannedData.product.stock < 10 ? "text-red-600" : "text-gray-800"}`}
-                          >
-                            {scannedData.product.stock} units
-                          </span>
-                        </div>
-                        <div className="grid grid-cols-2 gap-2">
-                          <span className="font-medium text-gray-600">
-                            Time:
-                          </span>
-                          <span className="text-gray-500 text-xs">
-                            {scannedData.timestamp}
-                          </span>
-                        </div>
-                      </div>
-                    </div>
-                  )}
-
-                  {/* Error Display */}
-                  {error && (
-                    <div className="mt-4 bg-red-50 border border-red-200 rounded-xl p-4">
-                      <div className="flex items-start gap-2">
-                        <FiAlertTriangle
-                          className="text-red-500 mt-0.5 flex-shrink-0"
-                          size={16}
+                ) : (
+                  <div className="space-y-4">
+                    {/* Camera Preview */}
+                    <div className="relative bg-gray-900 rounded-xl overflow-hidden">
+                      {cameraStreamRef.current && (
+                        <Webcam
+                          ref={webcamRef}
+                          audio={false}
+                          screenshotFormat="image/jpeg"
+                          videoConstraints={{
+                            deviceId: selectedDeviceId || undefined,
+                            width: { ideal: 1280 },
+                            height: { ideal: 720 },
+                            facingMode: { ideal: "environment" },
+                          }}
+                          className="w-full h-80 md:h-96 object-cover"
                         />
-                        <p className="text-red-600 text-sm flex-1">{error}</p>
+                      )}
+
+                      {/* Scanner Overlay */}
+                      <div className="absolute inset-0 pointer-events-none">
+                        <div className="absolute inset-0 bg-black bg-opacity-40"></div>
+                        <div className="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2">
+                          <div className="w-56 h-56 md:w-64 md:h-64 border-2 border-green-500 rounded-lg relative">
+                            {/* Corner brackets */}
+                            <div className="absolute top-0 left-0 w-6 h-6 md:w-8 md:h-8 border-t-2 border-l-2 border-green-500"></div>
+                            <div className="absolute top-0 right-0 w-6 h-6 md:w-8 md:h-8 border-t-2 border-r-2 border-green-500"></div>
+                            <div className="absolute bottom-0 left-0 w-6 h-6 md:w-8 md:h-8 border-b-2 border-l-2 border-green-500"></div>
+                            <div className="absolute bottom-0 right-0 w-6 h-6 md:w-8 md:h-8 border-b-2 border-r-2 border-green-500"></div>
+
+                            {/* Scanning line */}
+                            {isScanning && (
+                              <div className="absolute inset-0 flex items-center justify-center">
+                                <div className="h-0.5 w-full bg-green-500 animate-pulse shadow-lg shadow-green-500"></div>
+                              </div>
+                            )}
+                          </div>
+                        </div>
+                      </div>
+
+                      {/* Camera Controls Overlay */}
+                      <div className="absolute bottom-4 left-1/2 transform -translate-x-1/2 flex gap-2 md:gap-3">
                         <button
-                          onClick={() => setError(null)}
-                          className="text-red-400 hover:text-red-600 text-xs"
+                          onClick={handleManualCapture}
+                          className="px-3 py-1.5 md:px-4 md:py-2 bg-white bg-opacity-95 rounded-full text-xs md:text-sm font-semibold text-gray-700 hover:bg-opacity-100 transition-all shadow-lg hover:shadow-xl"
                         >
-                          Dismiss
+                          Capture
                         </button>
+                        {devices.length > 1 && (
+                          <select
+                            value={selectedDeviceId || ""}
+                            onChange={(e) =>
+                              setSelectedDeviceId(e.target.value)
+                            }
+                            className="px-2 py-1.5 md:px-3 md:py-2 bg-white bg-opacity-95 rounded-full text-xs md:text-sm text-gray-700"
+                          >
+                            {devices.map((device) => (
+                              <option
+                                key={device.deviceId}
+                                value={device.deviceId}
+                              >
+                                {device.label}
+                              </option>
+                            ))}
+                          </select>
+                        )}
                       </div>
                     </div>
-                  )}
 
-                  {/* Scanning Status */}
-                  {isScanning && !scannedData && (
-                    <div className="text-center text-sm text-green-600 animate-pulse flex items-center justify-center gap-2">
-                      <div className="w-2 h-2 bg-green-600 rounded-full animate-ping"></div>
-                      Scanning for barcodes...
+                    {/* Scan Controls */}
+                    <div className="flex flex-wrap gap-3 justify-center">
+                      {!isScanning ? (
+                        <button
+                          onClick={startScanning}
+                          className="px-5 py-2 md:px-6 md:py-2.5 bg-green-600 text-white rounded-full text-sm md:text-base font-semibold hover:bg-green-700 transition-all flex items-center gap-2 shadow-md"
+                        >
+                          <FaCamera size={14} />
+                          Start Auto-Scan
+                        </button>
+                      ) : (
+                        <button
+                          onClick={stopScanning}
+                          className="px-5 py-2 md:px-6 md:py-2.5 bg-red-600 text-white rounded-full text-sm md:text-base font-semibold hover:bg-red-700 transition-all flex items-center gap-2 shadow-md"
+                        >
+                          <FaStop size={14} />
+                          Stop Scanning
+                        </button>
+                      )}
+                      <button
+                        onClick={stopCamera}
+                        className="px-5 py-2 md:px-6 md:py-2.5 bg-gray-600 text-white rounded-full text-sm md:text-base font-semibold hover:bg-gray-700 transition-all shadow-md"
+                      >
+                        Close Camera
+                      </button>
                     </div>
-                  )}
-                </div>
-              )}
+
+                    {/* Scanned Results */}
+                    {scannedData && (
+                      <div className="mt-4 bg-gradient-to-r from-green-50 to-emerald-50 border border-green-200 rounded-xl p-4 animate-slideIn">
+                        <div className="flex justify-between items-start mb-3">
+                          <h4 className="text-sm md:text-base font-semibold text-green-800 flex items-center gap-2">
+                            <span className="text-lg">✅</span> Scan Successful!
+                          </h4>
+                          <button
+                            onClick={() => setScannedData(null)}
+                            className="text-gray-400 hover:text-gray-600 text-xs md:text-sm"
+                          >
+                            ✕
+                          </button>
+                        </div>
+                        <div className="space-y-2 text-sm">
+                          <div className="grid grid-cols-2 gap-2">
+                            <span className="font-medium text-gray-600">
+                              Barcode:
+                            </span>
+                            <span className="text-gray-800 font-mono text-xs break-all">
+                              {scannedData.barcode}
+                            </span>
+                          </div>
+                          <div className="grid grid-cols-2 gap-2">
+                            <span className="font-medium text-gray-600">
+                              Product:
+                            </span>
+                            <span className="text-gray-800 font-semibold">
+                              {scannedData.product.name}
+                            </span>
+                          </div>
+                          <div className="grid grid-cols-2 gap-2">
+                            <span className="font-medium text-gray-600">
+                              SKU:
+                            </span>
+                            <span className="text-gray-800">
+                              {scannedData.product.sku}
+                            </span>
+                          </div>
+                          <div className="grid grid-cols-2 gap-2">
+                            <span className="font-medium text-gray-600">
+                              Price:
+                            </span>
+                            <span className="text-green-600 font-bold">
+                              ${scannedData.product.price.toFixed(2)}
+                            </span>
+                          </div>
+                          <div className="grid grid-cols-2 gap-2">
+                            <span className="font-medium text-gray-600">
+                              Stock:
+                            </span>
+                            <span
+                              className={`font-semibold ${scannedData.product.stock < 10 ? "text-red-600" : "text-gray-800"}`}
+                            >
+                              {scannedData.product.stock} units
+                            </span>
+                          </div>
+                          <div className="grid grid-cols-2 gap-2">
+                            <span className="font-medium text-gray-600">
+                              Time:
+                            </span>
+                            <span className="text-gray-500 text-xs">
+                              {scannedData.timestamp}
+                            </span>
+                          </div>
+                        </div>
+                      </div>
+                    )}
+
+                    {/* Error Display */}
+                    {error && (
+                      <div className="mt-4 bg-red-50 border border-red-200 rounded-xl p-4">
+                        <div className="flex items-start gap-2">
+                          <FiAlertTriangle
+                            className="text-red-500 mt-0.5 flex-shrink-0"
+                            size={16}
+                          />
+                          <p className="text-red-600 text-sm flex-1">{error}</p>
+                          <button
+                            onClick={() => setError(null)}
+                            className="text-red-400 hover:text-red-600 text-xs"
+                          >
+                            Dismiss
+                          </button>
+                        </div>
+                      </div>
+                    )}
+
+                    {/* Scanning Status */}
+                    {isScanning && !scannedData && (
+                      <div className="text-center text-sm text-green-600 animate-pulse flex items-center justify-center gap-2">
+                        <div className="w-2 h-2 bg-green-600 rounded-full animate-ping"></div>
+                        Scanning for barcodes...
+                      </div>
+                    )}
+                  </div>
+                )}
+              </div>
             </div>
           </div>
 
-          {/* RIGHT SIDE - Information Cards */}
-          <div className="flex flex-col gap-6">
-            {/* Inventory Lookup Card */}
-            <div className="group bg-white rounded-xl shadow-lg p-5 md:p-6 hover:shadow-xl transition-all duration-300 hover:scale-105 cursor-pointer">
-              <div className="flex items-center gap-4">
-                <div className="p-3 bg-gradient-to-br from-blue-400 to-blue-600 rounded-xl text-white shadow-md">
-                  <FaBoxOpen size={24} />
-                </div>
-                <div className="flex-1">
-                  <h3 className="text-base md:text-lg font-semibold text-gray-800 group-hover:text-blue-600 transition-colors">
-                    Inventory Lookup
-                  </h3>
-                  <p className="text-xs md:text-sm text-gray-600 mt-1">
-                    Instantly find stock levels, pricing, and product details
-                  </p>
-                  <div className="mt-3 flex flex-wrap gap-2">
-                    <span className="text-xs bg-blue-100 text-blue-700 px-2 py-1 rounded-full">
-                      Real-time
-                    </span>
-                    <span className="text-xs bg-blue-100 text-blue-700 px-2 py-1 rounded-full">
-                      Accurate
-                    </span>
-                    <span className="text-xs bg-blue-100 text-blue-700 px-2 py-1 rounded-full">
-                      Fast
-                    </span>
+          <div className=" space-y-5">
+            {/* RIGHT SIDE - Information Cards */}
+            <div className="flex flex-col gap-6">
+              {/* Inventory Lookup Card */}
+              <div className="group bg-[#EFF2F6] rounded-xl shadow-lg p-5 md:p-6 hover:shadow-xl transition-all duration-300 hover:scale-105 cursor-pointer">
+                <div className="flex items-center gap-4">
+                  <div className="p-3 rounded-full shadow-lg">
+                    <BsBoxSeam size={24} className="text-[#175CD3]" />
+                  </div>
+                  <div className="flex-1">
+                    <h3 className="text-base md:text-lg font-semibold text-[#175CD3] group-hover:text-blue-600 transition-colors">
+                      Inventory Lookup
+                    </h3>
+                    <p className="text-xs md:text-sm text-gray-600 mt-1">
+                      Instantly find stock levels and pricing by scaning.
+                    </p>
                   </div>
                 </div>
               </div>
             </div>
 
-            {/* Troubleshooting Card */}
-            <div className="group bg-gradient-to-br from-orange-50 to-orange-100 rounded-xl shadow-lg p-5 md:p-6 hover:shadow-xl transition-all duration-300 hover:scale-105">
-              <div className="flex items-start gap-4">
-                <div className="p-3 bg-orange-500 rounded-xl text-white shadow-md">
-                  <FiAlertTriangle size={24} />
-                </div>
-                <div className="flex-1">
-                  <h3 className="text-base md:text-lg font-semibold text-gray-800 group-hover:text-orange-600 transition-colors">
-                    Troubleshooting Tips
-                  </h3>
-                  <ul className="text-xs md:text-sm text-gray-600 mt-2 space-y-1.5">
-                    <li className="flex items-center gap-2">
-                      ✓ Ensure good lighting conditions
-                    </li>
-                    <li className="flex items-center gap-2">
-                      ✓ Hold the device steady
-                    </li>
-                    <li className="flex items-center gap-2">
-                      ✓ Keep barcode within the frame
-                    </li>
-                    <li className="flex items-center gap-2">
-                      ✓ Maintain proper distance (4-10 inches)
-                    </li>
-                    <li className="flex items-center gap-2">
-                      ✓ Avoid glare on the barcode
-                    </li>
-                  </ul>
-                </div>
-              </div>
-            </div>
-
-            {/* Quick Stats Card */}
-            <div className="bg-white rounded-xl shadow-lg p-5 md:p-6">
-              <h4 className="text-xs md:text-sm font-semibold text-gray-500 mb-3 uppercase tracking-wide">
-                Performance Stats
-              </h4>
-              <div className="grid grid-cols-2 gap-4">
-                <div className="text-center p-3 bg-green-50 rounded-lg">
-                  <p className="text-2xl md:text-3xl font-bold text-green-600">
-                    98%
-                  </p>
-                  <p className="text-xs text-gray-500 mt-1">Success Rate</p>
-                </div>
-                <div className="text-center p-3 bg-blue-50 rounded-lg">
-                  <p className="text-2xl md:text-3xl font-bold text-blue-600">
-                    &lt;2s
-                  </p>
-                  <p className="text-xs text-gray-500 mt-1">Avg. Scan Time</p>
-                </div>
-                <div className="text-center p-3 bg-purple-50 rounded-lg">
-                  <p className="text-2xl md:text-3xl font-bold text-purple-600">
-                    24/7
-                  </p>
-                  <p className="text-xs text-gray-500 mt-1">Availability</p>
-                </div>
-                <div className="text-center p-3 bg-orange-50 rounded-lg">
-                  <p className="text-2xl md:text-3xl font-bold text-orange-600">
-                    100%
-                  </p>
-                  <p className="text-xs text-gray-500 mt-1">Accuracy</p>
+            {/* RIGHT SIDE - Information Cards */}
+            <div className="flex flex-col gap-6">
+              {/* Inventory Lookup Card */}
+              <div className="group bg-[#FDF7EB] rounded-xl shadow-lg p-5 md:p-6 hover:shadow-xl transition-all duration-300 hover:scale-105 cursor-pointer">
+                <div className="flex items-center gap-4">
+                  <div className="p-3 rounded-full shadow-lg">
+                    <HiOutlineExclamationTriangle
+                      size={24}
+                      className="text-[#92370D]"
+                    />
+                  </div>
+                  <div className="flex-1">
+                    <h3 className="text-base md:text-lg font-semibold text-[#92370D] group-hover:text-[#92370D] transition-colors">
+                      Troubleshooting
+                    </h3>
+                    <p className="text-xs md:text-sm text-gray-600 mt-1">
+                      Ensure good lighting and hold the device steady.
+                    </p>
+                  </div>
                 </div>
               </div>
             </div>

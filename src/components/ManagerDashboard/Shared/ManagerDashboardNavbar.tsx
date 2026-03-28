@@ -1,19 +1,10 @@
-import { Menu, User } from "lucide-react";
+import { Bell, Menu } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import imgUrl from "@/assets/webvixxen/icon/user.png";
 
-import {
-  DropdownMenu,
-  DropdownMenuContent,
-  DropdownMenuItem,
-  DropdownMenuTrigger,
-} from "@/components/ui/dropdown-menu";
-import { Link, useLocation, useNavigate } from "react-router-dom";
+import { useLocation } from "react-router-dom";
 import { useEffect, useRef, useState } from "react";
-import { useDispatch } from "react-redux";
-import { logOut } from "@/redux/features/auth/authSlice";
-import { CiSearch } from "react-icons/ci";
-// import { useAuthMeQuery } from "@/redux/features/auth/authApi";
+import NotificationPanel from "./NotificationPanel";
 
 export interface NavbarProps {
   onMobileMenuToggle: () => void;
@@ -27,18 +18,10 @@ const ManagerDashboardNavbar: React.FC<NavbarProps> = ({
   isSidebarOpen,
 }) => {
   const location = useLocation();
-  const [, setIsOpen] = useState(false);
+  const [isOpen, setIsOpen] = useState(false);
   const dropdownRef = useRef<HTMLDivElement>(null);
 
   console.log(imgUrl);
-
-  const navigate = useNavigate();
-  const dispatch = useDispatch();
-
-  const handleLogout = () => {
-    dispatch(logOut());
-    navigate("/login");
-  };
 
   useEffect(() => {
     function handleClickOutside(event: MouseEvent) {
@@ -124,18 +107,24 @@ const ManagerDashboardNavbar: React.FC<NavbarProps> = ({
 
         {/* Right Section */}
         <div className="flex items-center space-x-4">
-          {/* Search Bar */}
-          <div className="relative w-80 hidden md:block">
-            <input
-              type="text"
-              placeholder="Search by name, email, or role..."
-              className="w-full pl-10 pr-3 py-3 shadow-2xl border border-[#F5F5F5]  rounded-full outline-none focus:ring-2 focus:ring-blue-400"
-            />
-            <CiSearch className="w-4 h-4 absolute left-3 top-1/2 -translate-y-1/2 text-gray-500" />
-          </div>
+          <div className="relative" ref={dropdownRef}>
+            <button
+              onClick={() => setIsOpen(!isOpen)}
+              className="p-2 rounded-lg transition-colors relative cursor-pointer hover:p-2 hover:bg-gray-100 duration-200"
+              aria-label="Notifications"
+            >
+              <Bell className="w-5 h-5 text-foreground" />
+              <span className="absolute top-1 right-1 w-2 h-2 bg-destructive rounded-full" />
+            </button>
 
+            {isOpen && (
+              <div className="absolute -right-5 lg:right-0 mt-2 z-10">
+                <NotificationPanel />
+              </div>
+            )}
+          </div>
           {/* User Dropdown */}
-          <DropdownMenu>
+          {/* <DropdownMenu>
             <DropdownMenuTrigger asChild>
               <Button
                 variant="ghost"
@@ -156,16 +145,16 @@ const ManagerDashboardNavbar: React.FC<NavbarProps> = ({
 
             <DropdownMenuContent
               align="end"
-              className="bg-[#75029B] text-black w-60 shadow-2xl rounded-3xl border border-gray-200 overflow-hidden"
+              className="bg-[#FABF31] text-black w-60 shadow-2xl rounded-3xl border border-gray-200 overflow-hidden"
             >
               <Link to="/admin-dashboard">
-                <DropdownMenuItem className="px-4 py-2 hover:text-white hover:bg-purple-700 rounded-2xl">
+                <DropdownMenuItem className="px-4 py-2 hover:text-white hover:bg-[#855f06] cursor-pointer rounded-2xl">
                   Home
                 </DropdownMenuItem>
               </Link>
 
               <Link to="/admin-dashboard/settings">
-                <DropdownMenuItem className="px-4 py-2 hover:text-white hover:bg-purple-700 rounded-2xl">
+                <DropdownMenuItem className="px-4 py-2 hover:text-white hover:bg-[#855f06]  cursor-pointer rounded-2xl">
                   Settings
                 </DropdownMenuItem>
               </Link>
@@ -177,7 +166,7 @@ const ManagerDashboardNavbar: React.FC<NavbarProps> = ({
                 Sign Out
               </DropdownMenuItem>
             </DropdownMenuContent>
-          </DropdownMenu>
+          </DropdownMenu> */}
         </div>
       </header>
     </div>

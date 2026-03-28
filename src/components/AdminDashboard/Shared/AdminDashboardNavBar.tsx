@@ -123,16 +123,16 @@ const AdminDashboardNavBar: React.FC<NavbarProps> = ({
 
             <DropdownMenuContent
               align="end"
-              className="bg-[#75029B] text-black w-60 shadow-2xl rounded-3xl border border-gray-200 overflow-hidden"
+              className="bg-[#FABF31] text-black w-60 shadow-2xl rounded-3xl border border-gray-200 overflow-hidden"
             >
               <Link to="/admin-dashboard">
-                <DropdownMenuItem className="px-4 py-2 hover:text-white hover:bg-purple-700 rounded-2xl">
+                <DropdownMenuItem className="px-4 py-2 hover:text-white hover:bg-[#855f06] cursor-pointer rounded-2xl">
                   Home
                 </DropdownMenuItem>
               </Link>
 
               <Link to="/admin-dashboard/settings">
-                <DropdownMenuItem className="px-4 py-2 hover:text-white hover:bg-purple-700 rounded-2xl">
+                <DropdownMenuItem className="px-4 py-2 hover:text-white hover:bg-[#855f06]  cursor-pointer rounded-2xl">
                   Settings
                 </DropdownMenuItem>
               </Link>

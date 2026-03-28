@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { IoMdClose } from "react-icons/io";
+import { IoIosSave, IoMdClose } from "react-icons/io";
 
 export default function AddEmployeeDialog() {
   const [open, setOpen] = useState(false);
@@ -26,72 +26,69 @@ export default function AddEmployeeDialog() {
           {/* Header */}
           <div className="flex items-center justify-between mb-4 border-b border-[#C6CAD1] pb-2">
             <h2 className="text-lg font-semibold text-gray-800">
-              New Product Details
+              New Employee Profile
             </h2>
 
             <button
               onClick={() => setOpen(false)}
-              className="text-gray-500 hover:text-red-500"
+              className="text-gray-500 cursor-pointer hover:text-red-500"
             >
               <IoMdClose size={22} />
             </button>
           </div>
 
           {/* Form */}
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
             <div>
               <label className="text-sm text-[#6C7787]">Product Name</label>
               <input
                 type="text"
-                placeholder="e.g. Farm Chicken"
+                placeholder="e.a. Farm Chicken"
                 className="w-full bg-white border-[#DDDDDD] mt-1 px-4 py-2 rounded-xl border focus:outline-none focus:ring-2 focus:ring-[#061E49]"
               />
             </div>
 
             <div>
-              <label className="text-sm text-[#6C7787]">Barcode / SKU</label>
-              <div className="flex gap-2 mt-1">
-                <input
-                  type="text"
-                  placeholder="Scan or enter code"
-                  className="w-full bg-white border-[#DDDDDD] px-4 py-2 rounded-xl border focus:outline-none focus:ring-2 focus:ring-[#061E49]"
-                />
-                <button className="px-4 py-2 rounded-xl bg-orange-100 text-orange-600 border hover:bg-orange-200">
-                  Generate
-                </button>
-              </div>
-            </div>
-
-            <div>
-              <label className="text-sm text-[#6C7787]">Initial Stock</label>
-              <input
-                type="number"
-                placeholder="0"
+              <label className="text-sm text-[#6C7787]">System Role</label>
+              <select
                 className="w-full bg-white border-[#DDDDDD] mt-1 px-4 py-2 rounded-xl border focus:outline-none focus:ring-2 focus:ring-[#061E49]"
-              />
+                defaultValue=""
+              >
+                <option value="" disabled>
+                  Select role
+                </option>
+                <option value="server">Server</option>
+                <option value="admin">Admin</option>
+                <option value="kitchen">Kitchen</option>
+                <option value="manager">Manager</option>
+              </select>
             </div>
 
             <div>
-              <label className="text-sm text-[#6C7787]">Price ($)</label>
+              <label className="text-sm text-[#6C7787]">
+                Quick-Login PIN (4 digits)
+              </label>
               <input
                 type="number"
-                placeholder="0"
+                placeholder="Scan or enter code"
                 className="w-full bg-white border-[#DDDDDD] mt-1 px-4 py-2 rounded-xl border focus:outline-none focus:ring-2 focus:ring-[#061E49]"
               />
             </div>
           </div>
 
           {/* Buttons */}
-          <div className="flex justify-end gap-3 mt-6">
+          {/* Buttons */}
+          <div className="flex justify-end items-center gap-3 mt-6">
             <button
               onClick={() => setOpen(false)}
-              className="px-5 py-2 cursor-pointer rounded-full border hover:bg-gray-100"
+              className="px-5 text-[#684F1A] border-[#684F1A] cursor-pointer py-2 rounded-full border  text-base font-medium hover:bg-gray-100 transition"
             >
               Cancel
             </button>
 
-            <button className="px-5 py-2 cursor-pointer rounded-full bg-[#061E49] text-white hover:opacity-90">
-              Save Product
+            <button className="flex  cursor-pointer items-center gap-2 px-6 py-2.5 rounded-full bg-[#061E49] text-white text-sm font-medium shadow-sm hover:bg-[#0A2A66] transition-all duration-200">
+              <IoIosSave className="text-lg" />
+              <span>Update identity</span>
             </button>
           </div>
         </div>

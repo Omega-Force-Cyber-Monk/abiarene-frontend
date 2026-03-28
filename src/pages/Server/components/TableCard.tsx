@@ -18,7 +18,7 @@ export const TableCard = ({
 
   return (
     <div
-      className={`p-6 rounded-4xl transition-all border border-transparent 
+      className={`p-6 rounded-4xl cursor-pointer transition-all border border-transparent 
       ${isOccupied ? "bg-[#E9EAEF]" : "bg-[#F8F9FA] shadow-sm"}`}
     >
       {/* Table Number Badge */}
