@@ -1,7 +1,5 @@
-import { useState } from "react";
-
-type TableStatus = 'AVAILABLE' | 'OCCUPIED' | 'RESERVED' | 'CLEANING';
-type TableSubStatus = 'SERVED' | 'ORDERING' | 'BILLING' | null;
+type TableStatus = "AVAILABLE" | "OCCUPIED" | "RESERVED" | "CLEANING";
+type TableSubStatus = "SERVED" | "ORDERING" | "BILLING" | null;
 
 export interface TableCardProps {
   id: number | string;
@@ -10,13 +8,18 @@ export interface TableCardProps {
   subStatus?: TableSubStatus;
 }
 
-export const TableCard = ({ id, capacity, status, subStatus }: TableCardProps) => {
+export const TableCard = ({
+  id,
+  capacity,
+  status,
+  subStatus,
+}: TableCardProps) => {
   const isOccupied = status === "OCCUPIED";
 
   return (
     <div
       className={`p-6 rounded-4xl transition-all border border-transparent 
-      ${isOccupied ? 'bg-[#E9EAEF]' : 'bg-[#F8F9FA] shadow-sm'}`}
+      ${isOccupied ? "bg-[#E9EAEF]" : "bg-[#F8F9FA] shadow-sm"}`}
     >
       {/* Table Number Badge */}
       <div className="w-9 h-9 rounded-full bg-white/80 flex items-center justify-center text-sm font-bold text-gray-400 mb-4 shadow-sm">
@@ -34,8 +37,8 @@ export const TableCard = ({ id, capacity, status, subStatus }: TableCardProps) =
           className={`px-3 py-1 rounded-full text-[10px] font-black tracking-wider border
           ${
             isOccupied
-              ? 'bg-[#FFF2ED] text-[#FF8A65] border-[#FFD3C5]'
-              : 'bg-[#F0FDF4] text-[#22C55E] border-[#DCFCE7]'
+              ? "bg-[#FFF2ED] text-[#FF8A65] border-[#FFD3C5]"
+              : "bg-[#F0FDF4] text-[#22C55E] border-[#DCFCE7]"
           }`}
         >
           {status}
