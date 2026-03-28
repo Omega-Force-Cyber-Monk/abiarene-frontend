@@ -1,3 +1,5 @@
+import { useState } from "react";
+
 type TableStatus = 'AVAILABLE' | 'OCCUPIED' | 'RESERVED' | 'CLEANING';
 type TableSubStatus = 'SERVED' | 'ORDERING' | 'BILLING' | null;
 
