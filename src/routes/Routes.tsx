@@ -21,6 +21,8 @@ import ServerLayout from "@/Layout/ServerLayout";
 import KitchenLayout from "@/Layout/KitchenLayout";
 import KitchenDashboardPage from "@/pages/Kitchen/KitchenDashboardPage";
 import ServerDashboardPage from "@/pages/Server/ServerDashboardPage";
+import CashierLayout from "@/Layout/CashierLayout";
+import CashierDashboardPage from "@/pages/Cashier/CashierDashboardPage";
 
 const routes = createBrowserRouter([
   {
@@ -92,11 +94,7 @@ const routes = createBrowserRouter([
   /* kitchen */
   {
     path: "/kitchen-dashboard",
-    element: (
-      // <ManagerRoute>
-      <KitchenLayout />
-      // </ManagerRoute>
-    ),
+    element: <KitchenLayout />,
     children: [
       { index: true, element: <KitchenDashboardPage /> },
       { path: "dashboard", element: <KitchenDashboardPage /> },
@@ -105,14 +103,10 @@ const routes = createBrowserRouter([
   /* cashier */
   {
     path: "/cashier-dashboard",
-    element: (
-      // <ManagerRoute>
-      <ManagerLayout />
-      // </ManagerRoute>
-    ),
+    element: <CashierLayout />,
     children: [
-      { index: true, element: <ManagerDashboardPage /> },
-      { path: "dashboard", element: <ManagerDashboardPage /> },
+      { index: true, element: <CashierDashboardPage /> },
+      { path: "dashboard", element: <CashierDashboardPage /> },
     ],
   },
 
