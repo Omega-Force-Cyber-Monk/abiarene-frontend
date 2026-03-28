@@ -1,7 +1,11 @@
-import React from "react";
+import CashierHub from "./CashierHub";
 
 const Cashier = () => {
-  return <div>Cashier</div>;
+  return (
+    <div>
+      <CashierHub />
+    </div>
+  );
 };
 
 export default Cashier;
