@@ -1,3 +1,6 @@
+import { MENU_ITEMS } from "../DammyData";
+import { MenuItemCard } from "./MenuItemCard";
+
 type MenuModalProps = {
   tableId: number | string;
   onClose: () => void;
@@ -19,6 +22,11 @@ export const MenuModal = ({ tableId, onClose }: MenuModalProps) => {
           {/* Left: Food Items Grid */}
           <div className="flex-[2] p-6 overflow-y-auto grid grid-cols-2 gap-4">
             {/* Map your menu items here */}
+            {
+                MENU_ITEMS.map((menu)=>(
+                    <MenuItemCard key={menu.id} description={menu.description} image={menu.image} name={menu.name} price={menu.price} />
+                ))
+            }
           </div>
 
           {/* Right: Order Summary */}

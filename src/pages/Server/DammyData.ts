@@ -14,3 +14,53 @@ export const tableData: TableCardProps[] = [
   { id: 11, capacity: 2, status: 'AVAILABLE' },
   { id: 12, capacity: 2, status: 'AVAILABLE' },
 ];
+export const MENU_ITEMS = [
+  {
+    id: "m1",
+    name: "Chicken Biryani",
+    description: "Fragrant basmati rice with spiced chicken",
+    price: 12.99,
+    image: "https://images.unsplash.com/photo-1563379091339-03b21bc4a4f8?q=80&w=500", // Replace with your local path
+    category: "Main Course"
+  },
+  {
+    id: "m2",
+    name: "Paneer Tikka",
+    description: "Grilled cottage cheese with spices",
+    price: 9.99,
+    image: "https://images.unsplash.com/photo-1567188040759-fb8a883dc6d8?q=80&w=500",
+    category: "Appetizer"
+  },
+  {
+    id: "m3",
+    name: "Garlic Naan",
+    description: "Soft leavened bread with garlic",
+    price: 3.50,
+    image: "https://images.unsplash.com/photo-1601050690597-df0568f70950?q=80&w=500",
+    category: "Bread"
+  },
+  {
+    id: "m4",
+    name: "Mango Lassi",
+    description: "Sweet yogurt drink with mango",
+    price: 4.50,
+    image: "https://images.unsplash.com/photo-1571006682882-0050811e582d?q=80&w=500",
+    category: "Drinks"
+  },
+  {
+    id: "m5",
+    name: "Lamb Curry",
+    description: "Tender lamb in rich gravy",
+    price: 15.99,
+    image: "https://images.unsplash.com/photo-1545240103-114853b5a0d6?q=80&w=500",
+    category: "Main Course"
+  },
+  {
+    id: "m6",
+    name: "Samosa",
+    description: "Crispy pastry with potato filling",
+    price: 5.99,
+    image: "https://images.unsplash.com/photo-1601050690597-df0568f70950?q=80&w=500",
+    category: "Appetizer"
+  }
+];
