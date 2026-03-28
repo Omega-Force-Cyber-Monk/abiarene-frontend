@@ -1,7 +1,9 @@
+import KitchenTickets from "@/components/Kitchen/KitchenTickets";
+
 const KitchenDashboardPage = () => {
   return (
     <div>
-      <h1>KitchenDashboardPage</h1>
+      <KitchenTickets />
     </div>
   );
 };
