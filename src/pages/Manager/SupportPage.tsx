@@ -1,7 +1,9 @@
+import IssueCategory from "@/components/ManagerDashboard/Support/IssueCategory";
+
 const SupportPage = () => {
   return (
     <div>
-      <h1>SupportPage</h1>
+      <IssueCategory />
     </div>
   );
 };

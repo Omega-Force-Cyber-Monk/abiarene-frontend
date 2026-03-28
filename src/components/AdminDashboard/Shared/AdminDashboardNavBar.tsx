@@ -1,4 +1,4 @@
-import { Bell, Menu, User } from "lucide-react";
+import { Menu, User } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import imgUrl from "@/assets/webvixxen/icon/user.png";
 
@@ -27,7 +27,7 @@ const AdminDashboardNavBar: React.FC<NavbarProps> = ({
   isSidebarOpen,
 }) => {
   const location = useLocation();
-  const [isOpen, setIsOpen] = useState(false);
+  const [_isOpen, setIsOpen] = useState(false);
   const dropdownRef = useRef<HTMLDivElement>(null);
 
   console.log(imgUrl);

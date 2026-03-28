@@ -108,7 +108,7 @@ const ConversationsTable = () => {
   };
 
   // Open refund dialog
-  const openRefundDialog = (user: any, index: number) => {
+  const openRefundDialog = (user: any) => {
     setSelectedUser(user);
     setDialogType("refund");
     setIsDialogOpen(true);
@@ -267,7 +267,7 @@ const ConversationsTable = () => {
                         <SlBadge className="w-5 h-5 text-gray-600 hover:text-gray-800 cursor-pointer" />
 
                         <RiUserForbidLine
-                          onClick={() => openRefundDialog(user, index)}
+                          onClick={() => openRefundDialog(user)}
                           className="w-5 h-5 text-gray-600 hover:text-gray-800 cursor-pointer"
                         />
 

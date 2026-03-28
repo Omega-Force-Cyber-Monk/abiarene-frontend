@@ -10,7 +10,6 @@ import { IconType } from "react-icons";
 
 import { FiLogOut, FiPieChart } from "react-icons/fi";
 import { LuTicketPercent, LuUsers } from "react-icons/lu";
-import { MdOutlineAddCircleOutline } from "react-icons/md";
 import { BsBoxSeam } from "react-icons/bs";
 import { AiOutlineScan } from "react-icons/ai";
 import { HiOutlineSupport } from "react-icons/hi";

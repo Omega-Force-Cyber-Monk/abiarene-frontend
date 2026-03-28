@@ -1,7 +1,9 @@
+import Approvals from "@/components/ManagerDashboard/Approvals/Approvals";
+
 const ApprovalsPage = () => {
   return (
     <div>
-      <h1>ApprovalsPage</h1>
+      <Approvals />
     </div>
   );
 };

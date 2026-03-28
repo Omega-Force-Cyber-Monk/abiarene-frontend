@@ -113,7 +113,7 @@ const TenantsManagement = () => {
               </thead>
 
               <tbody>
-                {users.map((user, index) => (
+                {users.map((user) => (
                   <tr
                     key={user.id}
                     className="border-b border-gray-100 hover:bg-gray-50 transition"

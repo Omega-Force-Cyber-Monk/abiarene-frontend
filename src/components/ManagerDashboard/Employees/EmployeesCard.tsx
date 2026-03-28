@@ -92,7 +92,7 @@ const EmployeesCard = () => {
       <div>
         <AddEmployeeDialog />
       </div>
-      <div className="p-6  min-h-screen">
+      <div className="mt-6">
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
           {users.map((user) => (
             <StaffCard key={user.id} user={user} />

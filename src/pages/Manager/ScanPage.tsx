@@ -1,7 +1,9 @@
+import Scann from "@/components/ManagerDashboard/Scann/Scann";
+
 const ScanPage = () => {
   return (
     <div>
-      <h1>ScanPage</h1>
+      <Scann />
     </div>
   );
 };
