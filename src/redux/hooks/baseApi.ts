@@ -3,9 +3,9 @@ import Cookies from "js-cookie";
 
 const baseURL = import.meta.env.VITE_API_ENDPOINT;
 
-if (!baseURL) {
-  throw new Error("VITE_API_ENDPOINT is not defined in environment variables");
-}
+// if (!baseURL) {
+//   throw new Error("VITE_API_ENDPOINT is not defined in environment variables");
+// }
 
 const rawBaseQuery = fetchBaseQuery({
   baseUrl: baseURL,
@@ -23,7 +23,7 @@ const rawBaseQuery = fetchBaseQuery({
 const baseQueryWithErrorHandler: typeof rawBaseQuery = async (
   args,
   api,
-  extraOptions
+  extraOptions,
 ) => {
   try {
     const result = await rawBaseQuery(args, api, extraOptions);
