@@ -17,6 +17,10 @@ import ApprovalsPage from "@/pages/Manager/ApprovalsPage";
 import ScanPage from "@/pages/Manager/ScanPage";
 import SupportPage from "@/pages/Manager/SupportPage";
 import SettingsPage from "@/pages/Manager/SettingsPage";
+import ServerLayout from "@/Layout/ServerLayout";
+import KitchenLayout from "@/Layout/KitchenLayout";
+import KitchenDashboardPage from "@/pages/Kitchen/KitchenDashboardPage";
+import ServerDashboardPage from "@/pages/Server/ServerDashboardPage";
 
 const routes = createBrowserRouter([
   {
@@ -75,7 +79,41 @@ const routes = createBrowserRouter([
       { path: "support", element: <SupportPage /> },
       { path: "settings", element: <SettingsPage /> },
     ],
-    // </AdminRoute>
+  },
+  /* server */
+  {
+    path: "/server-dashboard",
+    element: <ServerLayout />,
+    children: [
+      { index: true, element: <ServerDashboardPage /> },
+      { path: "dashboard", element: <ServerDashboardPage /> },
+    ],
+  },
+  /* kitchen */
+  {
+    path: "/kitchen-dashboard",
+    element: (
+      // <ManagerRoute>
+      <KitchenLayout />
+      // </ManagerRoute>
+    ),
+    children: [
+      { index: true, element: <KitchenDashboardPage /> },
+      { path: "dashboard", element: <KitchenDashboardPage /> },
+    ],
+  },
+  /* cashier */
+  {
+    path: "/cashier-dashboard",
+    element: (
+      // <ManagerRoute>
+      <ManagerLayout />
+      // </ManagerRoute>
+    ),
+    children: [
+      { index: true, element: <ManagerDashboardPage /> },
+      { path: "dashboard", element: <ManagerDashboardPage /> },
+    ],
   },
 
   {
