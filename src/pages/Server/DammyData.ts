@@ -14,13 +14,23 @@ export const tableData: TableCardProps[] = [
   { id: 11, capacity: 2, status: 'AVAILABLE' },
   { id: 12, capacity: 2, status: 'AVAILABLE' },
 ];
-export const MENU_ITEMS = [
+
+export interface MenuItem {
+  id: string;
+  name: string;
+  description: string;
+  price: number;
+  image: string;
+  category: string;
+}
+
+export const MENU_ITEMS: MenuItem[] = [
   {
     id: "m1",
     name: "Chicken Biryani",
     description: "Fragrant basmati rice with spiced chicken",
     price: 12.99,
-    image: "https://images.unsplash.com/photo-1563379091339-03b21bc4a4f8?q=80&w=500", // Replace with your local path
+    image: "https://images.unsplash.com/photo-1563379091339-03b21bc4a4f8?q=80&w=500",
     category: "Main Course"
   },
   {
@@ -60,7 +70,32 @@ export const MENU_ITEMS = [
     name: "Samosa",
     description: "Crispy pastry with potato filling",
     price: 5.99,
-    image: "https://images.unsplash.com/photo-1601050690597-df0568f70950?q=80&w=500",
+    image: "https://images.unsplash.com/photo-1626330332854-e1b34845b688?q=80&w=500",
     category: "Appetizer"
+  }
+];
+
+export interface OrderItem {
+  id: string;
+  name: string;
+  price: number;
+  quantity: number;
+  customizations: string[];
+}
+
+export const CURRENT_ORDER: OrderItem[] = [
+  {
+    id: "m1",
+    name: "Chicken Biryani",
+    price: 12.99,
+    quantity: 1,
+    customizations: ["Extra Spicy", "No Onion", "Less salt"]
+  },
+  {
+    id: "m4",
+    name: "Mango Lassi",
+    price: 4.50,
+    quantity: 1,
+    customizations: ["Extra Spicy", "No Onion", "Less salt"]
   }
 ];
