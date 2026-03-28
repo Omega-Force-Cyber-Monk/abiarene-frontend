@@ -1,4 +1,5 @@
 import { useState } from "react";
+import { FaCaretRight } from "react-icons/fa";
 
 const categories = [
   "Sync Issue",
@@ -36,9 +37,6 @@ export default function IssueCategory() {
         <div className="flex-1 bg-white rounded-2xl shadow-2xl p-7 flex flex-col gap-6">
           {/* Header */}
           <div>
-            <p className="text-xs font-semibold uppercase tracking-widest text-slate-400 mb-1">
-              Support Portal
-            </p>
             <h2
               className="text-xl font-semibold text-slate-800"
               style={{ letterSpacing: "-0.02em" }}
@@ -53,7 +51,7 @@ export default function IssueCategory() {
               <button
                 key={cat}
                 onClick={() => setSelected(cat)}
-                className="py-3 px-4 rounded-xl text-sm font-medium transition-all duration-200 text-left"
+                className="py-3 px-4 cursor-pointer rounded-full text-sm font-medium transition-all duration-200 text-left"
                 style={{
                   background:
                     selected === cat
@@ -96,7 +94,7 @@ export default function IssueCategory() {
           {/* Submit Button */}
           <button
             onClick={handleSubmit}
-            className="self-end flex items-center gap-2 px-6 py-3 rounded-xl text-sm font-semibold text-white transition-all duration-200"
+            className="self-end flex cursor-pointer items-center gap-2 px-6 py-3 rounded-xl text-sm font-semibold text-white transition-all duration-200"
             style={{
               background: submitted
                 ? "linear-gradient(135deg, #16a34a, #15803d)"
@@ -129,19 +127,7 @@ export default function IssueCategory() {
             ) : (
               <>
                 Submit Ticket to Global Dashboard
-                <svg
-                  className="w-4 h-4"
-                  fill="none"
-                  viewBox="0 0 24 24"
-                  stroke="currentColor"
-                >
-                  <path
-                    strokeLinecap="round"
-                    strokeLinejoin="round"
-                    strokeWidth={2}
-                    d="M14 5l7 7m0 0l-7 7m7-7H3"
-                  />
-                </svg>
+                <FaCaretRight />
               </>
             )}
           </button>

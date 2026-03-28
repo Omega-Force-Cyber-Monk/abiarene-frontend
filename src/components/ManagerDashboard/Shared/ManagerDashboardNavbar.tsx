@@ -57,31 +57,31 @@ const ManagerDashboardNavbar: React.FC<NavbarProps> = ({
   const pathTitleMap: Record<string, { title: string; description: string }> = {
     "manager-dashboard": {
       title: "Overview",
-      description: "View overall system performance and insights.",
+      description: "Welcome back, Rene. Here's what's happening today.",
     },
     inventory: {
       title: "Inventory",
       description: "Manage your stock levels and product catalog.",
     },
     employees: {
-      title: "Tenants",
-      description: "Manage tenants and their assigned roles.",
+      title: "Employees",
+      description: "Manage staff profiles and quick-login PINs.",
     },
     approvals: {
-      title: "New Business",
-      description: "Review and approve new business requests.",
+      title: "Discount Approvals",
+      description: "Review and authorize discount requests from your staff.",
     },
     scan: {
-      title: "Scanner",
-      description: "Scan and process business-related data.",
+      title: "Scan",
+      description: "Use your camera to identify products instantly.",
     },
     support: {
-      title: "Support",
-      description: "Handle user queries and support tickets.",
+      title: "Report an Issue",
+      description: "Get technical help without leaving your POS.",
     },
     settings: {
-      title: "Settings",
-      description: "Configure system preferences and options.",
+      title: "Business Setup",
+      description: "Configure your terminal and payment methods.",
     },
   };
   const segments = location.pathname.split("/").filter(Boolean);
@@ -115,10 +115,10 @@ const ManagerDashboardNavbar: React.FC<NavbarProps> = ({
 
           {/* Logo + Dashboard text */}
           <div className="flex flex-col items-start space-y-1 pl-0 md:pl-2 lg:pl-70">
-            <h1 className="text-lg lg:text-3xl font-medium text-black">
+            <h1 className="text-lg lg:text-3xl mt-3 font-semibold text-black">
               {pageTitle}
             </h1>
-            <p className="text-sm text-gray-500">{pageDescription}</p>
+            <p className="text-lg text-[#717680]">{pageDescription}</p>
           </div>
         </div>
 

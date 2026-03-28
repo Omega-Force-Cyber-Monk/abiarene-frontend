@@ -1,7 +1,9 @@
+import Settings from "@/components/ManagerDashboard/Settings/Settings";
+
 const SettingsPage = () => {
   return (
     <div>
-      <h1>SettingsPage</h1>
+      <Settings />
     </div>
   );
 };
