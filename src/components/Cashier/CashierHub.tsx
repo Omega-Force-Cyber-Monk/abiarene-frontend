@@ -2,6 +2,8 @@ import { useState } from "react";
 import { IoCardOutline } from "react-icons/io5";
 import { PiCreditCardThin } from "react-icons/pi";
 
+import success from "@/assets/primepos/logo/success.svg";
+
 const mockCards = [
   { id: 1, title: "1", price: 14.49, server: "Server" },
   { id: 2, title: "2", price: 15.49, server: "Server" },
@@ -19,10 +21,29 @@ export default function CashierHub() {
   const [paymentMethod, setPaymentMethod] = useState<"cash" | "card" | null>(
     null,
   );
+  const [paymentSuccess, setPaymentSuccess] = useState(false);
 
   const closeModal = () => {
     setSelectedCard(null);
     setPaymentMethod(null);
+  };
+
+  const handlePayment = () => {
+    if (!paymentMethod) return;
+
+    // simulate success
+    setTimeout(() => {
+      closeModal();
+      setPaymentSuccess(true);
+    }, 500);
+  };
+
+  const closeSuccessModal = () => {
+    setPaymentSuccess(false);
+  };
+
+  const handlePrint = () => {
+    window.print(); // simple print trigger
   };
 
   return (
@@ -81,16 +102,15 @@ export default function CashierHub() {
         ))}
       </div>
 
-      {/* MODAL */}
+      {/* CHECKOUT MODAL */}
       {selectedCard && (
         <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50">
           <div className="bg-white w-[520px] rounded-2xl shadow-xl p-6">
-            {/* HEADER */}
             <div className="flex justify-between items-center mb-5">
               <h2 className="text-xl font-bold">Checkout</h2>
               <button
                 onClick={closeModal}
-                className="text-gray-500 hover:text-black"
+                className="text-gray-500 hover:text-black cursor-pointer"
               >
                 ✕
               </button>
@@ -118,11 +138,10 @@ export default function CashierHub() {
               <span>$100</span>
             </div>
 
-            {/* PAYMENT METHOD */}
+            {/* PAYMENT */}
             <p className="text-sm text-gray-500 mb-3">Select Payment Method</p>
 
             <div className="flex gap-4 mb-6">
-              {/* CASH */}
               <div
                 onClick={() => setPaymentMethod("cash")}
                 className={`w-full p-5 rounded-xl border flex flex-col items-center gap-2 cursor-pointer transition ${
@@ -135,7 +154,6 @@ export default function CashierHub() {
                 <span className="text-sm font-medium">Cash</span>
               </div>
 
-              {/* CARD */}
               <div
                 onClick={() => setPaymentMethod("card")}
                 className={`w-full p-5 rounded-xl border flex flex-col items-center gap-2 cursor-pointer transition ${
@@ -149,18 +167,56 @@ export default function CashierHub() {
               </div>
             </div>
 
-            {/* ACTION BUTTON */}
+            {/* PAY BUTTON */}
             <button
+              onClick={handlePayment}
               disabled={!paymentMethod}
-              className={`w-full py-3 rounded-full font-semibold transition ${
+              className={`w-full py-3 rounded-full cursor-pointer font-semibold transition ${
                 paymentMethod
-                  ? "bg-[#042452] text-white hover:bg-green-700"
+                  ? "bg-[#042452] text-white hover:bg-[#031f46]"
                   : "bg-gray-300 text-gray-500 cursor-not-allowed"
               }`}
             >
               {paymentMethod
                 ? `Pay with ${paymentMethod.toUpperCase()}`
                 : "Select Payment Method"}
+            </button>
+          </div>
+        </div>
+      )}
+
+      {/* SUCCESS MODAL */}
+      {paymentSuccess && (
+        <div
+          onClick={closeSuccessModal}
+          className="fixed inset-0 bg-black/50 flex items-center justify-center z-50"
+        >
+          <div className="bg-white w-[380px] rounded-2xl shadow-xl p-6 text-center animate-scaleIn">
+            {/* Success Image */}
+            <div className="flex justify-center mb-4">
+              <img
+                src={success}
+                alt="success"
+                className="w-42 h-42 object-contain"
+              />
+            </div>
+
+            {/* Title */}
+            <h2 className="text-xl font-bold text-[#17B26A] mb-2">
+              Payment Successful 🎉
+            </h2>
+
+            {/* Description */}
+            <p className="text-gray-600 text-sm mb-6">
+              Transaction recorded and inventory updated.
+            </p>
+
+            {/* Button */}
+            <button
+              onClick={handlePrint}
+              className="w-full py-3 cursor-pointer rounded-full bg-[#042452] text-white font-semibold hover:bg-[#031c3f] transition duration-200"
+            >
+              Print Thermal Receipt
             </button>
           </div>
         </div>
