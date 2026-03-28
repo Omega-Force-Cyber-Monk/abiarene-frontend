@@ -41,7 +41,7 @@ export const generateZodSchema = (fields: FieldConfig[]) => {
       if (validator instanceof z.ZodString) {
         validator = validator.min(
           field.minLength,
-          `${field.name} is too short`
+          `${field.name} is too short`,
         );
       }
     }

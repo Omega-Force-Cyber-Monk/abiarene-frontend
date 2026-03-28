@@ -40,8 +40,9 @@ export const ReusableDialog = ({
       <DialogContent className="sm:max-w-[450px] px-6 py-20 border-none rounded-2xl bg-white shadow-2xl">
         <DialogHeader>
           <DialogTitle
-            className={`text-[24px] md:text-[32px] border-b-2 border-b-gray-200 pb-2 ${variant === "destructive" ? "text-[#F04438]" : "text-heading-blue"
-              } font-bold mb-3`}
+            className={`text-[24px] md:text-[32px] border-b-2 border-b-gray-200 pb-2 ${
+              variant === "destructive" ? "text-[#F04438]" : "text-heading-blue"
+            } font-bold mb-3`}
           >
             {title}
           </DialogTitle>
@@ -59,16 +60,13 @@ export const ReusableDialog = ({
                 type="button"
                 onClick={onConfirm}
                 className="bg-primary-orange px-2 rounded-md text-white hover:bg-orange-600 cursor-pointer"
-                
               >
                 {confirmText}
               </button>
             )}
 
             <DialogClose asChild>
-              <button
-                className="text-[#F04438] border border-gray-300 hover:bg-gray-100  hover:text-primary-orange rounded-md px-4 py-2 cursor-pointer"
-              >
+              <button className="text-[#F04438] border border-gray-300 hover:bg-gray-100  hover:text-primary-orange rounded-md px-4 py-2 cursor-pointer">
                 {cancelText}
               </button>
             </DialogClose>
