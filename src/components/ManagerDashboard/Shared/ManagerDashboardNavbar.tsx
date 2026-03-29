@@ -101,7 +101,10 @@ const ManagerDashboardNavbar: React.FC<NavbarProps> = ({
             <h1 className="text-lg lg:text-3xl mt-3 font-semibold text-black">
               {pageTitle}
             </h1>
-            <p className="text-lg text-[#717680]">{pageDescription}</p>
+            {/* <p className="text-lg text-[#717680]">{pageDescription}</p> */}
+            <p className="hidden md:block text-lg text-[#717680]">
+              {pageDescription}
+            </p>
           </div>
         </div>
 
@@ -123,50 +126,6 @@ const ManagerDashboardNavbar: React.FC<NavbarProps> = ({
               </div>
             )}
           </div>
-          {/* User Dropdown */}
-          {/* <DropdownMenu>
-            <DropdownMenuTrigger asChild>
-              <Button
-                variant="ghost"
-                size="icon"
-                className="text-gray-600 hover:text-green-600 cursor-pointer"
-              >
-                {imgUrl ? (
-                  <img
-                    src={imgUrl}
-                    alt="User"
-                    className="w-8 h-8 rounded-full object-cover"
-                  />
-                ) : (
-                  <User className="w-6 h-6" />
-                )}
-              </Button>
-            </DropdownMenuTrigger>
-
-            <DropdownMenuContent
-              align="end"
-              className="bg-[#FABF31] text-black w-60 shadow-2xl rounded-3xl border border-gray-200 overflow-hidden"
-            >
-              <Link to="/admin-dashboard">
-                <DropdownMenuItem className="px-4 py-2 hover:text-white hover:bg-[#855f06] cursor-pointer rounded-2xl">
-                  Home
-                </DropdownMenuItem>
-              </Link>
-
-              <Link to="/admin-dashboard/settings">
-                <DropdownMenuItem className="px-4 py-2 hover:text-white hover:bg-[#855f06]  cursor-pointer rounded-2xl">
-                  Settings
-                </DropdownMenuItem>
-              </Link>
-
-              <DropdownMenuItem
-                onClick={handleLogout}
-                className="px-4 py-2 hover:bg-red-600 hover:text-white rounded-2xl"
-              >
-                Sign Out
-              </DropdownMenuItem>
-            </DropdownMenuContent>
-          </DropdownMenu> */}
         </div>
       </header>
     </div>

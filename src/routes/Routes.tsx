@@ -23,6 +23,7 @@ import KitchenDashboardPage from "@/pages/Kitchen/KitchenDashboardPage";
 import ServerDashboardPage from "@/pages/Server/ServerDashboardPage";
 import CashierLayout from "@/Layout/CashierLayout";
 import CashierDashboardPage from "@/pages/Cashier/CashierDashboardPage";
+import TicketQueueDetails from "@/components/AdminDashboard/Dashboard/TicketQueueDetails";
 
 const routes = createBrowserRouter([
   {
@@ -59,6 +60,7 @@ const routes = createBrowserRouter([
       { path: "dashboard", element: <AdminDashboardPage /> },
       { path: "ticket-queue", element: <TicketQueuePage /> },
       { path: "tenants", element: <TenantsPage /> },
+      { path: "tenants/:id", element: <TicketQueueDetails /> },
       { path: "conversations", element: <ConversationsPage /> },
       { path: "new-business", element: <NewBusinessPage /> },
     ],

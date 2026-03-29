@@ -1,16 +1,18 @@
 // AdminSidebar.tsx
 import logoIcon from "@/assets/primepos/logo/logo.svg";
 import user from "@/assets/primepos/logo/user.svg";
-import { Badge } from "@/components/ui/badge";
+// import { Badge } from "@/components/ui/badge";
 
 import { ChevronDown } from "lucide-react";
-import { Link, useLocation } from "react-router-dom";
+import { Link, useLocation, useNavigate } from "react-router-dom";
 import { useState } from "react";
 import { IconType } from "react-icons";
 
 import { FiLogOut, FiPieChart } from "react-icons/fi";
-import { LuUsers } from "react-icons/lu";
+import { LuTicketPercent, LuUsers } from "react-icons/lu";
 import { MdOutlineAddCircleOutline } from "react-icons/md";
+import { logOut } from "@/redux/features/auth/authSlice";
+import { useDispatch } from "react-redux";
 
 // Types
 export interface SidebarItem {
@@ -40,7 +42,7 @@ const defaultSidebarItems: SidebarItem[] = [
     href: "/admin-dashboard/tenants",
   },
   {
-    icon: LuUsers,
+    icon: LuTicketPercent,
     label: "Ticket Queue",
     href: "/admin-dashboard/ticket-queue",
   },
@@ -59,8 +61,14 @@ const AdminSidebar: React.FC<SidebarProps> = ({
   const location = useLocation();
   const [openMenu, setOpenMenu] = useState<string | null>(null);
 
+  const navigate = useNavigate();
+  const dispatch = useDispatch();
   const toggleMenu = (label: string) => {
     setOpenMenu(openMenu === label ? null : label);
+  };
+  const handleLogout = () => {
+    dispatch(logOut());
+    navigate("/");
   };
 
   return (
@@ -95,92 +103,50 @@ const AdminSidebar: React.FC<SidebarProps> = ({
             const isActive =
               location.pathname === item.href ||
               item.children?.some((child) => location.pathname === child.href);
+
             const isOpen = openMenu === item.label;
 
             return (
               <div key={item.label}>
+                {/* 👇 ADD THIS SECTION LABEL BEFORE "New Business" */}
+                {item.label === "New Business" && (
+                  <div className="px-4 pt-4 pb-2 text-xs font-semibold tracking-widest text-gray-500 uppercase">
+                    PROVISIONING
+                  </div>
+                )}
+
                 {item.href && !item.children ? (
                   <Link
                     to={item.href}
                     onClick={onItemClick}
                     className={`group flex items-center justify-between w-full px-4 py-2.5 text-sm font-normal rounded-xl transition-all duration-300 ease-out cursor-pointer
-  ${
-    isActive
-      ? "text-black bg-[linear-gradient(180deg,#FEAF02_0%,#F3D97E_100%)] shadow-md"
-      : "text-black hover:text-black hover:bg-[linear-gradient(180deg,#FEAF02_0%,#F3D97E_100%)] hover:shadow-xl hover:brightness-110"
-  }
-  active:translate-y-0 active:shadow-md`}
+          ${
+            isActive
+              ? "text-black bg-[linear-gradient(180deg,#FEAF02_0%,#F3D97E_100%)] shadow-md"
+              : "text-black hover:text-black hover:bg-[linear-gradient(180deg,#FEAF02_0%,#F3D97E_100%)] hover:shadow-xl hover:brightness-110"
+          }`}
                   >
                     <div className="flex items-center space-x-2 text-base">
-                      <item.icon
-                        className={`w-5 h-5 transition-colors duration-300 ${
-                          isActive
-                            ? "text-black"
-                            : "text-black group-hover:text-black"
-                        }`}
-                      />
+                      <item.icon className="w-5 h-5" />
                       <span>{item.label}</span>
                     </div>
                   </Link>
                 ) : (
                   <button
                     onClick={() => toggleMenu(item.label)}
-                    className={`group flex items-center justify-between w-full px-3 py-2 text-sm font-normal transition-all duration-300 ease-in-out cursor-pointer ${
-                      isActive
-                        ? "text-[#3A5CFF] bg-[#1C1D28] rounded-xl shadow-md"
-                        : "text-black hover:text-[#3A5CFF] hover:bg-[#1C1D28]/80 hover:rounded-xl hover:shadow-md"
-                    }`}
+                    className="group flex items-center justify-between w-full px-3 py-2 text-sm font-normal"
                   >
                     <div className="flex items-center space-x-2 md:text-lg">
-                      <item.icon
-                        className={`w-5 h-5 transition-all duration-300 ${
-                          isActive
-                            ? "text-[#3A5CFF]"
-                            : "text-black group-hover:text-[#3A5CFF]"
-                        }`}
-                      />
+                      <item.icon className="w-5 h-5" />
                       <span>{item.label}</span>
                     </div>
 
                     {item.children && (
                       <ChevronDown
-                        className={`w-4 h-4 transform transition-transform duration-300 ${
-                          isOpen ? "rotate-180" : ""
-                        }`}
+                        className={`w-4 h-4 ${isOpen ? "rotate-180" : ""}`}
                       />
                     )}
-
-                    {item.badge && (
-                      <Badge
-                        variant="secondary"
-                        className="text-xs bg-[#3A5CFF]/10 text-[#3A5CFF] border border-[#3A5CFF]/30"
-                      >
-                        {item.badge}
-                      </Badge>
-                    )}
                   </button>
-                )}
-
-                {item.children && isOpen && (
-                  <div className="ml-6 mt-2 space-y-2">
-                    {item.children.map((child) => {
-                      const childActive = location.pathname === child.href;
-                      return (
-                        <Link
-                          key={child.label}
-                          to={child.href}
-                          onClick={onItemClick}
-                          className={`group block px-3 py-2 text-sm rounded-lg transition-all ${
-                            childActive
-                              ? "text-[#3A5CFF] bg-[#1C1D28]"
-                              : "text-gray-300 hover:text-[#3A5CFF] hover:bg-[#1C1D28]/70"
-                          }`}
-                        >
-                          {child.label}
-                        </Link>
-                      );
-                    })}
-                  </div>
                 )}
               </div>
             );
@@ -189,7 +155,7 @@ const AdminSidebar: React.FC<SidebarProps> = ({
       </nav>
       {/* Help & Support */}
       <div
-        // onClick={handleLogout}
+        onClick={handleLogout}
         className="flex items-center justify-between p-4 m-4 bg-[#F8F9FA] border border-[#CED4DA] rounded-2xl hover:shadow-sm transition-all duration-200 cursor-pointer"
       >
         {/* Left Side */}

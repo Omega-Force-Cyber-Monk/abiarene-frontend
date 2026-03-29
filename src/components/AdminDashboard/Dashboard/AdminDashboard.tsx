@@ -2,7 +2,7 @@ import TenantsManagement from "../Tenants/TenantsManagement";
 import DashboardCard from "./DashboardCard";
 import InventoryDeletionRequests from "./InventoryDeletionRequests";
 import SupportQueueDashboard from "./SupportQueueDashboard";
-import TicketQueueDetails from "./TicketQueueDetails";
+// import TicketQueueDetails from "./TicketQueueDetails";
 
 const AdminDashboard = () => {
   return (
@@ -23,9 +23,9 @@ const AdminDashboard = () => {
           <SupportQueueDashboard />
         </div>
       </div>
-      <div>
+      {/* <div>
         <TicketQueueDetails />
-      </div>
+      </div> */}
       {/* <div className="grid grid-cols-1 sm:grid-cols-1 md:grid-cols-2 lg:grid-cols-2  xl:grid-cols-4 gap-6">
         <div className=" md:col-span-2 lg:col-span-2 xl:col-span-3">
           <RecentActivity />

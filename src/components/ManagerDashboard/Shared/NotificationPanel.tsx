@@ -55,7 +55,7 @@ export default function NotificationPanel() {
 
         <button
           onClick={markAllRead}
-          className="flex items-center gap-1 text-xs font-medium text-blue-600 hover:text-blue-700 transition"
+          className="flex cursor-pointer items-center gap-1 text-xs font-medium text-blue-600 hover:text-blue-700 transition"
         >
           <MdDoneAll className="text-sm" />
           Mark all read
@@ -86,7 +86,7 @@ export default function NotificationPanel() {
               </div>
 
               {/* content */}
-              <div className="flex-1">
+              <div className="flex-1 cursor-pointer">
                 <div className="flex justify-between items-start">
                   <h4 className="text-sm font-semibold text-gray-900">
                     {n.title}
@@ -103,7 +103,7 @@ export default function NotificationPanel() {
               </div>
 
               {/* hover action (optional UI feel) */}
-              <button className="opacity-0 group-hover:opacity-100  transition text-gray-400 hover:text-gray-600">
+              <button className="opacity-0 cursor-pointer group-hover:opacity-100  transition text-gray-400 hover:text-gray-600">
                 <MdClose size={16} />
               </button>
             </div>
@@ -113,7 +113,7 @@ export default function NotificationPanel() {
 
       {/* Footer */}
       <div className="px-5 py-3 border-t border-[#DBE0E5] bg-gray-50 text-center">
-        <button className="text-xs font-medium text-gray-600 hover:text-gray-900 transition">
+        <button className="text-xs cursor-pointer font-medium text-gray-600 hover:text-gray-900 transition">
           View all notifications
         </button>
       </div>

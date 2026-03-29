@@ -4,7 +4,7 @@ import user from "@/assets/primepos/logo/user.svg";
 import { Badge } from "@/components/ui/badge";
 
 import { ChevronDown } from "lucide-react";
-import { Link, useLocation } from "react-router-dom";
+import { Link, useLocation, useNavigate } from "react-router-dom";
 import { useState } from "react";
 import { IconType } from "react-icons";
 
@@ -14,6 +14,8 @@ import { BsBoxSeam } from "react-icons/bs";
 import { AiOutlineScan } from "react-icons/ai";
 import { HiOutlineSupport } from "react-icons/hi";
 import { IoSettingsOutline } from "react-icons/io5";
+import { useDispatch } from "react-redux";
+import { logOut } from "@/redux/features/auth/authSlice";
 
 // Types
 export interface SidebarItem {
@@ -77,8 +79,16 @@ const ManagerSidebar: React.FC<SidebarProps> = ({
   const location = useLocation();
   const [openMenu, setOpenMenu] = useState<string | null>(null);
 
+  const navigate = useNavigate();
+  const dispatch = useDispatch();
+
   const toggleMenu = (label: string) => {
     setOpenMenu(openMenu === label ? null : label);
+  };
+
+  const handleLogout = () => {
+    dispatch(logOut());
+    navigate("/");
   };
 
   return (
@@ -207,7 +217,7 @@ const ManagerSidebar: React.FC<SidebarProps> = ({
       </nav>
       {/* Help & Support */}
       <div
-        // onClick={handleLogout}
+        onClick={handleLogout}
         className="flex items-center justify-between p-4 m-4 bg-[#F8F9FA] border border-[#CED4DA] rounded-2xl hover:shadow-sm transition-all duration-200 cursor-pointer"
       >
         {/* Left Side */}

@@ -2,9 +2,11 @@ import { useState } from "react";
 
 import { CiSearch } from "react-icons/ci";
 import { FaAngleRight } from "react-icons/fa";
+import { useNavigate } from "react-router-dom";
 const TenantsManagement = () => {
-  const [, setIsDialogOpen] = useState(false);
-  const [, setSelectedUser] = useState<any>(null);
+  // const [, setIsDialogOpen] = useState(false);
+  // const [, setSelectedUser] = useState<any>(null);
+  const navigate = useNavigate();
 
   const [users] = useState([
     {
@@ -51,10 +53,10 @@ const TenantsManagement = () => {
     },
   ]);
 
-  const openDialog = (user: any) => {
-    setSelectedUser(user);
-    setIsDialogOpen(true);
-  };
+  // const openDialog = (user: any) => {
+  //   setSelectedUser(user);
+  //   setIsDialogOpen(true);
+  // };
 
   const getStatusBadge = (status: string) => {
     switch (status.toLowerCase()) {
@@ -145,7 +147,10 @@ const TenantsManagement = () => {
 
                     <td className="px-6 py-5 text-right">
                       <button
-                        onClick={() => openDialog(user)}
+                        // onClick={() => openDialog(user)}
+                        onClick={() =>
+                          navigate(`/admin-dashboard/tenants/${user.id}`)
+                        }
                         className=" cursor-pointer"
                       >
                         <FaAngleRight className="text-[#A4A7AE]" />

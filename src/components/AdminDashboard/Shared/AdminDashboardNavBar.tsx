@@ -37,7 +37,7 @@ const AdminDashboardNavBar: React.FC<NavbarProps> = ({
 
   const handleLogout = () => {
     dispatch(logOut());
-    navigate("/login");
+    navigate("/");
   };
 
   useEffect(() => {
@@ -131,9 +131,9 @@ const AdminDashboardNavBar: React.FC<NavbarProps> = ({
                 </DropdownMenuItem>
               </Link>
 
-              <Link to="/admin-dashboard/settings">
+              <Link to="/admin-dashboard/new-business">
                 <DropdownMenuItem className="px-4 py-2 hover:text-white hover:bg-[#855f06]  cursor-pointer rounded-2xl">
-                  Settings
+                  New Business
                 </DropdownMenuItem>
               </Link>
 

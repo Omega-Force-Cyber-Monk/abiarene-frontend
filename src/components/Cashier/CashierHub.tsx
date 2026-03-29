@@ -5,12 +5,30 @@ import { PiCreditCardThin } from "react-icons/pi";
 import success from "@/assets/primepos/logo/success.svg";
 
 const mockCards = [
-  { id: 1, title: "1", price: 14.49, server: "Server" },
-  { id: 2, title: "2", price: 15.49, server: "Server" },
-  { id: 3, title: "3", price: 17.49, server: "Server" },
-  { id: 4, title: "4", price: 10.49, server: "Server" },
-  { id: 5, title: "5", price: 17.49, server: "Server" },
-  { id: 6, title: "6", price: 23.49, server: "Server" },
+  { id: 1, title: "1", price: 14.49, server: "Server A" },
+  { id: 2, title: "2", price: 15.49, server: "Server A" },
+  { id: 3, title: "3", price: 17.49, server: "Server A" },
+  { id: 4, title: "4", price: 10.49, server: "Server B" },
+  { id: 5, title: "5", price: 17.49, server: "Server B" },
+  { id: 6, title: "6", price: 23.49, server: "Server B" },
+
+  { id: 7, title: "7", price: 19.99, server: "Server C" },
+  { id: 8, title: "8", price: 21.49, server: "Server C" },
+  { id: 9, title: "9", price: 12.75, server: "Server C" },
+  { id: 10, title: "10", price: 18.25, server: "Server C" },
+
+  { id: 11, title: "11", price: 25.0, server: "Server D" },
+  { id: 12, title: "12", price: 9.99, server: "Server D" },
+  { id: 13, title: "13", price: 14.75, server: "Server D" },
+  { id: 14, title: "14", price: 16.3, server: "Server D" },
+
+  { id: 15, title: "15", price: 22.1, server: "Server E" },
+  { id: 16, title: "16", price: 13.49, server: "Server E" },
+  { id: 17, title: "17", price: 11.99, server: "Server E" },
+  { id: 18, title: "18", price: 27.49, server: "Server E" },
+
+  { id: 19, title: "19", price: 30.0, server: "Server F" },
+  { id: 20, title: "20", price: 8.49, server: "Server F" },
 ];
 
 export default function CashierHub() {
@@ -60,7 +78,7 @@ export default function CashierHub() {
             <button
               key={tab}
               onClick={() => setActiveTab(tab)}
-              className={`px-4 py-2 rounded-full text-sm font-medium ${
+              className={`px-4 py-2 rounded-full cursor-pointer text-sm font-medium ${
                 activeTab === tab ? "bg-[#061E49] text-white" : "text-gray-600"
               }`}
             >

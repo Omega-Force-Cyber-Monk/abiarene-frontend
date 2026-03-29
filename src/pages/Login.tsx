@@ -7,6 +7,7 @@ import { useAppDispatch } from "@/redux/hooks/redux-hook";
 
 import { useLoginMutation } from "@/redux/features/auth/authApi";
 import { LoginResponse } from "@/redux/features/auth/auth.type";
+import { Link } from "react-router-dom";
 
 const Login: React.FC = () => {
   const [email, setEmail] = useState("");
@@ -128,13 +129,15 @@ const Login: React.FC = () => {
               </div>
             </div>
 
-            <button
-              type="submit"
-              disabled={isLoading}
-              className="w-full py-3 text-center font-semibold text-black px-7 rounded-xl bg-gradient-to-b from-[#FFB004] to-[#F3DA7F] shadow-md transition-all duration-300 ease-out  hover:-translate-y-0.5 hover:shadow-xl hover:brightness-110 active:translate-y-0 active:shadow-md focus:outline-none cursor-pointer disabled:opacity-70"
-            >
-              {isLoading ? "Logging in..." : "Login"}
-            </button>
+            <Link to="/admin-dashboard">
+              <button
+                type="submit"
+                disabled={isLoading}
+                className="w-full py-3 text-center font-semibold text-black px-7 rounded-xl bg-gradient-to-b from-[#FFB004] to-[#F3DA7F] shadow-md transition-all duration-300 ease-out  hover:-translate-y-0.5 hover:shadow-xl hover:brightness-110 active:translate-y-0 active:shadow-md focus:outline-none cursor-pointer disabled:opacity-70"
+              >
+                {isLoading ? "Logging in..." : "Login"}
+              </button>
+            </Link>
           </form>
 
           {/* <p className="text-sm text-[#01D449]  mt-4 text-center cursor-pointer">
