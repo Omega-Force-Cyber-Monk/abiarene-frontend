@@ -73,7 +73,7 @@ const AdminSidebar: React.FC<SidebarProps> = ({
 
   return (
     <div
-      className="flex flex-col h-full rounded-b-3xl rounded-t-3xl bg-[#E6E7EB]"
+      className="flex flex-col h-full rounded-tr-3xl rounded-br-3xl bg-[#E6E7EB]"
       style={{ boxShadow: "3px 4px 42.3px 0px #0000001A" }}
     >
       {/* Logo */}
