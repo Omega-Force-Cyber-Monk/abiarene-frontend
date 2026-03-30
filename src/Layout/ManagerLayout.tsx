@@ -101,7 +101,7 @@ const ManagerLayout = () => {
           <SheetTrigger asChild>
             <div className="hidden" />
           </SheetTrigger>
-          <SheetContent side="left" className="w-72 p-0 bg-[#FFFFFF]">
+          <SheetContent side="left" className="w-72 p-0 ">
             <ManagerSidebar onItemClick={() => setIsMobileMenuOpen(false)} />
           </SheetContent>
         </Sheet>

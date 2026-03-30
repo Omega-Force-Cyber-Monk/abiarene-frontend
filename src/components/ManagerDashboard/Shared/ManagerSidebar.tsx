@@ -99,18 +99,12 @@ const ManagerSidebar: React.FC<SidebarProps> = ({
       {/* Logo */}
       <div className="flex items-center justify-start pl-6 lg:pl-10 pt-5 pb-5 w-full">
         {/* Desktop (lg+) → icon top, text bottom */}
-        <Link
-          to="/manager-dashboard"
-          className="hidden lg:flex flex-col items-center gap-2"
-        >
+        <Link to="/" className="hidden lg:flex flex-col items-center gap-2">
           <img src={logoIcon} alt="Logo Icon" />
           {/* <img src={logoText} alt="Logo Text" /> */}
         </Link>
 
-        <Link
-          to={"/manager-dashboard"}
-          className="lg:hidden flex flex-col items-center gap-2"
-        >
+        <Link to={"/"} className="lg:hidden flex flex-col items-center gap-2">
           <img src={logoIcon} alt="Logo Icon" />
           {/* <img src={logoText} alt="Logo Text" /> */}
         </Link>

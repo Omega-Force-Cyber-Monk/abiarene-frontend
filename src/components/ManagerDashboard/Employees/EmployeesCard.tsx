@@ -4,6 +4,14 @@ import { FiEdit } from "react-icons/fi";
 import { IoIosSave, IoMdClose } from "react-icons/io";
 import AddEmployeeDialog from "./AddEmployeeDialog";
 
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
+
 type User = {
   id: number;
   name: string;
@@ -187,7 +195,7 @@ const EditEmployeeDialog = ({
         <form onSubmit={handleSubmit}>
           <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
             <div>
-              <label className="text-sm text-[#6C7787]">Employee Name</label>
+              <label className="text-md text-[#4D5665]">Employee Name</label>
               <input
                 type="text"
                 value={formData.name}
@@ -200,7 +208,7 @@ const EditEmployeeDialog = ({
               />
             </div>
 
-            <div>
+            {/* <div>
               <label className="text-sm text-[#6C7787]">System Role</label>
               <select
                 value={formData.role}
@@ -215,10 +223,56 @@ const EditEmployeeDialog = ({
                 <option value="Kitchen">Kitchen</option>
                 <option value="Cashier">Cashier</option>
               </select>
+            </div> */}
+            <div className="space-y-2">
+              <label className="text-sm font-medium text-gray-700">
+                System Role
+              </label>
+
+              <Select
+                value={formData.role}
+                onValueChange={(value) =>
+                  setFormData({ ...formData, role: value })
+                }
+              >
+                <SelectTrigger className="w-full mt-1 cursor-pointer rounded-xl border border-gray-300 bg-white px-4 py-2.5 text-sm shadow-sm focus:ring-2 focus:ring-[#061E49] transition-all duration-200">
+                  <SelectValue placeholder="Select role" />
+                </SelectTrigger>
+
+                <SelectContent className="rounded-xl border bg-white border-gray-200 shadow-lg">
+                  <SelectItem
+                    value="Manager"
+                    className="cursor-pointer rounded-md px-3 py-2 text-sm transition-all duration-200 hover:bg-[#061E49]/10 focus:bg-[#061E49]/20"
+                  >
+                    Manager
+                  </SelectItem>
+
+                  <SelectItem
+                    value="Server"
+                    className="cursor-pointer rounded-md px-3 py-2 text-sm transition-all duration-200 hover:bg-[#061E49]/10 focus:bg-[#061E49]/20"
+                  >
+                    Server
+                  </SelectItem>
+
+                  <SelectItem
+                    value="Kitchen"
+                    className="cursor-pointer rounded-md px-3 py-2 text-sm transition-all duration-200 hover:bg-[#061E49]/10 focus:bg-[#061E49]/20"
+                  >
+                    Kitchen
+                  </SelectItem>
+
+                  <SelectItem
+                    value="Cashier"
+                    className="cursor-pointer rounded-md px-3 py-2 text-sm transition-all duration-200 hover:bg-[#061E49]/10 focus:bg-[#061E49]/20"
+                  >
+                    Cashier
+                  </SelectItem>
+                </SelectContent>
+              </Select>
             </div>
 
             <div>
-              <label className="text-sm text-[#6C7787]">
+              <label className="text-sm text-[#4D5665]">
                 Quick-Login PIN (4 digits)
               </label>
               <input

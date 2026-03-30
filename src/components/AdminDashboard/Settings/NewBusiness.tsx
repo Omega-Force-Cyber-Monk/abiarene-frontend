@@ -6,6 +6,14 @@ type Role = {
   required?: boolean;
 };
 
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
+
 const roles: Role[] = [
   { label: "Manager (Required)", value: "manager", required: true },
   { label: "Server", value: "server" },
@@ -46,13 +54,49 @@ export default function NewBusiness() {
           />
         </div>
 
-        <div>
-          <label className="text-sm text-gray-600">Industry Type</label>
-          <select className="w-full mt-1 border cursor-pointer border-[#D5D7DA] rounded-full px-3 py-2 focus:outline-none focus:ring-2 focus:ring-[#052350]">
-            <option>Server</option>
-            <option>Restaurant</option>
-            <option>Retail</option>
-          </select>
+        <div className="space-y-2">
+          <label className="text-sm font-medium text-gray-700">
+            Industry Type
+          </label>
+
+          <Select
+          // value={formData.role}
+          // onValueChange={(value) => setFormData({ ...formData, role: value })}
+          >
+            <SelectTrigger className="w-full mt-1 cursor-pointer rounded-full border border-gray-300 bg-white px-4 py-2.5 text-sm shadow-sm focus:ring-2 focus:ring-[#061E49] transition-all duration-200">
+              <SelectValue placeholder="Select role" />
+            </SelectTrigger>
+
+            <SelectContent className="rounded-2xl border bg-white border-gray-200 shadow-lg">
+              <SelectItem
+                value="Manager"
+                className="cursor-pointer rounded-md px-3 py-2 text-sm transition-all duration-200 hover:bg-[#061E49]/10 focus:bg-[#061E49]/20"
+              >
+                Manager
+              </SelectItem>
+
+              <SelectItem
+                value="Server"
+                className="cursor-pointer rounded-md px-3 py-2 text-sm transition-all duration-200 hover:bg-[#061E49]/10 focus:bg-[#061E49]/20"
+              >
+                Server
+              </SelectItem>
+
+              <SelectItem
+                value="Kitchen"
+                className="cursor-pointer rounded-md px-3 py-2 text-sm transition-all duration-200 hover:bg-[#061E49]/10 focus:bg-[#061E49]/20"
+              >
+                Kitchen
+              </SelectItem>
+
+              <SelectItem
+                value="Cashier"
+                className="cursor-pointer rounded-md px-3 py-2 text-sm transition-all duration-200 hover:bg-[#061E49]/10 focus:bg-[#061E49]/20"
+              >
+                Cashier
+              </SelectItem>
+            </SelectContent>
+          </Select>
         </div>
 
         <div>
