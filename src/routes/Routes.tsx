@@ -24,6 +24,7 @@ import ServerDashboardPage from "@/pages/Server/ServerDashboardPage";
 import CashierLayout from "@/Layout/CashierLayout";
 import CashierDashboardPage from "@/pages/Cashier/CashierDashboardPage";
 import TicketQueueDetails from "@/components/AdminDashboard/Dashboard/TicketQueueDetails";
+import ManagerProductManagePage from "@/pages/Manager/ManagerProductManagePage";
 
 const routes = createBrowserRouter([
   {
@@ -82,6 +83,7 @@ const routes = createBrowserRouter([
       { path: "scan", element: <ScanPage /> },
       { path: "support", element: <SupportPage /> },
       { path: "settings", element: <SettingsPage /> },
+      { path: "product-manage", element: <ManagerProductManagePage /> },
     ],
   },
   /* server */

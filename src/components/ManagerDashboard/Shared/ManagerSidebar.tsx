@@ -49,6 +49,11 @@ const defaultSidebarItems: SidebarItem[] = [
     label: "Employees",
     href: "/manager-dashboard/employees",
   },
+  {
+    icon: LuUsers,
+    label: "Manage Food",
+    href: "/manager-dashboard/product-manage",
+  },
 
   {
     icon: LuTicketPercent,

@@ -50,6 +50,10 @@ const ManagerDashboardNavbar: React.FC<NavbarProps> = ({
       title: "Employees",
       description: "Manage staff profiles and quick-login PINs.",
     },
+    "product-manage": {
+      title: "Manage Food",
+      description: "Manage tables, menu items, and orders",
+    },
     approvals: {
       title: "Discount Approvals",
       description: "Review and authorize discount requests from your staff.",
