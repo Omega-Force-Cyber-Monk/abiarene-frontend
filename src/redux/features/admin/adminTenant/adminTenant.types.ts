@@ -6,6 +6,14 @@ export interface ApiResponse<T> {
   limit?: number;
 }
 
+/* create tenant user */
+export interface CreateTenantUserFormData {
+  name: string;
+  pin: string;
+  roleId: string;
+  status: "ACTIVE" | "INACTIVE";
+}
+
 // Tenant types
 export interface Tenant {
   id: string;
@@ -40,6 +48,7 @@ export interface GetTenantsParams {
 
 // Role types
 export interface Role {
+  description: import("react/jsx-runtime").JSX.Element;
   id: string;
   name: string;
   tenantId: string;

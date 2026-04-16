@@ -8,48 +8,48 @@ const InventoryTable = () => {
   const [, setIsDialogOpen] = useState(false);
   const [, setSelectedUser] = useState<any>(null);
 
-  const [users] = useState([
+  const [products] = useState([
     {
-      id: "USR-001",
-      name: "John Smith",
-      industry: "Supermarket",
-      status: "active",
-      subscription: "$199.99/mo",
+      id: "PRD-001",
+      product: "Rice Bag",
+      barcode: "RENE-1001",
+      stock: 50,
+      price: 30,
     },
     {
-      id: "USR-002",
-      name: "Sarah Johnson",
-      industry: "Restaurant",
-      status: "active",
-      subscription: "$149.99/mo",
+      id: "PRD-002",
+      product: "Cooking Oil",
+      barcode: "RENE-1002",
+      stock: 30,
+      price: 90,
     },
     {
-      id: "USR-003",
-      name: "Michael Chen",
-      industry: "Ear",
-      status: "active",
-      subscription: "$99.99/mo",
+      id: "PRD-003",
+      product: "Milk Pack",
+      barcode: "RENE-1003",
+      stock: 0,
+      price: 99,
     },
     {
-      id: "USR-004",
-      name: "Emily Rodriguez",
-      industry: "Merchant",
-      status: "suspended",
-      subscription: "$199.99/mo",
+      id: "PRD-004",
+      product: "Sugar",
+      barcode: "RENE-1004",
+      stock: 25,
+      price: 99,
     },
     {
-      id: "USR-005",
-      name: "David Kim",
-      industry: "Retail",
-      status: "suspended",
-      subscription: "$129.99/mo",
+      id: "PRD-005",
+      product: "Salt",
+      barcode: "RENE-1005",
+      stock: 5,
+      price: 29,
     },
     {
-      id: "USR-006",
-      name: "Lisa Thompson",
-      industry: "Retail",
-      status: "active",
-      subscription: "$249.99/mo",
+      id: "PRD-006",
+      product: "Flour",
+      barcode: "RENE-1006",
+      stock: 40,
+      price: 49,
     },
   ]);
 
@@ -58,15 +58,21 @@ const InventoryTable = () => {
     setIsDialogOpen(true);
   };
 
-  const getStatusBadge = (status: string) => {
-    switch (status.toLowerCase()) {
-      case "active":
-        return "bg-[#EDE6F4] text-[#6D2C93]";
-      case "suspended":
-        return "bg-red-100 text-red-700";
-      default:
-        return "bg-gray-100 text-gray-700";
+  const getStatusBadge = (stock: number) => {
+    if (stock === 0) {
+      return "bg-red-100 text-red-700"; // Out of stock
+    } else if (stock <= 5) {
+      return "bg-red-50 text-red-600"; // Critical low (<=5)
+    } else if (stock <= 20) {
+      return "bg-[#FFF4E5] text-[#B26A00]"; // Low stock
+    } else {
+      return "bg-[#E6F4EA] text-[#1E7E34]"; // In stock
     }
+  };
+
+  const getStockText = (stock: number) => {
+    if (stock === 0) return "Out of stock";
+    return `${stock} in stock`;
   };
 
   const [spinning, setSpinning] = useState(false);
@@ -117,16 +123,16 @@ const InventoryTable = () => {
                 <thead className="border-b border-[#DBE0E5] bg-[#F8F8F8]">
                   <tr>
                     <th className="px-6 py-4 text-left text-[#6A6A65] text-base font-semibold">
-                      Business Name
+                      Product
                     </th>
                     <th className="px-6 py-4 text-left text-[#6A6A65] text-base font-semibold">
-                      Industry
+                      BarCode
                     </th>
                     <th className="px-6 py-4 text-left text-[#6A6A65] text-base font-semibold">
-                      Status
+                      Stock
                     </th>
                     <th className="px-6 py-4 text-left text-[#6A6A65] text-base font-semibold">
-                      Subscriptions
+                      Price
                     </th>
                     <th className="px-6 py-4 text-center text-[#6A6A65] text-base font-semibold">
                       Action
@@ -135,14 +141,14 @@ const InventoryTable = () => {
                 </thead>
 
                 <tbody>
-                  {users.map((user) => (
+                  {products.map((product) => (
                     <tr
-                      key={user.id}
+                      key={product.id}
                       className="border-b border-gray-100 hover:bg-gray-50 transition"
                     >
                       <td className="px-6 py-5">
                         <div className="font-semibold text-gray-900 whitespace-nowrap">
-                          {user.name}
+                          {product.product}
                         </div>
                       </td>
                       {/* <td className="px-6 py-5 text-gray-700 whitespace-nowrap">
@@ -152,22 +158,21 @@ const InventoryTable = () => {
                         <span
                           className={`rounded-full px-3 py-1 text-xs font-medium `}
                         >
-                          {user.industry}
+                          {product.barcode}
                         </span>
                       </td>
                       <td className="px-6 py-5">
                         <span
-                          className={`rounded-full px-3 py-1 text-xs font-medium ${getStatusBadge(user.status)}`}
+                          className={`rounded-full px-3 py-1 text-xs font-medium ${getStatusBadge(product.stock)}`}
                         >
-                          {user.status.charAt(0).toUpperCase() +
-                            user.status.slice(1)}
+                          {getStockText(product.stock)}
                         </span>
                       </td>
-                      <td className="px-6 py-5"> {user.subscription}</td>
+                      <td className="px-6 py-5"> ${product.price}</td>
 
                       <td className="px-6 py-5 text-right">
                         <button
-                          onClick={() => openDialog(user)}
+                          onClick={() => openDialog(product)}
                           className=" cursor-pointer"
                         >
                           <FaAngleRight className="text-[#A4A7AE]" />
@@ -184,8 +189,8 @@ const InventoryTable = () => {
         {/* Pagination */}
         <div className="mt-6 flex items-center justify-between px-2 sm:px-4 py-3">
           <div className="text-sm text-gray-600">
-            Showing <span className="font-medium">{users.length}</span> of{" "}
-            <span className="font-medium">20</span> users
+            Showing <span className="font-medium">{products.length}</span> of{" "}
+            <span className="font-medium">20</span> products
           </div>
           <div className="flex items-center gap-2">
             <button className="cursor-pointer rounded-lg border px-3 py-1.5 text-sm font-medium text-gray-600 hover:bg-gray-100">

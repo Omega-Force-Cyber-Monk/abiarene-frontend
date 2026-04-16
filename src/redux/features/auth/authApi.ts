@@ -3,6 +3,8 @@ import { baseApi } from "@/redux/hooks/baseApi";
 import {
   LoginRequest,
   LoginResponse,
+  PinLoginRequest,
+  PinLoginResponse,
   SignupRequest,
   SignupResponse,
 } from "./auth.type";
@@ -27,6 +29,15 @@ export const authApi = baseApi.injectEndpoints({
       invalidatesTags: ["User"],
     }),
 
+    /* Pin Login */
+    pinLogin: builder.mutation<PinLoginResponse, PinLoginRequest>({
+      query: (body) => ({
+        url: "/auth/pin-login",
+        method: "POST",
+        body,
+      }),
+    }),
+
     logout: builder.mutation<void, void>({
       query: () => ({
         url: "/admin/logout",
@@ -38,52 +49,9 @@ export const authApi = baseApi.injectEndpoints({
   overrideExisting: false,
 });
 
-export const { useLoginMutation, useSignupMutation, useLogoutMutation } =
-  authApi;
-
-// import { baseApi } from "@/redux/hooks/baseApi";
-// import {
-//   LoginRequest,
-//   LoginResponse,
-//   RegisterRequest,
-//   RegisterResponse,
-// } from "./auth.type";
-
-// export const authApi = baseApi.injectEndpoints({
-//   endpoints: (builder) => ({
-//     login: builder.mutation<LoginResponse, LoginRequest>({
-//       query: (credentials) => ({
-//         url: "/admin/login",
-//         method: "POST",
-//         body: credentials,
-//       }),
-//       invalidatesTags: ["User"],
-//     }),
-
-//     register: builder.mutation<RegisterResponse, RegisterRequest>({
-//       query: (payload) => ({
-//         url: "/user",
-//         method: "POST",
-//         body: payload,
-//       }),
-//       invalidatesTags: ["User"],
-//     }),
-
-//     // 🟢 ADD THIS (CORRECT UPDATE PROFILE API)
-//     updateProfile: builder.mutation({
-//       query: ({ id, data }) => ({
-//         url: `/user/my-profile/${id}`,
-//         method: "PATCH",
-//         body: data,
-//       }),
-//       invalidatesTags: ["User"],
-//     }),
-//   }),
-//   overrideExisting: false,
-// });
-
-// export const {
-//   useLoginMutation,
-//   useRegisterMutation,
-//   useUpdateProfileMutation,
-// } = authApi;
+export const {
+  useLoginMutation,
+  useSignupMutation,
+  useLogoutMutation,
+  usePinLoginMutation,
+} = authApi;

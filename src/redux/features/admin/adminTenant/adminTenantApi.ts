@@ -17,7 +17,7 @@ export const adminTenantApi = baseApi.injectEndpoints({
     // Tenant endpoints
     getTenants: builder.query<ApiResponse<Tenant[]>, GetTenantsParams>({
       query: (params) => ({
-        url: "/api/admin/tenants",
+        url: "/admin/tenants",
         method: "GET",
         params: {
           page: params.page || 1,
@@ -31,7 +31,7 @@ export const adminTenantApi = baseApi.injectEndpoints({
 
     getTenantById: builder.query<Tenant, string>({
       query: (tenantId) => ({
-        url: `/api/admin/tenants/${tenantId}`,
+        url: `/admin/tenants/${tenantId}`,
         method: "GET",
       }),
       providesTags: (_result, _error, tenantId) => [
@@ -41,7 +41,7 @@ export const adminTenantApi = baseApi.injectEndpoints({
 
     createTenant: builder.mutation<Tenant, CreateTenantRequest>({
       query: (data) => ({
-        url: "/api/admin/tenants",
+        url: "/admin/tenants",
         method: "POST",
         body: data,
       }),
@@ -53,7 +53,7 @@ export const adminTenantApi = baseApi.injectEndpoints({
       { tenantId: string; data: UpdateTenantRequest }
     >({
       query: ({ tenantId, data }) => ({
-        url: `/api/admin/tenants/${tenantId}`,
+        url: `/admin/tenants/${tenantId}`,
         method: "PUT",
         body: data,
       }),
@@ -64,7 +64,7 @@ export const adminTenantApi = baseApi.injectEndpoints({
 
     deleteTenant: builder.mutation<void, string>({
       query: (tenantId) => ({
-        url: `/api/admin/tenants/${tenantId}`,
+        url: `/admin/tenants/${tenantId}`,
         method: "DELETE",
       }),
       invalidatesTags: ["Tenant"],
@@ -76,7 +76,7 @@ export const adminTenantApi = baseApi.injectEndpoints({
       { tenantId: string; page?: number; limit?: number }
     >({
       query: ({ tenantId, page = 1, limit = 20 }) => ({
-        url: `/api/admin/tenants/${tenantId}/roles`,
+        url: `/admin/tenants/${tenantId}/roles`,
         method: "GET",
         params: { page, limit },
       }),
@@ -88,7 +88,7 @@ export const adminTenantApi = baseApi.injectEndpoints({
       { tenantId: string; data: CreateRoleRequest }
     >({
       query: ({ tenantId, data }) => ({
-        url: `/api/admin/tenants/${tenantId}/roles`,
+        url: `/admin/tenants/${tenantId}/roles`,
         method: "POST",
         body: data,
       }),
@@ -100,7 +100,7 @@ export const adminTenantApi = baseApi.injectEndpoints({
       { tenantId: string; roleId: string; data: Partial<CreateRoleRequest> }
     >({
       query: ({ tenantId, roleId, data }) => ({
-        url: `/api/admin/tenants/${tenantId}/roles/${roleId}`,
+        url: `/admin/tenants/${tenantId}/roles/${roleId}`,
         method: "PUT",
         body: data,
       }),
@@ -109,7 +109,7 @@ export const adminTenantApi = baseApi.injectEndpoints({
 
     deleteRole: builder.mutation<void, { tenantId: string; roleId: string }>({
       query: ({ tenantId, roleId }) => ({
-        url: `/api/admin/tenants/${tenantId}/roles/${roleId}`,
+        url: `/admin/tenants/${tenantId}/roles/${roleId}`,
         method: "DELETE",
       }),
       invalidatesTags: ["Role"],
@@ -121,7 +121,7 @@ export const adminTenantApi = baseApi.injectEndpoints({
       { tenantId: string; page?: number; limit?: number }
     >({
       query: ({ tenantId, page = 1, limit = 20 }) => ({
-        url: `/api/admin/tenants/${tenantId}/users`,
+        url: `/admin/tenants/${tenantId}/users`,
         method: "GET",
         params: { page, limit },
       }),
@@ -133,7 +133,7 @@ export const adminTenantApi = baseApi.injectEndpoints({
       { tenantId: string; data: CreateTenantUserRequest }
     >({
       query: ({ tenantId, data }) => ({
-        url: `/api/admin/tenants/${tenantId}/users`,
+        url: `/admin/tenants/${tenantId}/users`,
         method: "POST",
         body: data,
       }),
@@ -145,7 +145,7 @@ export const adminTenantApi = baseApi.injectEndpoints({
       { tenantId: string; userId: string; data: UpdateTenantUserRequest }
     >({
       query: ({ tenantId, userId, data }) => ({
-        url: `/api/admin/tenants/${tenantId}/users/${userId}`,
+        url: `/admin/tenants/${tenantId}/users/${userId}`,
         method: "PUT",
         body: data,
       }),
@@ -157,7 +157,7 @@ export const adminTenantApi = baseApi.injectEndpoints({
       { tenantId: string; userId: string }
     >({
       query: ({ tenantId, userId }) => ({
-        url: `/api/admin/tenants/${tenantId}/users/${userId}`,
+        url: `/admin/tenants/${tenantId}/users/${userId}`,
         method: "DELETE",
       }),
       invalidatesTags: ["TenantUser"],
