@@ -1,5 +1,6 @@
 import { useState } from "react";
 import { FaCaretRight } from "react-icons/fa";
+import { useCreateSupportTicketMutation } from "@/redux/features/manager/support/supportApi";
 
 const categories = [
   "Sync Issue",
@@ -12,6 +13,9 @@ export default function IssueCategory() {
   const [selected, setSelected] = useState("Sync Issue");
   const [description, setDescription] = useState("");
   const [submitted, setSubmitted] = useState(false);
+  const [error, setError] = useState<string | null>(null);
+
+  const [createSupportTicket, { isLoading }] = useCreateSupportTicketMutation();
 
   const deviceData = {
     deviceId: "RENE-POS-8821",
@@ -19,10 +23,30 @@ export default function IssueCategory() {
     lastSync: "07/03/2026, 15:22:04",
   };
 
-  const handleSubmit = () => {
-    if (!description.trim()) return;
-    setSubmitted(true);
-    setTimeout(() => setSubmitted(false), 3000);
+  const handleSubmit = async () => {
+    if (!description.trim()) {
+      setError("Please provide a description of the issue");
+      return;
+    }
+
+    setError(null);
+
+    try {
+      const fullMessage = `${description}\n\n--- Device Info ---\nDevice ID: ${deviceData.deviceId}\nSoftware Version: ${deviceData.softwareVersion}\nLast Sync: ${deviceData.lastSync}`;
+
+      await createSupportTicket({
+        subject: selected,
+        message: fullMessage,
+      }).unwrap();
+
+      setSubmitted(true);
+      setDescription("");
+      setTimeout(() => setSubmitted(false), 3000);
+    } catch (err) {
+      console.error("Failed to create ticket:", err);
+      setError("Failed to submit ticket. Please try again.");
+      setTimeout(() => setError(null), 5000);
+    }
   };
 
   return (
@@ -83,18 +107,28 @@ export default function IssueCategory() {
               onChange={(e) => setDescription(e.target.value)}
               style={{
                 background: "#f8fafc",
-                border: "1.5px solid #e2e8f0",
+                border: error ? "1.5px solid #ef4444" : "1.5px solid #e2e8f0",
                 fontFamily: "'DM Sans', sans-serif",
               }}
-              onFocus={(e) => (e.target.style.border = "1.5px solid #2d4080")}
-              onBlur={(e) => (e.target.style.border = "1.5px solid #e2e8f0")}
+              onFocus={(e) =>
+                (e.target.style.border = error
+                  ? "1.5px solid #ef4444"
+                  : "1.5px solid #2d4080")
+              }
+              onBlur={(e) =>
+                (e.target.style.border = error
+                  ? "1.5px solid #ef4444"
+                  : "1.5px solid #e2e8f0")
+              }
             />
+            {error && <p className="text-xs text-red-500">{error}</p>}
           </div>
 
           {/* Submit Button */}
           <button
             onClick={handleSubmit}
-            className="w-full sm:w-auto self-end flex justify-center items-center gap-2 px-6 py-3 rounded-xl text-sm font-semibold text-white transition-all duration-200"
+            disabled={isLoading}
+            className="w-full sm:w-auto self-end flex justify-center items-center gap-2 px-6 py-3 rounded-xl text-sm font-semibold text-white transition-all duration-200 disabled:opacity-70 disabled:cursor-not-allowed"
             style={{
               background: submitted
                 ? "linear-gradient(135deg, #16a34a, #15803d)"
@@ -102,12 +136,39 @@ export default function IssueCategory() {
               boxShadow: "0 4px 16px rgba(30,45,90,0.3)",
               transform: submitted ? "scale(0.98)" : "scale(1)",
             }}
-            onMouseEnter={(e) =>
-              (e.currentTarget.style.transform = "scale(1.04)")
-            }
-            onMouseLeave={(e) => (e.currentTarget.style.transform = "scale(1)")}
+            onMouseEnter={(e) => {
+              if (!isLoading && !submitted)
+                e.currentTarget.style.transform = "scale(1.04)";
+            }}
+            onMouseLeave={(e) => {
+              if (!isLoading && !submitted)
+                e.currentTarget.style.transform = "scale(1)";
+            }}
           >
-            {submitted ? (
+            {isLoading ? (
+              <>
+                <svg
+                  className="w-4 h-4 animate-spin"
+                  fill="none"
+                  viewBox="0 0 24 24"
+                >
+                  <circle
+                    className="opacity-25"
+                    cx="12"
+                    cy="12"
+                    r="10"
+                    stroke="currentColor"
+                    strokeWidth="4"
+                  />
+                  <path
+                    className="opacity-75"
+                    fill="currentColor"
+                    d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"
+                  />
+                </svg>
+                Submitting...
+              </>
+            ) : submitted ? (
               <>
                 <svg
                   className="w-4 h-4"
@@ -228,6 +289,7 @@ function DataRow({ label, value, mono }: DataRowProps) {
     </div>
   );
 }
+
 // import { useState } from "react";
 // import { FaCaretRight } from "react-icons/fa";
 
@@ -256,19 +318,19 @@ function DataRow({ label, value, mono }: DataRowProps) {
 //   };
 
 //   return (
-//     <div className=" flex items-center justify-center ">
+//     <div className="flex items-center justify-center">
 //       <link
 //         href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@300;400;500;600;700&family=DM+Mono:wght@400;500&display=swap"
 //         rel="stylesheet"
 //       />
 
-//       <div className="flex gap-4 w-full items-stretch">
+//       <div className="flex flex-col lg:flex-row gap-4 w-full items-stretch">
 //         {/* Main Form Card */}
-//         <div className="flex-1 bg-white rounded-2xl shadow-2xl p-7 flex flex-col gap-6">
+//         <div className="w-full lg:flex-1 bg-white rounded-2xl shadow-2xl p-5 sm:p-6 md:p-7 flex flex-col gap-6">
 //           {/* Header */}
 //           <div>
 //             <h2
-//               className="text-xl font-semibold text-slate-800"
+//               className="text-lg sm:text-xl font-semibold text-slate-800"
 //               style={{ letterSpacing: "-0.02em" }}
 //             >
 //               Issue Category
@@ -276,7 +338,7 @@ function DataRow({ label, value, mono }: DataRowProps) {
 //           </div>
 
 //           {/* Category Buttons */}
-//           <div className="grid grid-cols-2 gap-2">
+//           <div className="grid grid-cols-1 sm:grid-cols-2 gap-2">
 //             {categories.map((cat) => (
 //               <button
 //                 key={cat}
@@ -307,7 +369,7 @@ function DataRow({ label, value, mono }: DataRowProps) {
 //               Description
 //             </label>
 //             <textarea
-//               className="flex-1 min-h-32 w-full rounded-xl p-4 text-sm text-slate-700 resize-none outline-none transition-all duration-200"
+//               className="flex-1 min-h-28 sm:min-h-32 w-full rounded-xl p-3 sm:p-4 text-sm text-slate-700 resize-none outline-none transition-all duration-200"
 //               placeholder="Please explain what happened..."
 //               value={description}
 //               onChange={(e) => setDescription(e.target.value)}
@@ -324,7 +386,7 @@ function DataRow({ label, value, mono }: DataRowProps) {
 //           {/* Submit Button */}
 //           <button
 //             onClick={handleSubmit}
-//             className="self-end flex cursor-pointer items-center gap-2 px-6 py-3 rounded-xl text-sm font-semibold text-white transition-all duration-200"
+//             className="w-full sm:w-auto self-end flex justify-center items-center gap-2 px-6 py-3 rounded-xl text-sm font-semibold text-white transition-all duration-200"
 //             style={{
 //               background: submitted
 //                 ? "linear-gradient(135deg, #16a34a, #15803d)"
@@ -363,9 +425,9 @@ function DataRow({ label, value, mono }: DataRowProps) {
 //           </button>
 //         </div>
 
-//         {/* Auto-Captured Data Panel */}
+//         {/* Sidebar */}
 //         <div
-//           className="w-72 rounded-2xl p-5 flex flex-col gap-5 shadow-xl"
+//           className="w-full lg:w-72 rounded-2xl p-4 sm:p-5 flex flex-col gap-5 shadow-xl"
 //           style={{
 //             background: "linear-gradient(160deg, #1a2744 0%, #0f1a35 100%)",
 //           }}
