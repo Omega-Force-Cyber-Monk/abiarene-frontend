@@ -4,10 +4,10 @@ import { FaAngleRight } from "react-icons/fa";
 import { useNavigate } from "react-router-dom";
 import {
   useGetTenantsQuery,
-  useDeleteTenantMutation,
+  // useDeleteTenantMutation,
 } from "@/redux/features/admin/adminTenant/adminTenantApi";
 import { Tenant } from "@/redux/features/admin/adminTenant/adminTenant.types";
-import { toast } from "sonner";
+// import { toast } from "sonner";
 import Loader from "../Shared/Loader";
 
 const TenantsManagement = () => {
@@ -16,13 +16,13 @@ const TenantsManagement = () => {
   const [searchTerm, setSearchTerm] = useState("");
   const [searchInput, setSearchInput] = useState("");
 
-  const { data, isLoading, error, refetch } = useGetTenantsQuery({
+  const { data, isLoading, error } = useGetTenantsQuery({
     page,
     limit: 10,
     search: searchTerm,
   });
 
-  const [deleteTenant] = useDeleteTenantMutation();
+  // const [deleteTenant] = useDeleteTenantMutation();
 
   const tenants = data?.data || [];
   const total = data?.total || 0;
@@ -39,18 +39,18 @@ const TenantsManagement = () => {
     }
   };
 
-  const handleDelete = async (id: string, name: string) => {
-    if (window.confirm(`Are you sure you want to delete "${name}"?`)) {
-      try {
-        await deleteTenant(id).unwrap();
-        toast.success("Tenant deleted successfully");
-        refetch();
-      } catch (err) {
-        toast.error("Failed to delete tenant");
-        console.error(err);
-      }
-    }
-  };
+  // const handleDelete = async (id: string, name: string) => {
+  //   if (window.confirm(`Are you sure you want to delete "${name}"?`)) {
+  //     try {
+  //       await deleteTenant(id).unwrap();
+  //       toast.success("Tenant deleted successfully");
+  //       refetch();
+  //     } catch (err) {
+  //       toast.error("Failed to delete tenant");
+  //       console.error(err);
+  //     }
+  //   }
+  // };
 
   const getStatusBadge = (status: string) => {
     switch (status?.toLowerCase()) {

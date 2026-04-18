@@ -22,7 +22,7 @@ export const inventoryApi = baseApi.injectEndpoints({
         url: `/inventory/${id}`,
         method: "GET",
       }),
-      providesTags: (result, error, id) => [{ type: "Inventory", id }],
+      providesTags: (_result, _error, id) => [{ type: "Inventory", id }],
     }),
 
     // Create new inventory item
@@ -45,7 +45,7 @@ export const inventoryApi = baseApi.injectEndpoints({
         method: "PATCH",
         body: data,
       }),
-      invalidatesTags: (result, error, { id }) => [{ type: "Inventory", id }],
+      invalidatesTags: (_result, _error, { id }) => [{ type: "Inventory", id }],
     }),
 
     // Delete inventory item

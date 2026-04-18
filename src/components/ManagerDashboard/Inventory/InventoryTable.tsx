@@ -1,4 +1,4 @@
-import { useState, useEffect } from "react";
+import { useState } from "react";
 import { CiSearch } from "react-icons/ci";
 import { FaPrint, FaTrash, FaEdit } from "react-icons/fa";
 import { LuRefreshCw } from "react-icons/lu";
