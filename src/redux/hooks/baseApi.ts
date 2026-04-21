@@ -1,59 +1,3 @@
-// // src/redux/hooks/baseApi.ts
-// import { createApi, fetchBaseQuery } from "@reduxjs/toolkit/query/react";
-// import Cookies from "js-cookie";
-
-// const baseURL = import.meta.env.VITE_API_ENDPOINT;
-
-// const rawBaseQuery = fetchBaseQuery({
-//   baseUrl: baseURL,
-//   credentials: "omit",
-//   prepareHeaders: (headers) => {
-//     const token = Cookies.get("token");
-//     if (token) {
-//       headers.set("Authorization", `${token}`);
-//     }
-//     headers.set("Content-Type", "application/json");
-//     return headers;
-//   },
-// });
-
-// const baseQueryWithErrorHandler: typeof rawBaseQuery = async (
-//   args,
-//   api,
-//   extraOptions,
-// ) => {
-//   try {
-//     const result = await rawBaseQuery(args, api, extraOptions);
-
-//     if (result.error?.status === 401) {
-//       Cookies.remove("token");
-//       localStorage.removeItem("user");
-//       if (typeof window !== "undefined") {
-//         window.location.href = "/login";
-//       }
-//     }
-
-//     return result;
-//   } catch (error) {
-//     console.error("API Error:", error);
-//     return {
-//       error: {
-//         status: "FETCH_ERROR",
-//         error: "Failed to connect to the server",
-//       },
-//     };
-//   }
-// };
-
-// export const baseApi = createApi({
-//   reducerPath: "baseApi",
-//   baseQuery: baseQueryWithErrorHandler,
-//   tagTypes: ["User", "TenantUser", "Tenant", "Role"],
-//   endpoints: () => ({}),
-// });
-
-/*  */
-
 import { createApi, fetchBaseQuery } from "@reduxjs/toolkit/query/react";
 import Cookies from "js-cookie";
 
@@ -106,6 +50,14 @@ const baseQueryWithErrorHandler: typeof rawBaseQuery = async (
 export const baseApi = createApi({
   reducerPath: "baseApi",
   baseQuery: baseQueryWithErrorHandler,
-  tagTypes: ["User", "TenantUser", "Tenant", "Role", "Inventory", "Support"],
+  tagTypes: [
+    "User",
+    "TenantUser",
+    "Tenant",
+    "Role",
+    "Inventory",
+    "Support",
+    "Notification",
+  ],
   endpoints: () => ({}),
 });

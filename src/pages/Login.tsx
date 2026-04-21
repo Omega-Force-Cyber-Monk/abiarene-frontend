@@ -75,9 +75,9 @@ const Login: React.FC = () => {
   };
 
   return (
-    <div className="min-h-screen flex items-center justify-center bg-gray-50">
-      <div className="max-w-5xl w-full flex overflow-hidden bg-white rounded-2xl shadow-lg">
-        <div className="hidden md:flex w-1/2 items-center justify-center bg-gradient-to-br from-[#FFB004] to-[#F3DA7F]">
+    <div className="min-h-screen flex items-center justify-center text-black">
+      <div className="max-w-5xl w-full flex overflow-hidden">
+        <div className="hidden md:flex w-1/2 items-center justify-center">
           <img
             src={loginphoto}
             alt="illustration"
@@ -251,15 +251,15 @@ export default Login;
 //   };
 
 //   return (
-//     <div className="min-h-screen flex items-center justify-center text-black">
-//       <div className="max-w-5xl w-full flex overflow-hidden">
-//         <div className="hidden md:flex w-1/2 items-center justify-center">
-//           <img
-//             src={loginphoto}
-//             alt="illustration"
-//             className="h-full w-full object-cover rounded-l-xl"
-//           />
-//         </div>
+// <div className="min-h-screen flex items-center justify-center text-black">
+//   <div className="max-w-5xl w-full flex overflow-hidden">
+// <div className="hidden md:flex w-1/2 items-center justify-center">
+//   <img
+//     src={loginphoto}
+//     alt="illustration"
+//     className="h-full w-full object-cover rounded-l-xl"
+//   />
+// </div>
 
 //         <div className="w-full md:w-1/2 p-10 flex flex-col justify-center bg-transparent">
 //           <h2 className="text-center text-3xl md:text-4xl font-sans font-semibold tracking-wide mb-4 text-black">

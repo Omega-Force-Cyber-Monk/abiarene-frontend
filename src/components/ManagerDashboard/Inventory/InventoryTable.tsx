@@ -9,6 +9,7 @@ import {
 } from "@/redux/features/manager/managerInventory/inventoryApi";
 import { toast } from "react-hot-toast";
 import EditProductDialog from "./EditProductDialog";
+import { MdDelete, MdLocalPrintshop } from "react-icons/md";
 
 const InventoryTable = () => {
   const [searchTerm, setSearchTerm] = useState("");
@@ -232,28 +233,27 @@ const InventoryTable = () => {
                           {/* Edit Button */}
                           <button
                             onClick={() => handleEdit(product)}
-                            className="p-2 rounded-full hover:bg-gray-100 transition"
+                            className="flex items-center gap-2 px-2 py-2 cursor-pointer rounded-lg border border-green-200 text-green-600 hover:bg-green-50 hover:border-green-300 transition duration-200"
                             title="Edit"
                           >
-                            <FaEdit className="text-green-500" />
+                            <FaEdit className="text-lg" />
                           </button>
 
                           {/* Print Button */}
                           <button
                             onClick={() => handlePrint(product)}
-                            className="p-2 rounded-full hover:bg-gray-100 transition"
+                            className="flex items-center gap-2 px-2 py-2 cursor-pointer rounded-lg border border-blue-200 text-blue-600 hover:bg-blue-50 hover:border-blue-300 transition duration-200"
                             title="Print"
                           >
-                            <FaPrint className="text-blue-500" />
+                            <MdLocalPrintshop className="text-lg" />
                           </button>
-
                           {/* Delete Button */}
                           <button
                             onClick={() => handleDelete(product)}
-                            className="p-2 rounded-full hover:bg-red-100 transition"
+                            className="flex items-center gap-2 px-2 py-2 cursor-pointer rounded-lg border border-red-200 text-red-600 hover:bg-red-50 hover:border-red-300 transition duration-200"
                             title="Delete"
                           >
-                            <FaTrash className="text-red-500" />
+                            <MdDelete className="text-lg" />
                           </button>
                         </div>
                       </td>

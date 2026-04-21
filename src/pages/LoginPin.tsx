@@ -54,8 +54,8 @@ const LoginPin: React.FC = () => {
   };
 
   return (
-    <div className="min-h-screen flex items-center justify-center bg-gray-50">
-      <div className="max-w-5xl w-full flex overflow-hidden bg-white rounded-2xl shadow-lg">
+    <div className="min-h-screen flex items-center justify-center text-black">
+      <div className="max-w-5xl w-full flex overflow-hidden">
         {/* Left Image */}
         <div className="hidden md:flex w-1/2">
           <img
@@ -86,7 +86,7 @@ const LoginPin: React.FC = () => {
                 value={pin}
                 onChange={(e) => setPin(e.target.value)}
                 placeholder="Enter PIN"
-                className="w-full px-4 py-2 border rounded-lg"
+                className="w-full px-4 py-3 border border-gray-300 rounded-xl bg-white text-gray-800 focus:ring-2 focus:ring-[#FFB004] focus:border-transparent outline-none transition-all"
               />
             </div>
 
@@ -98,7 +98,7 @@ const LoginPin: React.FC = () => {
                 value={tenantId}
                 onChange={(e) => setTenantId(e.target.value)}
                 placeholder="Enter Tenant ID"
-                className="w-full px-4 py-2 border rounded-lg"
+                className="w-full px-4 py-3 border border-gray-300 rounded-xl bg-white text-gray-800 focus:ring-2 focus:ring-[#FFB004] focus:border-transparent outline-none transition-all"
               />
             </div>
 
