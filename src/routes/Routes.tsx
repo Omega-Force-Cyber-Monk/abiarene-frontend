@@ -25,7 +25,7 @@ import CashierLayout from "@/Layout/CashierLayout";
 import CashierDashboardPage from "@/pages/Cashier/CashierDashboardPage";
 import TicketQueueDetails from "@/components/AdminDashboard/Dashboard/TicketQueueDetails";
 import ManagerProductManagePage from "@/pages/Manager/ManagerProductManagePage";
-import TenantDetails from "@/components/AdminDashboard/Tenants/TenantDetails";
+// import TenantDetails from "@/components/AdminDashboard/Tenants/TenantDetails";
 import LoginPin from "@/pages/LoginPin";
 
 const routes = createBrowserRouter([
@@ -64,7 +64,7 @@ const routes = createBrowserRouter([
       { path: "ticket-queue", element: <TicketQueuePage /> },
       { path: "ticket-queue/:id", element: <TicketQueueDetails /> },
       { path: "tenants", element: <TenantsPage /> },
-      { path: "tenants/:id", element: <TenantDetails /> },
+      // { path: "tenants/:id", element: <TenantDetails /> },
 
       { path: "conversations", element: <ConversationsPage /> },
       { path: "new-business", element: <NewBusinessPage /> },
