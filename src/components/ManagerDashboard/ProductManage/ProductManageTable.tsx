@@ -1,19 +1,19 @@
-// ManagerDashboardPage.tsx
 import { useState } from "react";
 import { Plus, Eye, Pencil, Trash2 } from "lucide-react";
 import {
-  initialTableData,
   initialMenuItems,
   initialCurrentOrder,
 } from "./initialData";
-import {
-  TableCardProps,
-  MenuItem,
-  OrderItem,
-  TableStatus,
-  TableSubStatus,
-} from "./index";
+import { TableCardProps, MenuItem, OrderItem, TableStatus } from "./index";
 import { ManagerModal } from "./ManagerModal";
+import {
+  useGetTablesQuery,
+  useCreateTableMutation,
+  useUpdateTableMutation,
+  useDeleteTableMutation,
+} from "@/redux/features/restaurant";
+import { toast } from "react-hot-toast";
+import CommonTable, { Column } from "@/common/CommonTable";
 
 type ActiveTab = "tables" | "menu" | "orders";
 
@@ -22,38 +22,53 @@ const TableForm = ({
   initialData,
   onSubmit,
   onCancel,
+  isSubmitting,
 }: {
   initialData?: TableCardProps;
-  onSubmit: (
-    data: Omit<TableCardProps, "id"> & { id?: number | string },
-  ) => void;
+  onSubmit: (data: any) => void;
   onCancel: () => void;
+  isSubmitting?: boolean;
 }) => {
   const [formData, setFormData] = useState({
-    capacity: initialData?.capacity || 4,
+    tableNumber: initialData?.tableNumber || 0,
+    seatCount: initialData?.seatCount || 4,
     status: initialData?.status || "AVAILABLE",
-    subStatus: initialData?.subStatus || null,
   });
 
   return (
     <form
       onSubmit={(e) => {
         e.preventDefault();
-        onSubmit({ ...formData, id: initialData?.id });
+        onSubmit(formData);
       }}
       className="space-y-4"
     >
       <div>
         <label className="block text-sm font-medium text-gray-700 mb-1">
-          Capacity
+          Table Number
         </label>
         <input
           type="number"
           min="1"
-          max="20"
-          value={formData.capacity}
+          value={formData.tableNumber}
           onChange={(e) =>
-            setFormData({ ...formData, capacity: parseInt(e.target.value) })
+            setFormData({ ...formData, tableNumber: parseInt(e.target.value) })
+          }
+          className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#0A2540] focus:border-transparent"
+          required
+        />
+      </div>
+      <div>
+        <label className="block text-sm font-medium text-gray-700 mb-1">
+          Seat Count
+        </label>
+        <input
+          type="number"
+          min="1"
+          max="50"
+          value={formData.seatCount}
+          onChange={(e) =>
+            setFormData({ ...formData, seatCount: parseInt(e.target.value) })
           }
           className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#0A2540] focus:border-transparent"
           required
@@ -72,45 +87,24 @@ const TableForm = ({
         >
           <option value="AVAILABLE">AVAILABLE</option>
           <option value="OCCUPIED">OCCUPIED</option>
-          <option value="RESERVED">RESERVED</option>
-          <option value="CLEANING">CLEANING</option>
+          <option value="SERVED">SERVED</option>
         </select>
       </div>
-      {formData.status === "OCCUPIED" && (
-        <div>
-          <label className="block text-sm font-medium text-gray-700 mb-1">
-            Sub Status
-          </label>
-          <select
-            value={formData.subStatus || ""}
-            onChange={(e) =>
-              setFormData({
-                ...formData,
-                subStatus: (e.target.value as TableSubStatus) || null,
-              })
-            }
-            className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#0A2540] focus:border-transparent"
-          >
-            <option value="">None</option>
-            <option value="SERVED">SERVED</option>
-            <option value="ORDERING">ORDERING</option>
-            <option value="BILLING">BILLING</option>
-          </select>
-        </div>
-      )}
       <div className="flex gap-3 pt-4">
         <button
           type="button"
           onClick={onCancel}
-          className="flex-1 px-4 py-2 border border-gray-300 rounded-lg text-gray-700 hover:bg-gray-50 cursor-pointer"
+          disabled={isSubmitting}
+          className="flex-1 px-4 py-2 border border-gray-300 rounded-lg text-gray-700 hover:bg-gray-50 cursor-pointer disabled:opacity-50"
         >
           Cancel
         </button>
         <button
           type="submit"
-          className="flex-1 px-4 py-2 bg-[#0A2540] text-white rounded-lg hover:bg-[#0A2540]/90 cursor-pointer"
+          disabled={isSubmitting}
+          className="flex-1 px-4 py-2 bg-[#0A2540] text-white rounded-lg hover:bg-[#0A2540]/90 cursor-pointer disabled:opacity-50"
         >
-          Save
+          {isSubmitting ? "Saving..." : "Save"}
         </button>
       </div>
     </form>
@@ -421,8 +415,17 @@ const ViewModal = ({
 
 export const ProductManageTable = () => {
   const [activeTab, setActiveTab] = useState<ActiveTab>("tables");
-  const [tableData, setTableData] =
-    useState<TableCardProps[]>(initialTableData);
+  const [page, setPage] = useState(1);
+  
+  const { data: tables = [], isLoading: isTablesLoading } = useGetTablesQuery({ 
+    page, 
+    limit: 10 
+  });
+
+  const [createTable, { isLoading: isCreatingTable }] = useCreateTableMutation();
+  const [updateTable, { isLoading: isUpdatingTable }] = useUpdateTableMutation();
+  const [deleteTable] = useDeleteTableMutation();
+
   const [menuItems, setMenuItems] = useState<MenuItem[]>(initialMenuItems);
   const [orderItems, setOrderItems] =
     useState<OrderItem[]>(initialCurrentOrder);
@@ -434,27 +437,35 @@ export const ProductManageTable = () => {
   const [selectedItem, setSelectedItem] = useState<any>(null);
 
   // Table CRUD
-  const handleAddTable = (
-    data: Omit<TableCardProps, "id"> & { id?: number | string },
-  ) => {
-    const newId = Math.max(...tableData.map((t) => Number(t.id)), 0) + 1;
-    setTableData([...tableData, { ...data, id: newId } as TableCardProps]);
-    setIsAddModalOpen(false);
+  const handleAddTable = async (data: any) => {
+    try {
+      await createTable(data).unwrap();
+      toast.success("Table created successfully");
+      setIsAddModalOpen(false);
+    } catch (error: any) {
+      toast.error(error?.data?.message || "Failed to create table");
+    }
   };
 
-  const handleEditTable = (
-    data: Omit<TableCardProps, "id"> & { id?: number | string },
-  ) => {
-    setTableData(
-      tableData.map((t) => (t.id === data.id ? { ...t, ...data } : t)),
-    );
-    setIsEditModalOpen(false);
-    setSelectedItem(null);
+  const handleEditTable = async (data: any) => {
+    try {
+      await updateTable({ id: selectedItem.id, data }).unwrap();
+      toast.success("Table updated successfully");
+      setIsEditModalOpen(false);
+      setSelectedItem(null);
+    } catch (error: any) {
+      toast.error(error?.data?.message || "Failed to update table");
+    }
   };
 
-  const handleDeleteTable = (id: number | string) => {
+  const handleDeleteTable = async (id: string) => {
     if (confirm("Are you sure you want to delete this table?")) {
-      setTableData(tableData.filter((t) => t.id !== id));
+      try {
+        await deleteTable(id).unwrap();
+        toast.success("Table deleted successfully");
+      } catch (error: any) {
+        toast.error(error?.data?.message || "Failed to delete table");
+      }
     }
   };
 
@@ -519,92 +530,205 @@ export const ProductManageTable = () => {
     setIsViewModalOpen(true);
   };
 
+
+  const tableColumns: Column<TableCardProps>[] = [
+    {
+      header: "Table Number",
+      render: (table) => (
+        <span className="font-medium text-gray-700">Table {table.tableNumber}</span>
+      ),
+    },
+    {
+      header: "Seat Count",
+      render: (table) => table.seatCount,
+    },
+    {
+      header: "Status",
+      render: (table) => (
+        <span
+          className={`px-2 py-1 rounded-full text-xs font-semibold ${
+            table.status === "AVAILABLE"
+              ? "bg-green-100 text-green-700"
+              : table.status === "OCCUPIED"
+                ? "bg-orange-100 text-orange-700"
+                : table.status === "SERVED"
+                  ? "bg-blue-100 text-blue-700"
+                  : "bg-gray-100 text-gray-700"
+          }`}
+        >
+          {table.status}
+        </span>
+      ),
+    },
+    {
+      header: "Created At",
+      render: (table) => new Date(table.createdAt).toLocaleDateString(),
+    },
+    {
+      header: "Actions",
+      className: "text-right",
+      render: (table) => (
+        <div className="flex gap-2 justify-end">
+          <button
+            onClick={() => openViewModal(table)}
+            className="p-1.5 rounded-lg hover:bg-blue-50 text-blue-600 cursor-pointer"
+            title="View"
+          >
+            <Eye size={18} />
+          </button>
+          <button
+            onClick={() => openEditModal(table)}
+            className="p-1.5 rounded-lg hover:bg-yellow-50 text-yellow-600 cursor-pointer"
+            title="Edit"
+          >
+            <Pencil size={18} />
+          </button>
+          <button
+            onClick={() => handleDeleteTable(table.id)}
+            className="p-1.5 rounded-lg hover:bg-red-50 text-red-600 cursor-pointer"
+            title="Delete"
+          >
+            <Trash2 size={18} />
+          </button>
+        </div>
+      ),
+    },
+  ];
+
+  const menuColumns: Column<MenuItem>[] = [
+    {
+      header: "Image",
+      render: (item) => (
+        <img
+          src={item.image}
+          alt={item.name}
+          className="w-10 h-10 rounded-lg object-cover"
+        />
+      ),
+    },
+    {
+      header: "Name",
+      render: (item) => item.name,
+    },
+    {
+      header: "Category",
+      render: (item) => item.category,
+    },
+    {
+      header: "Price",
+      render: (item) => (
+        <span className="font-semibold text-gray-800">${item.price.toFixed(2)}</span>
+      ),
+    },
+    {
+      header: "Actions",
+      className: "text-right",
+      render: (item) => (
+        <div className="flex gap-2 justify-end">
+          <button
+            onClick={() => openViewModal(item)}
+            className="p-1.5 rounded-lg hover:bg-blue-50 text-blue-600 cursor-pointer"
+            title="View"
+          >
+            <Eye size={18} />
+          </button>
+          <button
+            onClick={() => openEditModal(item)}
+            className="p-1.5 rounded-lg hover:bg-yellow-50 text-yellow-600 cursor-pointer"
+            title="Edit"
+          >
+            <Pencil size={18} />
+          </button>
+          <button
+            onClick={() => handleDeleteMenuItem(item.id)}
+            className="p-1.5 rounded-lg hover:bg-red-50 text-red-600 cursor-pointer"
+            title="Delete"
+          >
+            <Trash2 size={18} />
+          </button>
+        </div>
+      ),
+    },
+  ];
+
+  const orderColumns: Column<OrderItem>[] = [
+    {
+      header: "Name",
+      render: (item) => item.name,
+    },
+    {
+      header: "Price",
+      render: (item) => `$${item.price.toFixed(2)}`,
+    },
+    {
+      header: "Quantity",
+      render: (item) => item.quantity,
+    },
+    {
+      header: "Total",
+      render: (item) => (
+        <span className="font-semibold text-gray-800">
+          ${(item.price * item.quantity).toFixed(2)}
+        </span>
+      ),
+    },
+    {
+      header: "Customizations",
+      render: (item) => (
+        <span className="text-gray-500">
+          {item.customizations?.slice(0, 2).join(", ")}
+          {item.customizations?.length > 2 && ` +${item.customizations.length - 2}`}
+        </span>
+      ),
+    },
+    {
+      header: "Actions",
+      className: "text-right",
+      render: (item) => (
+        <div className="flex gap-2 justify-end">
+          <button
+            onClick={() => openViewModal(item)}
+            className="p-1.5 rounded-lg hover:bg-blue-50 text-blue-600 cursor-pointer"
+            title="View"
+          >
+            <Eye size={18} />
+          </button>
+          <button
+            onClick={() => openEditModal(item)}
+            className="p-1.5 rounded-lg hover:bg-yellow-50 text-yellow-600 cursor-pointer"
+            title="Edit"
+          >
+            <Pencil size={18} />
+          </button>
+          <button
+            onClick={() => handleDeleteOrderItem(item.id)}
+            className="p-1.5 rounded-lg hover:bg-red-50 text-red-600 cursor-pointer"
+            title="Delete"
+          >
+            <Trash2 size={18} />
+          </button>
+        </div>
+      ),
+    },
+  ];
+
   const renderTableContent = () => {
     if (activeTab === "tables") {
       return (
         <div className="grid grid-cols-1 lg:grid-cols-1 xl:grid-cols-4 gap-5">
           <div className="xl:col-span-4 w-full">
-            <div className="w-full overflow-x-auto bg-white rounded-xl shadow-sm ">
-              <table className="min-w-[800px] w-full text-sm">
-                <thead className="border-b border-[#DBE0E5] bg-[#F8F8F8]">
-                  <tr className="border-b border-gray-200 bg-gray-50">
-                    <th className="px-4 py-3 text-left text-sm font-semibold text-gray-600">
-                      ID
-                    </th>
-                    <th className="px-4 py-3 text-left text-sm font-semibold text-gray-600">
-                      Capacity
-                    </th>
-                    <th className="px-4 py-3 text-left text-sm font-semibold text-gray-600">
-                      Status
-                    </th>
-                    <th className="px-4 py-3 text-left text-sm font-semibold text-gray-600">
-                      Sub Status
-                    </th>
-                    <th className="px-4 py-3 text-left text-sm font-semibold text-gray-600">
-                      Actions
-                    </th>
-                  </tr>
-                </thead>
-                <tbody>
-                  {tableData.map((table) => (
-                    <tr
-                      key={table.id}
-                      className="border-b border-gray-100 hover:bg-gray-50"
-                    >
-                      <td className="px-4 py-3 text-sm text-gray-700">
-                        {table.id}
-                      </td>
-                      <td className="px-4 py-3 text-sm text-gray-700">
-                        {table.capacity}
-                      </td>
-                      <td className="px-4 py-3">
-                        <span
-                          className={`px-2 py-1 rounded-full text-xs font-semibold ${
-                            table.status === "AVAILABLE"
-                              ? "bg-green-100 text-green-700"
-                              : table.status === "OCCUPIED"
-                                ? "bg-orange-100 text-orange-700"
-                                : table.status === "RESERVED"
-                                  ? "bg-blue-100 text-blue-700"
-                                  : "bg-gray-100 text-gray-700"
-                          }`}
-                        >
-                          {table.status}
-                        </span>
-                      </td>
-                      <td className="px-4 py-3 text-sm text-gray-700">
-                        {table.subStatus || "-"}
-                      </td>
-                      <td className="px-4 py-3">
-                        <div className="flex gap-2">
-                          <button
-                            onClick={() => openViewModal(table)}
-                            className="p-1.5 rounded-lg hover:bg-blue-50 text-blue-600 cursor-pointer"
-                            title="View"
-                          >
-                            <Eye size={18} />
-                          </button>
-                          <button
-                            onClick={() => openEditModal(table)}
-                            className="p-1.5 rounded-lg hover:bg-yellow-50 text-yellow-600 cursor-pointer"
-                            title="Edit"
-                          >
-                            <Pencil size={18} />
-                          </button>
-                          <button
-                            onClick={() => handleDeleteTable(table.id)}
-                            className="p-1.5 rounded-lg hover:bg-red-50 text-red-600 cursor-pointer"
-                            title="Delete"
-                          >
-                            <Trash2 size={18} />
-                          </button>
-                        </div>
-                      </td>
-                    </tr>
-                  ))}
-                </tbody>
-              </table>
-            </div>
+            <CommonTable
+              columns={tableColumns}
+              data={tables}
+              isLoading={isTablesLoading}
+              emptyMessage="No tables found."
+              pagination={{
+                currentPage: page,
+                totalPages: tables.length === 10 ? page + 1 : page,
+                onPageChange: (newPage) => setPage(newPage),
+                totalItems: undefined,
+              }}
+            />
           </div>
         </div>
       );
@@ -614,79 +738,11 @@ export const ProductManageTable = () => {
       return (
         <div className="grid grid-cols-1 lg:grid-cols-1 xl:grid-cols-4 gap-5">
           <div className="xl:col-span-4 w-full">
-            <div className="w-full overflow-x-auto bg-white rounded-xl shadow-sm ">
-              <table className="min-w-[800px] w-full text-sm">
-                <thead className="border-b border-[#DBE0E5] bg-[#F8F8F8]">
-                  <tr className="border-b border-gray-200 bg-gray-50">
-                    <th className="px-4 py-3 text-left text-sm font-semibold text-gray-600">
-                      Image
-                    </th>
-                    <th className="px-4 py-3 text-left text-sm font-semibold text-gray-600">
-                      Name
-                    </th>
-                    <th className="px-4 py-3 text-left text-sm font-semibold text-gray-600">
-                      Category
-                    </th>
-                    <th className="px-4 py-3 text-left text-sm font-semibold text-gray-600">
-                      Price
-                    </th>
-                    <th className="px-4 py-3 text-left text-sm font-semibold text-gray-600">
-                      Actions
-                    </th>
-                  </tr>
-                </thead>
-                <tbody>
-                  {menuItems.map((item) => (
-                    <tr
-                      key={item.id}
-                      className="border-b border-gray-100 hover:bg-gray-50"
-                    >
-                      <td className="px-4 py-3">
-                        <img
-                          src={item.image}
-                          alt={item.name}
-                          className="w-10 h-10 rounded-lg object-cover"
-                        />
-                      </td>
-                      <td className="px-4 py-3 text-sm text-gray-700">
-                        {item.name}
-                      </td>
-                      <td className="px-4 py-3 text-sm text-gray-700">
-                        {item.category}
-                      </td>
-                      <td className="px-4 py-3 text-sm font-semibold text-gray-800">
-                        ${item.price.toFixed(2)}
-                      </td>
-                      <td className="px-4 py-3">
-                        <div className="flex gap-2">
-                          <button
-                            onClick={() => openViewModal(item)}
-                            className="p-1.5 rounded-lg hover:bg-blue-50 text-blue-600 cursor-pointer"
-                            title="View"
-                          >
-                            <Eye size={18} />
-                          </button>
-                          <button
-                            onClick={() => openEditModal(item)}
-                            className="p-1.5 rounded-lg hover:bg-yellow-50 text-yellow-600 cursor-pointer"
-                            title="Edit"
-                          >
-                            <Pencil size={18} />
-                          </button>
-                          <button
-                            onClick={() => handleDeleteMenuItem(item.id)}
-                            className="p-1.5 rounded-lg hover:bg-red-50 text-red-600 cursor-pointer"
-                            title="Delete"
-                          >
-                            <Trash2 size={18} />
-                          </button>
-                        </div>
-                      </td>
-                    </tr>
-                  ))}
-                </tbody>
-              </table>
-            </div>
+            <CommonTable
+              columns={menuColumns}
+              data={menuItems}
+              emptyMessage="No menu items found."
+            />
           </div>
         </div>
       );
@@ -696,83 +752,11 @@ export const ProductManageTable = () => {
     return (
       <div className="grid grid-cols-1 lg:grid-cols-1 xl:grid-cols-4 gap-5">
         <div className="xl:col-span-4 w-full">
-          <div className="w-full overflow-x-auto bg-white rounded-xl shadow-sm ">
-            <table className="min-w-[800px] w-full text-sm">
-              <thead className="border-b border-[#DBE0E5] bg-[#F8F8F8]">
-                <tr className="border-b border-gray-200 bg-gray-50">
-                  <th className="px-4 py-3 text-left text-sm font-semibold text-gray-600">
-                    Name
-                  </th>
-                  <th className="px-4 py-3 text-left text-sm font-semibold text-gray-600">
-                    Price
-                  </th>
-                  <th className="px-4 py-3 text-left text-sm font-semibold text-gray-600">
-                    Quantity
-                  </th>
-                  <th className="px-4 py-3 text-left text-sm font-semibold text-gray-600">
-                    Total
-                  </th>
-                  <th className="px-4 py-3 text-left text-sm font-semibold text-gray-600">
-                    Customizations
-                  </th>
-                  <th className="px-4 py-3 text-left text-sm font-semibold text-gray-600">
-                    Actions
-                  </th>
-                </tr>
-              </thead>
-              <tbody>
-                {orderItems.map((item) => (
-                  <tr
-                    key={item.id}
-                    className="border-b border-gray-100 hover:bg-gray-50"
-                  >
-                    <td className="px-4 py-3 text-sm text-gray-700">
-                      {item.name}
-                    </td>
-                    <td className="px-4 py-3 text-sm text-gray-700">
-                      ${item.price.toFixed(2)}
-                    </td>
-                    <td className="px-4 py-3 text-sm text-gray-700">
-                      {item.quantity}
-                    </td>
-                    <td className="px-4 py-3 text-sm font-semibold text-gray-800">
-                      ${(item.price * item.quantity).toFixed(2)}
-                    </td>
-                    <td className="px-4 py-3 text-sm text-gray-500">
-                      {item.customizations?.slice(0, 2).join(", ")}
-                      {item.customizations?.length > 2 &&
-                        ` +${item.customizations.length - 2}`}
-                    </td>
-                    <td className="px-4 py-3">
-                      <div className="flex gap-2">
-                        <button
-                          onClick={() => openViewModal(item)}
-                          className="p-1.5 rounded-lg hover:bg-blue-50 text-blue-600 cursor-pointer"
-                          title="View"
-                        >
-                          <Eye size={18} />
-                        </button>
-                        <button
-                          onClick={() => openEditModal(item)}
-                          className="p-1.5 rounded-lg hover:bg-yellow-50 text-yellow-600 cursor-pointer"
-                          title="Edit"
-                        >
-                          <Pencil size={18} />
-                        </button>
-                        <button
-                          onClick={() => handleDeleteOrderItem(item.id)}
-                          className="p-1.5 rounded-lg hover:bg-red-50 text-red-600 cursor-pointer"
-                          title="Delete"
-                        >
-                          <Trash2 size={18} />
-                        </button>
-                      </div>
-                    </td>
-                  </tr>
-                ))}
-              </tbody>
-            </table>
-          </div>
+          <CommonTable
+            columns={orderColumns}
+            data={orderItems}
+            emptyMessage="No order items found."
+          />
         </div>
       </div>
     );
@@ -811,6 +795,7 @@ export const ProductManageTable = () => {
           <TableForm
             initialData={isEditModalOpen ? selectedItem : undefined}
             onSubmit={isEditModalOpen ? handleEditTable : handleAddTable}
+            isSubmitting={isEditModalOpen ? isUpdatingTable : isCreatingTable}
             onCancel={() => {
               setIsAddModalOpen(false);
               setIsEditModalOpen(false);

@@ -1,12 +1,13 @@
 // types/index.ts
-export type TableStatus = "AVAILABLE" | "OCCUPIED" | "RESERVED" | "CLEANING";
-export type TableSubStatus = "SERVED" | "ORDERING" | "BILLING" | null;
+export type TableStatus = "AVAILABLE" | "OCCUPIED" | "SERVED";
+// export type TableSubStatus = "SERVED" | "ORDERING" | "BILLING" | null;
 
 export interface TableCardProps {
-  id: number | string;
-  capacity: number;
+  id: string;
+  tableNumber: number;
+  seatCount: number;
   status: TableStatus;
-  subStatus?: TableSubStatus;
+  createdAt: string;
 }
 
 export interface MenuItem {
