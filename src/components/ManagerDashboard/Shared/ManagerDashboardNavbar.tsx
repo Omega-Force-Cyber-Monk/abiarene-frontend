@@ -5,6 +5,7 @@ import imgUrl from "@/assets/webvixxen/icon/user.png";
 import { useLocation } from "react-router-dom";
 import { useEffect, useRef, useState } from "react";
 import NotificationPanel from "./NotificationPanel";
+import { useGetNotificationsQuery } from "@/redux/features/manager/notification/notificationApi";
 
 export interface NavbarProps {
   onMobileMenuToggle: () => void;
@@ -22,6 +23,10 @@ const ManagerDashboardNavbar: React.FC<NavbarProps> = ({
   const dropdownRef = useRef<HTMLDivElement>(null);
 
   console.log(imgUrl);
+
+  const { data: notifications } = useGetNotificationsQuery();
+
+  const unreadCount = notifications?.filter((n) => !n.isRead).length || 0;
 
   useEffect(() => {
     function handleClickOutside(event: MouseEvent) {
@@ -113,7 +118,7 @@ const ManagerDashboardNavbar: React.FC<NavbarProps> = ({
         </div>
 
         {/* Right Section */}
-        <div className="flex items-center space-x-4">
+        {/* <div className="flex items-center space-x-4">
           <div className="relative" ref={dropdownRef}>
             <button
               onClick={() => setIsOpen(!isOpen)}
@@ -126,6 +131,29 @@ const ManagerDashboardNavbar: React.FC<NavbarProps> = ({
 
             {isOpen && (
               <div className="absolute -right-5 lg:right-0 mt-2 z-10">
+                <NotificationPanel />
+              </div>
+            )}
+          </div>
+        </div> */}
+        {/* Right Section */}
+        <div className="flex items-center space-x-4">
+          <div className="relative" ref={dropdownRef}>
+            <button
+              onClick={() => setIsOpen(!isOpen)}
+              className="p-2 rounded-lg transition-colors relative cursor-pointer hover:p-2 hover:bg-gray-100 duration-200"
+              aria-label="Notifications"
+            >
+              <Bell className="w-5 h-5 text-foreground" />
+              {unreadCount > 0 && (
+                <span className="absolute -top-1 -right-1 min-w-[16px] h-[16px] px-1 flex items-center justify-center text-[10px] font-semibold text-white bg-red-500 rounded-full shadow-sm">
+                  {unreadCount > 99 ? "99+" : unreadCount}
+                </span>
+              )}
+            </button>
+
+            {isOpen && (
+              <div className="absolute -right-5 lg:right-0 mt-2 z-50">
                 <NotificationPanel />
               </div>
             )}

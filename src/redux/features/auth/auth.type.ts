@@ -10,7 +10,7 @@ export type Role =
 export type User = {
   id: string;
   email: string;
-  name: string;
+  name?: string;
   role: Role;
   status?: string;
   createdAt?: string;
@@ -24,15 +24,20 @@ export type AdminUser = {
   createdAt: string;
 };
 
+// Updated to match Swagger: uses pin instead of password
 export type LoginRequest = {
   email: string;
-  password: string;
+  pin: string;  // Changed from password to pin
 };
 
+// Updated to match Swagger response structure
 export type LoginResponse = {
-  user: any;
   accessToken: string;
-  admin: AdminUser;
+  user: {
+    sub: string;
+    email: string;
+    role: string;
+  };
 };
 
 export type SignupRequest = {
@@ -69,3 +74,75 @@ export type PinLoginResponse = {
     role: string;
   };
 };
+
+// // src/redux/features/auth/auth.type.ts
+// export type Role =
+//   | "ADMIN"
+//   | "MANAGER"
+//   | "SERVER"
+//   | "KITCHEN"
+//   | "CASHIER"
+//   | string;
+
+// export type User = {
+//   id: string;
+//   email: string;
+//   name: string;
+//   role: Role;
+//   status?: string;
+//   createdAt?: string;
+// };
+
+// export type AdminUser = {
+//   id: string;
+//   email: string;
+//   name: string;
+//   status: string;
+//   createdAt: string;
+// };
+
+// export type LoginRequest = {
+//   email: string;
+//   password: string;
+// };
+
+// export type LoginResponse = {
+//   user: any;
+//   accessToken: string;
+//   admin: AdminUser;
+// };
+
+// export type SignupRequest = {
+//   email: string;
+//   password: string;
+//   name: string;
+// };
+
+// export type SignupResponse = {
+//   accessToken: string;
+//   admin: AdminUser;
+// };
+
+// export type AuthError = {
+//   data?: {
+//     message?: string;
+//     error?: string;
+//   };
+//   error?: string;
+//   status?: number;
+// };
+
+// export type PinLoginRequest = {
+//   pin: string;
+//   tenantId: string;
+// };
+
+// export type PinLoginResponse = {
+//   accessToken: string;
+//   user: {
+//     sub: string;
+//     name: string;
+//     tenantId: string;
+//     role: string;
+//   };
+// };

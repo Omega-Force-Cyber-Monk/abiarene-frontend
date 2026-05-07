@@ -17,11 +17,11 @@ export const adminTenantApi = baseApi.injectEndpoints({
     // Tenant endpoints
     getTenants: builder.query<ApiResponse<Tenant[]>, GetTenantsParams>({
       query: (params) => ({
-        url: "/admin/tenants",
+        url: "/tenant/all",
         method: "GET",
         params: {
           page: params.page || 1,
-          limit: params.limit || 10,
+          limit: params.limit || 20,
           ...(params.search && { search: params.search }),
           ...(params.status && { status: params.status }),
         },
@@ -41,7 +41,7 @@ export const adminTenantApi = baseApi.injectEndpoints({
 
     createTenant: builder.mutation<Tenant, CreateTenantRequest>({
       query: (data) => ({
-        url: "/admin/tenants",
+        url: "/tenant/create",
         method: "POST",
         body: data,
       }),
