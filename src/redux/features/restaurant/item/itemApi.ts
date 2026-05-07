@@ -1,17 +1,19 @@
 import { baseApi } from "@/redux/hooks/baseApi";
+import { Item, CreateItemRequest, UpdateItemRequest } from "./item.type";
 
 export const itemApi = baseApi.injectEndpoints({
   endpoints: (builder) => ({
     // --- Tenant Endpoints ---
-    getItems: builder.query<any, void>({
-      query: () => ({
+    getItems: builder.query<Item[], { page?: number; limit?: number } | void>({
+      query: (params) => ({
         url: "/items",
         method: "GET",
+        params: params || { page: 1, limit: 10 },
       }),
       providesTags: ["Item"],
     }),
 
-    getItemById: builder.query<any, string>({
+    getItemById: builder.query<Item, string>({
       query: (id) => ({
         url: `/items/${id}`,
         method: "GET",
@@ -19,7 +21,7 @@ export const itemApi = baseApi.injectEndpoints({
       providesTags: (_result, _error, id) => [{ type: "Item", id }],
     }),
 
-    createItem: builder.mutation<any, any>({
+    createItem: builder.mutation<Item, CreateItemRequest>({
       query: (data) => ({
         url: "/items",
         method: "POST",
@@ -28,7 +30,7 @@ export const itemApi = baseApi.injectEndpoints({
       invalidatesTags: ["Item"],
     }),
 
-    updateItem: builder.mutation<any, { id: string; data: any }>({
+    updateItem: builder.mutation<Item, { id: string; data: UpdateItemRequest }>({
       query: ({ id, data }) => ({
         url: `/items/${id}`,
         method: "PATCH",
