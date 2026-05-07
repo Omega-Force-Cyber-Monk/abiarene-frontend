@@ -155,7 +155,7 @@ const Login: React.FC = () => {
             <button
               type="submit"
               disabled={isLoading}
-              className="w-full py-3 text-center font-semibold text-gray-800 px-7 rounded-xl bg-gradient-to-b from-[#FFB004] to-[#F3DA7F] shadow-md transition-all duration-300 ease-out hover:-translate-y-0.5 hover:shadow-xl hover:brightness-110 active:translate-y-0 active:shadow-md focus:outline-none cursor-pointer disabled:opacity-70 disabled:cursor-not-allowed"
+              className="w-full py-3 text-center font-semibold text-gray-800 px-7 rounded-xl bg-linear-to-b from-[#FFB004] to-[#F3DA7F] shadow-md transition-all duration-300 ease-out hover:-translate-y-0.5 hover:shadow-xl hover:brightness-110 active:translate-y-0 active:shadow-md focus:outline-none cursor-pointer disabled:opacity-70 disabled:cursor-not-allowed"
             >
               {isLoading ? (
                 <span className="flex items-center justify-center gap-2">

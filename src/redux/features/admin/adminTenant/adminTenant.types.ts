@@ -124,8 +124,6 @@ export const INDUSTRY_OPTIONS = [
   { label: "Ear", value: "ear" },
 ];
 
-
-
 // // Base response type
 // export interface ApiResponse<T> {
 //   data: T;
