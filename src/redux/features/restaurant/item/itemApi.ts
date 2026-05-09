@@ -1,10 +1,11 @@
 import { baseApi } from "@/redux/hooks/baseApi";
 import { Item, CreateItemRequest, UpdateItemRequest } from "./item.type";
+import { PaginatedResponse } from "../restaurant.type";
 
 export const itemApi = baseApi.injectEndpoints({
   endpoints: (builder) => ({
     // --- Tenant Endpoints ---
-    getItems: builder.query<Item[], { page?: number; limit?: number } | void>({
+    getItems: builder.query<PaginatedResponse<Item>, { page?: number; limit?: number } | void>({
       query: (params) => ({
         url: "/items",
         method: "GET",

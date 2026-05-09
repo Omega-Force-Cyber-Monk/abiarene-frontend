@@ -1,6 +1,5 @@
 import { useState } from "react";
 import { Plus } from "lucide-react";
-import {  initialCurrentOrder } from "./initialData";
 import { TableCardProps, MenuItem, OrderItem } from "./index";
 import { ManagerModal } from "./ManagerModal";
 import {
@@ -12,6 +11,10 @@ import {
   useCreateItemMutation,
   useUpdateItemMutation,
   useDeleteItemMutation,
+  useGetOrdersQuery,
+  useCreateOrderMutation,
+  useUpdateOrderMutation,
+  useDeleteOrderMutation,
 } from "@/redux/features/restaurant";
 import { toast } from "react-hot-toast";
 import CommonTable from "@/common/CommonTable";
@@ -31,18 +34,21 @@ export const ProductManageTable = () => {
   const limit = 10;
 
   // API Hooks
-  const { data: tables = [], isLoading: isTablesLoading } = useGetTablesQuery({ page, limit });
+  const { data: tables, isLoading: isTablesLoading } = useGetTablesQuery({ page, limit });
   const [createTable, { isLoading: isCreatingTable }] = useCreateTableMutation();
   const [updateTable, { isLoading: isUpdatingTable }] = useUpdateTableMutation();
   const [deleteTable] = useDeleteTableMutation();
 
-  const { data: menuItemsData = [], isLoading: isMenuItemsLoading } = useGetItemsQuery({ page, limit });
+  const { data: menuItemsData, isLoading: isMenuItemsLoading } = useGetItemsQuery({ page, limit });
   const [createItem, { isLoading: isCreatingItem }] = useCreateItemMutation();
   const [updateItem, { isLoading: isUpdatingItem }] = useUpdateItemMutation();
   const [deleteItem] = useDeleteItemMutation();
 
-  // Static State (Temporary until API integration)
-  const [orderItems, setOrderItems] = useState<OrderItem[]>(initialCurrentOrder);
+  const { data: ordersData, isLoading: isOrdersLoading } = useGetOrdersQuery({ page, limit });
+  const [createOrder, { isLoading: isCreatingOrder }] = useCreateOrderMutation();
+  const [updateOrder, { isLoading: isUpdatingOrder }] = useUpdateOrderMutation();
+  const [deleteOrder] = useDeleteOrderMutation();
+
 
   // Modal states
   const [isAddModalOpen, setIsAddModalOpen] = useState(false);
@@ -128,19 +134,29 @@ export const ProductManageTable = () => {
   };
 
   // Order CRUD Handlers
-  const handleOrderSubmit = (data: Omit<OrderItem, "id"> & { id?: string }) => {
-    if (isEditModalOpen) {
-      setOrderItems(orderItems.map((o) => (o.id === data.id ? { ...o, ...data } as OrderItem : o)));
-    } else {
-      const newId = `o${Date.now()}`;
-      setOrderItems([...orderItems, { ...data, id: newId } as OrderItem]);
+  const handleOrderSubmit = async (data: any) => {
+    try {
+      if (isEditModalOpen) {
+        await updateOrder({ id: selectedItem.id, data }).unwrap();
+        toast.success("Order updated successfully");
+      } else {
+        await createOrder(data).unwrap();
+        toast.success("Order created successfully");
+      }
+      closeModal();
+    } catch (error: any) {
+      toast.error(error?.data?.message || "Operation failed");
     }
-    closeModal();
   };
 
-  const handleDeleteOrder = (id: string | number) => {
+  const handleDeleteOrder = async (id: string | number) => {
     if (confirm("Are you sure?")) {
-      setOrderItems(orderItems.filter((o) => o.id !== id.toString()));
+      try {
+        await deleteOrder(id.toString()).unwrap();
+        toast.success("Order deleted successfully");
+      } catch (error: any) {
+        toast.error(error?.data?.message || "Delete failed");
+      }
     }
   };
 
@@ -156,12 +172,12 @@ export const ProductManageTable = () => {
       return (
         <CommonTable
           columns={getTableColumns(handlers)}
-          data={tables}
+          data={tables?.data || []}
           isLoading={isTablesLoading}
           emptyMessage="No tables found."
           pagination={{
             currentPage: page,
-            totalPages: tables.length === limit ? page + 1 : page,
+            totalPages: tables?.meta?.totalPages || 1,
             onPageChange: (newPage) => setPage(newPage),
           }}
         />
@@ -172,12 +188,12 @@ export const ProductManageTable = () => {
       return (
         <CommonTable
           columns={getMenuColumns(handlers)}
-          data={menuItemsData}
+          data={menuItemsData?.data || []}
           isLoading={isMenuItemsLoading}
           emptyMessage="No menu items found."
           pagination={{
             currentPage: page,
-            totalPages: menuItemsData.length === limit ? page + 1 : page,
+            totalPages: menuItemsData?.meta?.totalPages || 1,
             onPageChange: (newPage) => setPage(newPage),
           }}
         />
@@ -187,8 +203,14 @@ export const ProductManageTable = () => {
     return (
       <CommonTable
         columns={getOrderColumns(handlers)}
-        data={orderItems}
+        data={ordersData?.data || []}
+        isLoading={isOrdersLoading}
         emptyMessage="No orders found."
+        pagination={{
+          currentPage: page,
+          totalPages: ordersData?.meta?.totalPages || 1,
+          onPageChange: (newPage) => setPage(newPage),
+        }}
       />
     );
   };
@@ -278,7 +300,7 @@ export const ProductManageTable = () => {
               initialData={selectedItem as OrderItem}
               onSubmit={handleOrderSubmit}
               onCancel={closeModal}
-              menuItems={menuItemsData}
+              menuItems={menuItemsData?.data || []}
             />
           )}
         </ManagerModal>

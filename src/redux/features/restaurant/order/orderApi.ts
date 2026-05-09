@@ -1,11 +1,13 @@
 import { baseApi } from "@/redux/hooks/baseApi";
+import { PaginatedResponse } from "../restaurant.type";
 
 export const orderApi = baseApi.injectEndpoints({
   endpoints: (builder) => ({
-    getOrders: builder.query<any, void>({
-      query: () => ({
+    getOrders: builder.query<PaginatedResponse<any>, { page?: number; limit?: number } | void>({
+      query: (params) => ({
         url: "/orders",
         method: "GET",
+        params: params || { page: 1, limit: 10 },
       }),
       providesTags: ["Order"],
     }),

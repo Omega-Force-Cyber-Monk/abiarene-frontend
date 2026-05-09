@@ -61,7 +61,7 @@ const CommonTable = <T extends { id: string | number }>({
                 </td>
               </tr>
             ) : (
-              data.map((item) => (
+              data?.map((item) => (
                 <tr
                   key={item.id}
                   className="border-b border-gray-100 hover:bg-gray-50 transition-colors"

@@ -4,11 +4,12 @@ import {
   CreateTableRequest,
   UpdateTableRequest,
 } from "./table.type";
+import { PaginatedResponse } from "../restaurant.type";
 
 export const tableApi = baseApi.injectEndpoints({
   endpoints: (builder) => ({
     // --- Tenant Endpoints ---
-    getTables: builder.query<Table[], { page?: number; limit?: number } | void>({
+    getTables: builder.query<PaginatedResponse<Table>, { page?: number; limit?: number } | void>({
       query: (params) => ({
         url: "/tables",
         method: "GET",
