@@ -1,14 +1,9 @@
-export interface ProductInfo {
-  name: string;
-  price: number;
-  stock: number;
-  sku: string;
-}
+import { InventoryItem } from "@/redux/features/restaurant/inventory/inventory.type";
 
 export interface ScannedData {
   barcode: string;
   timestamp: string;
-  product: ProductInfo;
+  product: InventoryItem;
   image?: string;
 }
 

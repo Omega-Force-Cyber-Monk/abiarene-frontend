@@ -1,14 +1,18 @@
 import React, { useState, useRef, useEffect, useCallback } from "react";
 import { Html5Qrcode } from "html5-qrcode";
 
+import { useLazyGetInventoryByValueQuery } from "@/redux/features/restaurant/inventory/inventoryApi";
+
 // Components
 import { InitialView } from "./components/InitialView";
 import { ScannerView } from "./components/ScannerView";
 import { ScanResults } from "./components/ScanResults";
 import { ScanInfoCards } from "./components/ScanInfoCards";
+import { AddInventoryModal } from "./components/AddInventoryModal";
+import { UpdateInventoryModal } from "./components/UpdateInventoryModal";
 
 // Types
-import { ScannedData, ProductInfo } from "./types";
+import { ScannedData } from "./types";
 
 const READER_ID = "qr-reader";
 
@@ -17,21 +21,19 @@ const Scann: React.FC = () => {
   const [isScanning, setIsScanning] = useState(false);
   const [scannedData, setScannedData] = useState<ScannedData | null>(null);
   const [error, setError] = useState<string | null>(null);
+  
+  // State for Add/Update Inventory Modals
+  const [isAddModalOpen, setIsAddModalOpen] = useState(false);
+  const [isUpdateModalOpen, setIsUpdateModalOpen] = useState(false);
+  const [lastScannedBarcode, setLastScannedBarcode] = useState("");
 
   // Use a ref to track actual running state (more reliable than library's isScanning)
   const qrRef = useRef<Html5Qrcode | null>(null);
   const isRunningRef = useRef(false);
+  const isProcessingRef = useRef(false); // To prevent multiple scans of same item
 
-  const getProductInfo = (barcode: string): ProductInfo => {
-    const products: Record<string, ProductInfo> = {
-      "123456789012": { name: "Wireless Mouse", price: 29.99, stock: 45, sku: "WM-001" },
-      "5901234123457": { name: "USB-C Cable", price: 12.99, stock: 120, sku: "UC-002" },
-      "4006381333931": { name: "Bluetooth Headphones", price: 89.99, stock: 23, sku: "BH-003" },
-      "735135353": { name: "Screen Protector", price: 9.99, stock: 67, sku: "SP-004" },
-      "9780201379624": { name: "Programming Book", price: 49.99, stock: 12, sku: "PB-005" },
-    };
-    return products[barcode] || { name: "Unknown Product", price: 0, stock: 0, sku: "N/A" };
-  };
+  // RTK Query lazy hook to fetch inventory by barcode
+  const [triggerLookup] = useLazyGetInventoryByValueQuery();
 
   const stopScanning = useCallback(async () => {
     if (isRunningRef.current && qrRef.current) {
@@ -60,13 +62,40 @@ const Scann: React.FC = () => {
       await scanner.start(
         { facingMode: "environment" },
         { fps: 15, qrbox: { width: 280, height: 280 }, aspectRatio: 1.6 },
-        (decodedText) => {
-          const product = getProductInfo(decodedText);
-          setScannedData({
-            barcode: decodedText,
-            timestamp: new Date().toLocaleString(),
-            product,
-          });
+        async (decodedText) => {
+          if (isProcessingRef.current) return;
+          isProcessingRef.current = true;
+          
+          console.log("Scanned Barcode:", decodedText);
+          
+          try {
+            const result = await triggerLookup(decodedText).unwrap();
+            console.log("API Result:", result);
+            
+            if (result) {
+              setScannedData({
+                barcode: decodedText,
+                timestamp: new Date().toLocaleString(),
+                product: result,
+              });
+              setError(null);
+              setLastScannedBarcode("");
+            } else {
+              // Handle null response as not found
+              setError(`Item "${decodedText}" not found in inventory.`);
+              setLastScannedBarcode(decodedText);
+              setScannedData(null);
+            }
+          } catch (err: any) {
+            console.error("Lookup Error:", err);
+            setError(`Item "${decodedText}" not found in inventory.`);
+            setLastScannedBarcode(decodedText);
+            setScannedData(null);
+          } finally {
+            setTimeout(() => {
+              isProcessingRef.current = false;
+            }, 2000);
+          }
         },
         () => {}
       );
@@ -130,6 +159,8 @@ const Scann: React.FC = () => {
                   isScanning={isScanning}
                   onClear={() => setScannedData(null)}
                   onClearError={() => setError(null)}
+                  onAdd={() => setIsAddModalOpen(true)}
+                  onEdit={() => setIsUpdateModalOpen(true)}
                 />
               </div>
             </div>
@@ -140,6 +171,34 @@ const Scann: React.FC = () => {
           </div>
         </div>
       </div>
+
+      <AddInventoryModal 
+        isOpen={isAddModalOpen}
+        onClose={() => setIsAddModalOpen(false)}
+        barcode={lastScannedBarcode}
+        onSuccess={(newItem) => {
+          setScannedData({
+            barcode: newItem.barcode,
+            timestamp: new Date().toLocaleString(),
+            product: newItem
+          });
+          setError(null);
+        }}
+      />
+
+      {scannedData?.product && (
+        <UpdateInventoryModal 
+          isOpen={isUpdateModalOpen}
+          onClose={() => setIsUpdateModalOpen(false)}
+          item={scannedData.product}
+          onSuccess={(updatedItem) => {
+            setScannedData({
+              ...scannedData,
+              product: updatedItem
+            });
+          }}
+        />
+      )}
 
       <style>{`
         #qr-reader { border: none !important; }
