@@ -1,4 +1,5 @@
-// adminTenant.types.ts
+// redux/features/admin/adminTenant/adminTenant.types.ts
+
 export interface ApiResponse<T> {
   data: T;
   total?: number;
@@ -6,14 +7,6 @@ export interface ApiResponse<T> {
   limit?: number;
 }
 
-export interface CreateTenantUserFormData {
-  name: string;
-  pin: string;
-  roleId: string;
-  status: "ACTIVE" | "INACTIVE";
-}
-
-// Tenant types
 export interface Role {
   id: string;
   name: string;
@@ -21,6 +14,62 @@ export interface Role {
   isActive: boolean;
   createdAt: string;
   updatedAt: string;
+}
+
+// export interface Tenant {
+//   id: string;
+//   name: string;
+//   industry: string;
+//   subscriptionFee: number;
+//   status: "ACTIVE" | "INACTIVE" | "SUSPENDED";
+//   lastSync: string;
+//   createdAt: string;
+//   updatedAt: string;
+// }
+
+export interface Tenant {
+  id: string;
+  name: string;
+  industry: string;
+  subscriptionFee: number;
+  status: "ACTIVE" | "INACTIVE" | "SUSPENDED";
+  lastSync: string;
+  createdAt: string;
+  updatedAt: string;
+  roles?: Role[];
+  manager?: Manager;
+}
+
+export interface UpdateRolesPayload {
+  server: boolean;
+  kitchen: boolean;
+  cashier: boolean;
+}
+
+export interface DeleteUserResponse {
+  count: number;
+}
+
+export interface GetTenantsQueryParams {
+  page?: number;
+  limit?: number;
+  search?: string;
+}
+
+export interface GetRolesQueryParams {
+  page?: number;
+  limit?: number;
+}
+
+export interface CreateTenantRequest {
+  name: string;
+  industry: string;
+  subscriptionFee: number;
+  managerEmail: string;
+  managerPin: string;
+  server: boolean;
+  kitchen: boolean;
+  cashier: boolean;
 }
 
 export interface Manager {
@@ -36,55 +85,11 @@ export interface Manager {
   role: Role;
 }
 
-export interface Tenant {
-  id: string;
-  name: string;
-  industry: string;
-  subscriptionFee: number;
-  status: "ACTIVE" | "INACTIVE" | "SUSPENDED";
-  lastSync: string;
-  createdAt: string;
-  updatedAt: string;
-  roles?: Role[];
-  manager?: Manager;
-}
-
-export interface CreateTenantRequest {
-  name: string;
-  industry: string;
-  subscriptionFee: number;
-  managerEmail: string;
-  managerPin: string;
-  server: boolean;
-  kitchen: boolean;
-  cashier: boolean;
-}
-
-export interface UpdateTenantRequest {
-  name?: string;
-  industry?: string;
-  subscriptionFee?: number;
-  status?: "ACTIVE" | "INACTIVE" | "SUSPENDED";
-}
-
-export interface GetTenantsParams {
-  page?: number;
-  limit?: number;
-  search?: string;
-  status?: string;
-}
-
-// Role types
-export interface CreateRoleRequest {
-  name: string;
-  isActive: boolean;
-}
-
-// User types
+// User types based on actual API response
 export interface TenantUser {
   id: string;
   name: string;
-  email?: string;
+  email: string;
   pin: string;
   roleId: string;
   tenantId: string;
@@ -94,37 +99,32 @@ export interface TenantUser {
   role?: Role;
 }
 
+// Create User Request - matches Swagger POST /api/users/tenant/{tenantId}
 export interface CreateTenantUserRequest {
   name: string;
+  email: string;
   pin: string;
-  roleId: string;
-  status: "ACTIVE" | "INACTIVE";
+  role: string; // role name as string, not roleId
 }
 
+// Update User Request - matches Swagger PATCH /api/users/tenant/{tenantId}/{id}
 export interface UpdateTenantUserRequest {
   name?: string;
+  email?: string;
   pin?: string;
-  roleId?: string;
+  role?: string;
   status?: "ACTIVE" | "INACTIVE";
 }
 
-// Industry options
-export type IndustryType =
-  | "restaurant"
-  | "supermarket"
-  | "retail"
-  | "merchant"
-  | "ear";
+// Get Tenant Users Response (GET /api/users/tenant/{tenantId})
+export interface TenantUsersResponse {
+  data: TenantUser[];
+  total: number;
+  page: number;
+  limit: number;
+}
 
-export const INDUSTRY_OPTIONS = [
-  { label: "Restaurant", value: "restaurant" },
-  { label: "Supermarket", value: "supermarket" },
-  { label: "Retail", value: "retail" },
-  { label: "Merchant", value: "merchant" },
-  { label: "Ear", value: "ear" },
-];
-
-// // Base response type
+// // Base response types
 // export interface ApiResponse<T> {
 //   data: T;
 //   total?: number;
@@ -132,12 +132,14 @@ export const INDUSTRY_OPTIONS = [
 //   limit?: number;
 // }
 
-// /* create tenant user */
-// export interface CreateTenantUserFormData {
+// // Role types
+// export interface Role {
+//   id: string;
 //   name: string;
-//   pin: string;
-//   roleId: string;
-//   status: "ACTIVE" | "INACTIVE";
+//   tenantId: string;
+//   isActive: boolean;
+//   createdAt: string;
+//   updatedAt: string;
 // }
 
 // // Tenant types
@@ -152,81 +154,63 @@ export const INDUSTRY_OPTIONS = [
 //   updatedAt: string;
 // }
 
+// // Role update payload
+// export interface UpdateRolesPayload {
+//   server: boolean;
+//   kitchen: boolean;
+//   cashier: boolean;
+// }
+
+// // User deletion response
+// export interface DeleteUserResponse {
+//   count: number;
+// }
+
+// // Query params
+// export interface GetTenantsQueryParams {
+//   page?: number;
+//   limit?: number;
+//   search?: string;
+// }
+
+// export interface GetRolesQueryParams {
+//   page?: number;
+//   limit?: number;
+// }
+
+// export interface Tenant {
+//   id: string;
+//   name: string;
+//   industry: string;
+//   subscriptionFee: number;
+//   status: "ACTIVE" | "INACTIVE" | "SUSPENDED";
+//   lastSync: string;
+//   createdAt: string;
+//   updatedAt: string;
+//   roles?: Role[];
+//   manager?: Manager;
+// }
+
 // export interface CreateTenantRequest {
 //   name: string;
 //   industry: string;
 //   subscriptionFee: number;
+//   managerEmail: string;
+//   managerPin: string;
+//   server: boolean;
+//   kitchen: boolean;
+//   cashier: boolean;
 // }
 
-// export interface UpdateTenantRequest {
-//   name?: string;
-//   industry?: string;
-//   subscriptionFee?: number;
-//   status?: "ACTIVE" | "INACTIVE" | "SUSPENDED";
-// }
-
-// export interface GetTenantsParams {
-//   page?: number;
-//   limit?: number;
-//   search?: string;
-//   status?: string;
-// }
-
-// // Role types
-// export interface Role {
-//   description: import("react/jsx-runtime").JSX.Element;
+// export interface Manager {
 //   id: string;
 //   name: string;
-//   tenantId: string;
-//   isActive: boolean;
-//   createdAt: string;
-//   updatedAt: string;
-// }
-
-// export interface CreateRoleRequest {
-//   name: string;
-//   isActive: boolean;
-// }
-
-// // User types
-// export interface TenantUser {
-//   id: string;
-//   name: string;
+//   email: string;
 //   pin: string;
 //   roleId: string;
 //   tenantId: string;
 //   status: "ACTIVE" | "INACTIVE";
 //   createdAt: string;
 //   updatedAt: string;
-//   role?: Role;
+//   role: Role;
 // }
-
-// export interface CreateTenantUserRequest {
-//   name: string;
-//   pin: string;
-//   roleId: string;
-//   status: "ACTIVE" | "INACTIVE";
-// }
-
-// export interface UpdateTenantUserRequest {
-//   name?: string;
-//   pin?: string;
-//   roleId?: string;
-//   status?: "ACTIVE" | "INACTIVE";
-// }
-
-// // Industry options
-// export type IndustryType =
-//   | "restaurant"
-//   | "supermarket"
-//   | "retail"
-//   | "merchant"
-//   | "ear";
-
-// export const INDUSTRY_OPTIONS = [
-//   { label: "Restaurant", value: "restaurant" },
-//   { label: "Supermarket", value: "supermarket" },
-//   { label: "Retail", value: "retail" },
-//   { label: "Merchant", value: "merchant" },
-//   { label: "Ear", value: "ear" },
-// ];
