@@ -1,6 +1,6 @@
-import { useState, useMemo } from "react";
+import { useState } from "react";
 import { Plus } from "lucide-react";
-import { initialMenuItems, initialCurrentOrder } from "./initialData";
+import {  initialCurrentOrder } from "./initialData";
 import { TableCardProps, MenuItem, OrderItem } from "./index";
 import { ManagerModal } from "./ManagerModal";
 import {
