@@ -24,9 +24,17 @@ import { TableForm } from "./components/TableForm";
 import { MenuForm } from "./components/MenuForm";
 import { OrderForm } from "./components/OrderForm";
 import { ViewModal } from "./components/ViewModal";
+import { SharedMenuForm } from "./components/SharedMenuForm";
 import { getTableColumns, getMenuColumns, getOrderColumns } from "./components/columns";
+import { SharedMenuContent } from "./SharedMenuContent";
 
-type ActiveTab = "tables" | "menu" | "orders";
+import {
+  useGetSharedMenuQuery,
+  useAddToSharedMenuMutation,
+  useRemoveFromSharedMenuMutation,
+} from "@/redux/features/restaurant/menu/menuApi";
+
+type ActiveTab = "tables" | "items" | "shared-menu" | "orders";
 
 export const ProductManageTable = () => {
   const [activeTab, setActiveTab] = useState<ActiveTab>("tables");
@@ -48,6 +56,11 @@ export const ProductManageTable = () => {
   const [createOrder, { isLoading: isCreatingOrder }] = useCreateOrderMutation();
   const [updateOrder, { isLoading: isUpdatingOrder }] = useUpdateOrderMutation();
   const [deleteOrder] = useDeleteOrderMutation();
+
+  // Shared Menu Hooks
+  const { data: sharedMenu, isLoading: isSharedMenuLoading } = useGetSharedMenuQuery();
+  const [addToSharedMenu, { isLoading: isAddingToMenu }] = useAddToSharedMenuMutation();
+  const [removeFromSharedMenu] = useRemoveFromSharedMenuMutation();
 
 
   // Modal states
@@ -160,12 +173,33 @@ export const ProductManageTable = () => {
     }
   };
 
+  const handleRemoveFromSharedMenu = async (itemId: string) => {
+    if (confirm("Remove this item from the shared menu?")) {
+      try {
+        await removeFromSharedMenu(itemId).unwrap();
+        toast.success("Item removed from shared menu");
+      } catch (error: any) {
+        toast.error(error?.data?.message || "Action failed");
+      }
+    }
+  };
+
+  const handleAddToSharedMenu = async (data: { name: string; itemIds: string[] }) => {
+    try {
+      await addToSharedMenu(data).unwrap();
+      toast.success("Items added to shared menu");
+      closeModal();
+    } catch (error: any) {
+      toast.error(error?.data?.message || "Action failed");
+    }
+  };
+
 
   const renderTableContent = () => {
     const handlers = {
       openViewModal,
       openEditModal,
-      handleDelete: activeTab === "tables" ? handleDeleteTable : activeTab === "menu" ? handleDeleteMenu : handleDeleteOrder
+      handleDelete: activeTab === "tables" ? handleDeleteTable : activeTab === "items" ? handleDeleteMenu : handleDeleteOrder
     };
 
     if (activeTab === "tables") {
@@ -184,7 +218,7 @@ export const ProductManageTable = () => {
       );
     }
 
-    if (activeTab === "menu") {
+    if (activeTab === "items") {
       return (
         <CommonTable
           columns={getMenuColumns(handlers)}
@@ -196,6 +230,16 @@ export const ProductManageTable = () => {
             totalPages: menuItemsData?.meta?.totalPages || 1,
             onPageChange: (newPage) => setPage(newPage),
           }}
+        />
+      );
+    }
+
+    if (activeTab === "shared-menu") {
+      return (
+        <SharedMenuContent 
+          sharedMenu={sharedMenu}
+          onRemoveItem={handleRemoveFromSharedMenu}
+          isLoading={isSharedMenuLoading || isMenuItemsLoading}
         />
       );
     }
@@ -217,7 +261,8 @@ export const ProductManageTable = () => {
 
   const labels: Record<ActiveTab, string> = {
     tables: "Table",
-    menu: "Menu",
+    items: "Item",
+    "shared-menu": "Shared Menu",
     orders: "Order",
   };
 
@@ -243,7 +288,7 @@ export const ProductManageTable = () => {
         </div>
 
         <div className="flex flex-col sm:flex-row gap-2 bg-white rounded-xl p-2 shadow-sm mb-6">
-          {(["tables", "menu", "orders"] as ActiveTab[]).map((tab) => (
+          {(["tables", "items", "shared-menu", "orders"] as ActiveTab[]).map((tab) => (
             <button
               key={tab}
               onClick={() => {
@@ -253,7 +298,7 @@ export const ProductManageTable = () => {
               className={`w-full sm:flex-1 px-4 py-2.5 rounded-lg font-medium capitalize transition-all cursor-pointer ${activeTab === tab ? "bg-[#0A2540] text-white shadow-sm" : "text-gray-600 hover:bg-gray-100"
                 }`}
             >
-              {tab}
+              {tab.replace("-", " ")}
             </button>
           ))}
         </div>
@@ -287,7 +332,7 @@ export const ProductManageTable = () => {
               onCancel={closeModal}
             />
           )}
-          {activeTab === "menu" && (
+          {activeTab === "items" && (
             <MenuForm
               initialData={selectedItem as MenuItem}
               onSubmit={handleMenuSubmit}
@@ -301,6 +346,15 @@ export const ProductManageTable = () => {
               onSubmit={handleOrderSubmit}
               onCancel={closeModal}
               menuItems={menuItemsData?.data || []}
+            />
+          )}
+          {activeTab === "shared-menu" && (
+            <SharedMenuForm
+              items={menuItemsData?.data || []}
+              sharedMenu={sharedMenu}
+              onSubmit={handleAddToSharedMenu}
+              onCancel={closeModal}
+              isSubmitting={isAddingToMenu}
             />
           )}
         </ManagerModal>
