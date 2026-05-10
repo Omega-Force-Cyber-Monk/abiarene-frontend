@@ -99,8 +99,8 @@ export const ScanResults: React.FC<ScanResultsProps> = ({
               </button>
             </div>
             
-            {/* If it's a "not found" error, show Add button */}
-            {error.includes("not found") && (
+            {/* If it's a "not found in inventory" error, show Add button */}
+            {error.includes("not found in inventory") && (
               <button
                 onClick={onAdd}
                 className="w-full py-2 bg-green-600 text-white rounded-lg text-xs font-semibold hover:bg-green-700 transition-all cursor-pointer"

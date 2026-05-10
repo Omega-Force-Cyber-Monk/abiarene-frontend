@@ -12,6 +12,7 @@ export interface Role {
 export interface Employee {
   id: string;
   name: string;
+  email: string;
   pin: string;
   roleId: string;
   tenantId: string;
@@ -21,21 +22,35 @@ export interface Employee {
   role?: Role;
 }
 
+export interface PaginatedResponse<T> {
+  data: T[];
+  meta: {
+    page: number;
+    limit: number;
+    total: number;
+    count: number;
+    totalPages: number;
+  };
+}
+
 export interface CreateEmployeeRequest {
   name: string;
+  email: string;
   pin: string;
-  roleId: string;
+  role: "SERVER" | "KITCHEN" | "CASHIER" | "MANAGER";
 }
 
 export interface UpdateEmployeeRequest {
   name?: string;
+  email?: string;
   pin?: string;
-  roleId?: string;
+  role?: "SERVER" | "KITCHEN" | "CASHIER" | "MANAGER";
   status?: "ACTIVE" | "INACTIVE";
 }
 
 export interface EmployeeFormData {
   name: string;
-  roleId: string;
+  email: string;
+  role: string;
   pin: string;
 }

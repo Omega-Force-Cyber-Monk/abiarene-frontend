@@ -6,16 +6,21 @@ import {
   CreateEmployeeRequest,
   UpdateEmployeeRequest,
   Role,
+  PaginatedResponse,
 } from "./employee";
 // import { Employee, CreateEmployeeRequest, UpdateEmployeeRequest, Role } from "@/";
 
 export const employeeApi = baseApi.injectEndpoints({
   endpoints: (builder) => ({
     // Get all employees
-    getEmployees: builder.query<Employee[], void>({
-      query: () => ({
+    getEmployees: builder.query<
+      PaginatedResponse<Employee>,
+      { page?: number; limit?: number } | void
+    >({
+      query: (params) => ({
         url: "/users",
         method: "GET",
+        params: params || { page: 1, limit: 20 },
       }),
       providesTags: ["User"],
     }),
