@@ -1,154 +1,92 @@
 import { useState } from "react";
 import { MdSend } from "react-icons/md";
+import { Loader2 } from "lucide-react";
+import { toast } from "sonner";
 import print from "@/assets/primepos/logo/print.svg";
-
-type TicketItem = {
-  id: number;
-  name: string;
-  notes?: string[];
-};
-
-type TicketStatus = "Preparing" | "Ready" | "Completed";
-
-type Ticket = {
-  id: number;
-  time: string;
-  ticketNumber: string;
-  items: TicketItem[];
-  status: TicketStatus;
-};
-
-const initialTickets: Ticket[] = [
-  {
-    id: 1,
-    time: "13:41",
-    ticketNumber: "9418621",
-    items: [
-      { id: 1, name: "PANEER TIKKA", notes: ["Extra Spicy", "Well Grilled"] },
-      { id: 2, name: "GARLIC NAAN", notes: ["Less Salt", "No Onion"] },
-      { id: 3, name: "BUTTER RICE", notes: ["Hot"] },
-    ],
-    status: "Preparing",
-  },
-  {
-    id: 2,
-    time: "13:45",
-    ticketNumber: "9418622",
-    items: [
-      { id: 1, name: "MANGO LASSI" },
-      { id: 2, name: "CHICKEN BIRYANI", notes: ["Extra Spicy"] },
-    ],
-    status: "Preparing",
-  },
-  {
-    id: 3,
-    time: "13:50",
-    ticketNumber: "9418623",
-    items: [
-      { id: 1, name: "PANEER TIKKA" },
-      { id: 2, name: "MANGO LASSI" },
-      { id: 3, name: "FRENCH FRIES", notes: ["Crispy", "Extra Salt"] },
-    ],
-    status: "Ready",
-  },
-  {
-    id: 4,
-    time: "13:55",
-    ticketNumber: "9418624",
-    items: [
-      { id: 1, name: "GARLIC NAAN" },
-      { id: 2, name: "CHICKEN WINGS", notes: ["BBQ Sauce"] },
-    ],
-    status: "Completed",
-  },
-  {
-    id: 5,
-    time: "14:00",
-    ticketNumber: "9418625",
-    items: [
-      { id: 1, name: "VEG BURGER", notes: ["No Onion", "Extra Cheese"] },
-      { id: 2, name: "COKE" },
-      { id: 3, name: "ONION RINGS", notes: ["Crispy"] },
-    ],
-    status: "Preparing",
-  },
-  {
-    id: 6,
-    time: "14:05",
-    ticketNumber: "9418626",
-    items: [
-      { id: 1, name: "CHICKEN PIZZA", notes: ["Thin Crust", "Extra Cheese"] },
-      { id: 2, name: "LEMON JUICE", notes: ["Less Sugar"] },
-    ],
-    status: "Ready",
-  },
-  {
-    id: 7,
-    time: "14:10",
-    ticketNumber: "9418627",
-    items: [
-      { id: 1, name: "FISH CURRY", notes: ["Spicy", "Hot Served"] },
-      { id: 2, name: "STEAM RICE" },
-      { id: 3, name: "SALAD", notes: ["No Onion", "Extra Lemon"] },
-    ],
-    status: "Preparing",
-  },
-  {
-    id: 8,
-    time: "14:15",
-    ticketNumber: "9418628",
-    items: [
-      { id: 1, name: "CHOCOLATE SHAKE" },
-      { id: 2, name: "FRENCH TOAST", notes: ["Maple Syrup"] },
-    ],
-    status: "Completed",
-  },
-];
+import {
+  useGetKitchenBoardTicketsQuery,
+  useGetAllTicketsQuery,
+  useBumpToReadyMutation,
+  useForceArchiveMutation,
+} from "@/redux/features/restaurant/ticket/ticketApi";
+import { Ticket } from "@/redux/features/restaurant/ticket/ticket.type";
 
 export default function KitchenTickets() {
   const [activeTab, setActiveTab] = useState<"Active" | "Archive">("Active");
-  const [tickets, setTickets] = useState<Ticket[]>(initialTickets);
 
-  // Move Preparing → Ready
-  const handleBumpToReady = (id: number) => {
-    setTickets((prev) =>
-      prev.map((t) => (t.id === id ? { ...t, status: "Ready" } : t)),
-    );
+  // API Hooks with Polling
+  const { data: activeTicketsData, isLoading: isBoardLoading, isError: isBoardError, refetch: refetchBoard } = useGetKitchenBoardTicketsQuery(undefined, {
+    pollingInterval: 10000, // auto refresh every 10s for kitchen board
+    skip: activeTab !== "Active",
+  });
+  
+  const { data: archivedTicketsResp, isLoading: isArchivedLoading, isError: isArchivedError, refetch: refetchArchived } = useGetAllTicketsQuery({ status: "ARCHIVED" }, {
+    skip: activeTab !== "Archive",
+  });
+
+  const [bumpToReady, { isLoading: isBumping }] = useBumpToReadyMutation();
+  const [archiveTicket, { isLoading: isArchiving }] = useForceArchiveMutation();
+
+  const handleBumpToReady = async (id: string) => {
+    try {
+      await bumpToReady(id).unwrap();
+      toast.success("Ticket marked as ready");
+    } catch (error: any) {
+      toast.error(error?.data?.message || "Failed to bump ticket to ready");
+    }
   };
 
-  // Move Ready → Completed (Archive)
-  const handleArchive = (id: number) => {
-    setTickets((prev) =>
-      prev.map((t) => (t.id === id ? { ...t, status: "Completed" } : t)),
-    );
+  const handleArchive = async (id: string) => {
+    try {
+      await archiveTicket(id).unwrap();
+      toast.success("Ticket archived successfully");
+    } catch (error: any) {
+      toast.error(error?.data?.message || "Failed to archive ticket");
+    }
   };
 
-  const filteredTickets = tickets.filter((ticket) =>
-    activeTab === "Active"
-      ? ticket.status !== "Completed"
-      : ticket.status === "Completed",
-  );
+  const activeTickets = activeTicketsData || [];
+  const archivedTickets = Array.isArray(archivedTicketsResp) 
+    ? archivedTicketsResp 
+    : archivedTicketsResp?.data || [];
+
+  const ticketsToDisplay = activeTab === "Active" ? activeTickets : archivedTickets;
+
+  const filteredTickets = ticketsToDisplay.filter((ticket: Ticket) => {
+    // If order is cancelled, we should treat the ticket as archived/discarded
+    const isCancelled = ticket.order?.status === "CANCELLED";
+    
+    if (activeTab === "Active") {
+      return (ticket.status === "ACTIVE" || ticket.status === "READY") && !isCancelled;
+    } else {
+      return ticket.status === "ARCHIVED" || isCancelled; 
+    }
+  });
+
+  const isLoading = activeTab === "Active" ? isBoardLoading : isArchivedLoading;
+  const isError = activeTab === "Active" ? isBoardError : isArchivedError;
+  const refetch = activeTab === "Active" ? refetchBoard : refetchArchived;
 
   return (
-    <div className="p-6">
+    <div className="p-4 md:p-6 min-h-full">
       {/* Header */}
-      <div className="flex justify-between items-center mb-8">
+      <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 mb-8">
         <div>
-          <h1 className="text-2xl font-semibold text-gray-800">
+          <h1 className="text-2xl md:text-3xl font-bold text-gray-800">
             Kitchen Production
           </h1>
-          <p>Live Ticket Stream</p>
+          <p className="text-gray-500 mt-1 font-medium">Live Ticket Stream</p>
         </div>
 
-        <div className="flex bg-gray-200 rounded-full p-1">
+        <div className="flex bg-gray-200/80 rounded-full p-1 shadow-inner">
           {["Active", "Archive"].map((tab) => (
             <button
               key={tab}
               onClick={() => setActiveTab(tab as any)}
-              className={`px-4 py-1.5 text-sm rounded-full cursor-pointer transition ${
+              className={`px-6 py-2 text-sm font-semibold rounded-full cursor-pointer transition-all duration-200 ${
                 activeTab === tab
-                  ? "bg-white shadow text-gray-900"
-                  : "text-gray-500"
+                  ? "bg-white shadow-sm text-gray-900"
+                  : "text-gray-500 hover:text-gray-700"
               }`}
             >
               {tab}
@@ -157,91 +95,146 @@ export default function KitchenTickets() {
         </div>
       </div>
 
-      {/* Grid */}
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
-        {filteredTickets.map((ticket) => (
-          <div
-            key={ticket.id}
-            className="bg-[#E6E7EB] rounded-2xl shadow-md flex flex-col justify-between"
-          >
-            <div className="p-5">
-              {/* Top */}
-              <div className="flex justify-between mb-3">
-                <span className="text-xs text-gray-400">IN{ticket.time}</span>
-
-                <span
-                  className={`text-xs px-2 py-1 rounded-full ${
-                    ticket.status === "Preparing"
-                      ? "bg-yellow-100 text-yellow-700"
-                      : ticket.status === "Ready"
-                        ? "bg-green-100 text-green-700"
-                        : "bg-gray-200 text-gray-600"
-                  }`}
-                >
-                  {ticket.status}
-                </span>
-              </div>
-
-              <p className="text-sm text-gray-500 mb-3">
-                Ticket #{ticket.ticketNumber}
-              </p>
-
-              <hr className="border-dashed border-gray-400 my-3" />
-
-              {/* Items */}
-              <ul className="space-y-2">
-                {ticket.items.map((item) => (
-                  <li key={item.id}>
-                    <p className="font-medium text-sm">{item.name}</p>
-
-                    {item.notes && (
-                      <ul className="ml-4 text-xs text-gray-500 list-disc">
-                        {item.notes.map((note, i) => (
-                          <li key={i}>{note}</li>
-                        ))}
-                      </ul>
-                    )}
-                  </li>
-                ))}
-              </ul>
-            </div>
-            <div className=" text-center">
-              {ticket.status === "Ready" && (
-                <span className="text-lg font-medium mb-5 text-[#31B97A] animate-pulse">
-                  WAITING FOR SERVER.......
-                </span>
-              )}
-            </div>
-
-            {/* Footer */}
-            <div className="px-5 py-3 flex items-center justify-between">
-              <img src={print} alt="print" className="w-9 h-9" />
-
-              {ticket.status === "Preparing" && (
-                <button
-                  onClick={() => handleBumpToReady(ticket.id)}
-                  className="flex items-center cursor-pointer gap-2 bg-[#042554] text-white px-4 py-2 rounded-full"
-                >
-                  Bump to Ready <MdSend />
-                </button>
-              )}
-
-              {ticket.status === "Ready" && (
-                <button
-                  onClick={() => handleArchive(ticket.id)}
-                  className="bg-gray-600 text-white px-4 py-1.5 rounded-md"
-                >
-                  Archive
-                </button>
-              )}
-
-              {ticket.status === "Completed" && (
-                <span className="text-xs text-gray-400">Completed</span>
-              )}
-            </div>
+      {isLoading ? (
+        <div className="flex flex-col items-center justify-center h-[50vh]">
+          <Loader2 className="animate-spin text-[#0A2540] mb-4" size={48} />
+          <p className="text-gray-500 font-medium animate-pulse">Syncing Kitchen Board...</p>
+        </div>
+      ) : isError ? (
+        <div className="flex flex-col items-center justify-center h-[50vh]">
+          <p className="text-red-500 font-medium mb-4 text-lg">Error loading kitchen tickets.</p>
+          <button onClick={() => refetch()} className="px-6 py-2.5 bg-[#0A2540] text-white rounded-lg font-medium hover:bg-black transition-colors cursor-pointer">
+            Retry Connection
+          </button>
+        </div>
+      ) : filteredTickets.length === 0 ? (
+        <div className="flex flex-col items-center justify-center h-[50vh] text-center bg-white/50 rounded-3xl border border-dashed border-gray-200">
+          <div className="w-24 h-24 bg-gray-50 rounded-full flex items-center justify-center mb-4">
+            <span className="text-4xl opacity-50">🍽️</span>
           </div>
-        ))}
-      </div>
+          <h3 className="text-xl font-bold text-gray-700">No Tickets</h3>
+          <p className="text-gray-500 mt-2 font-medium">There are no {activeTab.toLowerCase()} tickets at the moment.</p>
+        </div>
+      ) : (
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
+          {filteredTickets.map((ticket: Ticket) => {
+            const time = new Date(ticket.createdAt).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit', hour12: false });
+            const tableNo = ticket.order?.table?.tableNumber || "?";
+            const isReady = ticket.status === "READY";
+            const isPreparing = ticket.status === "ACTIVE";
+
+            return (
+              <div
+                key={ticket.id}
+                className="bg-[#EAECEF] rounded-[1.5rem] flex flex-col justify-between shadow-sm overflow-hidden border border-gray-100"
+              >
+                <div className="p-6">
+                  {/* Top Header */}
+                  <div className="flex justify-between items-start mb-5">
+                    <div className="w-11 h-11 rounded-full bg-white flex items-center justify-center font-bold text-[#374151] text-lg shadow-sm">
+                      {tableNo}
+                    </div>
+                    <span
+                      className={`text-[12px] px-3.5 py-1.5 rounded-full font-bold shadow-sm ${
+                        isPreparing
+                          ? "bg-white text-[#D97706] border border-[#FDE68A]"
+                          : isReady
+                          ? "bg-green-50 text-green-700 border border-green-200"
+                          : "bg-gray-100 text-gray-600 border border-gray-200"
+                      }`}
+                    >
+                      {isPreparing ? "Preparing" : isReady ? "Ready" : ticket.status}
+                    </span>
+                  </div>
+
+                  {/* Time & ID */}
+                  <div className="space-y-1.5 mb-5">
+                    <p className="text-[15px] font-medium text-[#6B7280]">IN: {time}</p>
+                    <p className="text-[15px] font-medium text-[#6B7280]">Ticket ID: {ticket.ticketCode || ticket.id.substring(0,8)}</p>
+                  </div>
+
+                  <hr className="border-t border-dashed border-gray-300 my-5" />
+
+                  {/* Items */}
+                  <div className="space-y-5">
+                    {ticket.items.map((itemObj: any) => {
+                      const item = itemObj.orderItem;
+                      return (
+                        <div key={item.id} className="flex flex-col">
+                          <div className="flex items-start gap-2.5">
+                            <span className="font-bold text-[18px] text-[#1E293B] leading-none mt-0.5">{item.quantity}</span>
+                            <span className="font-medium text-[16px] text-[#1E293B] uppercase tracking-wide leading-tight">
+                              {item.menuItem?.name || "Unknown Item"}
+                            </span>
+                          </div>
+
+                          {/* Options & Notes */}
+                          {(item.selectedOptions?.length > 0 || item.notes) && (
+                            <ul className="mt-2.5 ml-5 space-y-2">
+                              {item.selectedOptions?.map((opt: string, i: number) => (
+                                <li key={i} className="flex items-center gap-2.5">
+                                  <div className="w-[5px] h-[5px] bg-[#9CA3AF] shrink-0 rounded-sm" />
+                                  <span className="text-[14px] font-medium text-[#6B7280]">{opt}</span>
+                                </li>
+                              ))}
+                              {item.notes && (
+                                <li className="flex items-start gap-2.5 mt-2">
+                                  <div className="w-[5px] h-[5px] bg-[#9CA3AF] shrink-0 rounded-sm mt-2" />
+                                  <span className="text-[14px] font-medium text-[#6B7280] italic leading-tight">
+                                    {item.notes}
+                                  </span>
+                                </li>
+                              )}
+                            </ul>
+                          )}
+                        </div>
+                      );
+                    })}
+                  </div>
+                </div>
+
+                <div className="text-center px-4">
+                  {isReady && (
+                    <p className="text-sm font-bold tracking-widest text-[#10B981] animate-pulse mb-3">
+                      WAITING FOR SERVER.......
+                    </p>
+                  )}
+                </div>
+
+                {/* Footer Controls */}
+                <div className="px-5 pb-5 pt-2 flex items-center justify-between">
+                  <button 
+                    className="w-[46px] h-[46px] rounded-full bg-[#FDF6E3] border border-[#D4AF37] flex items-center justify-center hover:bg-[#FBEFCD] transition-colors shadow-sm cursor-pointer"
+                    title="Print Ticket"
+                  >
+                    <img src={print} alt="print" className="w-[22px] h-[22px] opacity-80" />
+                  </button>
+
+                  {isPreparing && (
+                    <button
+                      disabled={isBumping}
+                      onClick={() => handleBumpToReady(ticket.id)}
+                      className="flex items-center cursor-pointer gap-2 bg-[#0B1A38] hover:bg-black transition-colors text-white px-6 py-[11px] rounded-full font-medium text-[15px] shadow-md disabled:opacity-70"
+                    >
+                      Bump To Ready <MdSend size={18} />
+                    </button>
+                  )}
+
+                  {isReady && (
+                    <button
+                      disabled={isArchiving}
+                      onClick={() => handleArchive(ticket.id)}
+                      className="flex items-center cursor-pointer gap-2 bg-gray-800 hover:bg-gray-900 transition-colors text-white px-6 py-[11px] rounded-full font-medium text-[15px] shadow-md disabled:opacity-70"
+                    >
+                      Archive Ticket
+                    </button>
+                  )}
+                </div>
+              </div>
+            );
+          })}
+        </div>
+      )}
     </div>
   );
 }

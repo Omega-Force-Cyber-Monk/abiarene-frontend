@@ -28,6 +28,8 @@ import TicketQueueDetails from "@/components/AdminDashboard/Dashboard/TicketQueu
 import ManagerProductManagePage from "@/pages/Manager/ManagerProductManagePage";
 // import TenantDetails from "@/components/AdminDashboard/Tenants/TenantDetails";
 import LoginPin from "@/pages/LoginPin";
+import ProtectedRoute from "@/components/Shared/ProtectedRoute";
+import Login from "@/pages/Login";
 
 const routes = createBrowserRouter([
   {
@@ -35,9 +37,12 @@ const routes = createBrowserRouter([
     element: <App />,
     children: [
       {
-        // path: "/",
         index: true,
         element: <Home />,
+      },
+      {
+        path: "/login",
+        element: <Login />,
       },
 
       {
@@ -55,9 +60,9 @@ const routes = createBrowserRouter([
   {
     path: "/admin-dashboard",
     element: (
-      // <AdminRoute>
-      <AdminLayout />
-      // </AdminRoute>
+      <ProtectedRoute requiredRole="ADMIN">
+        <AdminLayout />
+      </ProtectedRoute>
     ),
     children: [
       { index: true, element: <AdminDashboardPage /> },
@@ -75,9 +80,9 @@ const routes = createBrowserRouter([
   {
     path: "/manager-dashboard",
     element: (
-      // <ManagerRoute>
-      <ManagerLayout />
-      // </ManagerRoute>
+      <ProtectedRoute requiredRole="MANAGER">
+        <ManagerLayout />
+      </ProtectedRoute>
     ),
     children: [
       { index: true, element: <ManagerDashboardPage /> },
@@ -94,7 +99,11 @@ const routes = createBrowserRouter([
   /* server */
   {
     path: "/server-dashboard",
-    element: <ServerLayout />,
+    element: (
+      <ProtectedRoute requiredRole="SERVER">
+        <ServerLayout />
+      </ProtectedRoute>
+    ),
     children: [
       { index: true, element: <ServerDashboardPage /> },
       { path: "dashboard", element: <ServerDashboardPage /> },
@@ -104,7 +113,11 @@ const routes = createBrowserRouter([
   /* kitchen */
   {
     path: "/kitchen-dashboard",
-    element: <KitchenLayout />,
+    element: (
+      <ProtectedRoute requiredRole="KITCHEN">
+        <KitchenLayout />
+      </ProtectedRoute>
+    ),
     children: [
       { index: true, element: <KitchenDashboardPage /> },
       { path: "dashboard", element: <KitchenDashboardPage /> },
@@ -113,7 +126,11 @@ const routes = createBrowserRouter([
   /* cashier */
   {
     path: "/cashier-dashboard",
-    element: <CashierLayout />,
+    element: (
+      <ProtectedRoute requiredRole="CASHIER">
+        <CashierLayout />
+      </ProtectedRoute>
+    ),
     children: [
       { index: true, element: <CashierDashboardPage /> },
       { path: "dashboard", element: <CashierDashboardPage /> },
