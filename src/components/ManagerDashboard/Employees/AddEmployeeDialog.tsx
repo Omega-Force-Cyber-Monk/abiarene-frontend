@@ -24,11 +24,11 @@ export default function AddEmployeeDialog({
 }: AddEmployeeDialogProps) {
   const [open, setOpen] = useState(false);
   const [createEmployee, { isLoading }] = useCreateEmployeeMutation();
-  const { data: roles, isLoading: rolesLoading } = useGetRolesQuery();
 
   const [formData, setFormData] = useState({
     name: "",
-    roleId: "",
+    email: "",
+    role: "" as "SERVER" | "KITCHEN" | "CASHIER" | "MANAGER",
     pin: "",
   });
 
@@ -43,12 +43,13 @@ export default function AddEmployeeDialog({
     try {
       await createEmployee({
         name: formData.name,
+        email: formData.email,
         pin: formData.pin,
-        roleId: formData.roleId,
+        role: formData.role,
       }).unwrap();
 
       toast.success("Employee added successfully!");
-      setFormData({ name: "", roleId: "", pin: "" });
+      setFormData({ name: "", email: "", role: "" as any, pin: "" });
       setOpen(false);
       onAddEmployee();
     } catch (error: any) {
@@ -107,33 +108,54 @@ export default function AddEmployeeDialog({
                 />
               </div>
 
+              <div>
+                <label className="text-sm text-[#6C7787]">Email Address</label>
+                <input
+                  type="email"
+                  value={formData.email}
+                  onChange={(e) =>
+                    setFormData({ ...formData, email: e.target.value })
+                  }
+                  placeholder="e.g. john@example.com"
+                  className="w-full bg-white border-[#DDDDDD] mt-1 px-4 py-2 rounded-xl border focus:outline-none focus:ring-2 focus:ring-[#061E49]"
+                  required
+                />
+              </div>
+
               <div className="space-y-2">
                 <label className="text-sm font-medium text-gray-700">
                   System Role
                 </label>
 
                 <Select
-                  value={formData.roleId}
-                  onValueChange={(value) =>
-                    setFormData({ ...formData, roleId: value })
+                  value={formData.role}
+                  onValueChange={(value: any) =>
+                    setFormData({ ...formData, role: value })
                   }
                 >
                   <SelectTrigger className="w-full cursor-pointer rounded-xl border border-gray-300 bg-white px-4 py-2.5 text-sm shadow-sm focus:ring-2 focus:ring-[#061E49] transition-all duration-200">
-                    <SelectValue
-                      placeholder={rolesLoading ? "Loading..." : "Select role"}
-                    />
+                    <SelectValue placeholder="Select role" />
                   </SelectTrigger>
 
                   <SelectContent className="rounded-xl border bg-white border-gray-200 shadow-lg">
-                    {roles?.map((role) => (
-                      <SelectItem
-                        key={role.id}
-                        value={role.id}
-                        className="cursor-pointer rounded-md px-3 py-2 text-sm transition-all duration-200 hover:bg-[#061E49]/10 focus:bg-[#061E49]/20"
-                      >
-                        {role.name}
-                      </SelectItem>
-                    ))}
+                    <SelectItem
+                      value="SERVER"
+                      className="cursor-pointer rounded-md px-3 py-2 text-sm hover:bg-[#061E49]/10"
+                    >
+                      Server
+                    </SelectItem>
+                    <SelectItem
+                      value="KITCHEN"
+                      className="cursor-pointer rounded-md px-3 py-2 text-sm hover:bg-[#061E49]/10"
+                    >
+                      Kitchen
+                    </SelectItem>
+                    <SelectItem
+                      value="CASHIER"
+                      className="cursor-pointer rounded-md px-3 py-2 text-sm hover:bg-[#061E49]/10"
+                    >
+                      Cashier
+                    </SelectItem>
                   </SelectContent>
                 </Select>
               </div>

@@ -5,13 +5,16 @@ import {
   UpdateInventoryRequest,
 } from "./inventory";
 
+import { PaginatedResponse } from "../../restaurant/restaurant.type";
+
 export const inventoryApi = baseApi.injectEndpoints({
   endpoints: (builder) => ({
     // Get all inventory items
-    getAllInventory: builder.query<InventoryItem[], void>({
-      query: () => ({
+    getAllInventory: builder.query<PaginatedResponse<InventoryItem> | InventoryItem[], void | { page?: number; limit?: number }>({
+      query: (params) => ({
         url: "/inventory",
         method: "GET",
+        params: params || { page: 1, limit: 100 },
       }),
       providesTags: ["Inventory"],
     }),

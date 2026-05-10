@@ -80,7 +80,7 @@ const EmployeesCard = () => {
         <AddEmployeeDialog onAddEmployee={handleAddEmployee} />
       </div>
 
-      {employees && employees.length === 0 ? (
+      {employees && employees.data.length === 0 ? (
         <div className="text-center py-12 bg-gray-50 rounded-lg">
           <p className="text-gray-500">
             No employees found. Click "Add Employee" to get started.
@@ -89,7 +89,7 @@ const EmployeesCard = () => {
       ) : (
         <div className="mt-6">
           <div className="grid grid-cols-1 sm:grid-cols-1 md:grid-cols-2 lg:grid-cols-2 xl:grid-cols-3 2xl:grid-cols-4 gap-6">
-            {employees?.map((user) => (
+            {employees?.data.map((user: Employee) => (
               <StaffCard
                 key={user.id}
                 user={user}

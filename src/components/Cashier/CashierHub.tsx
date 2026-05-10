@@ -3,57 +3,40 @@ import { IoCardOutline } from "react-icons/io5";
 import { PiCreditCardThin } from "react-icons/pi";
 
 import success from "@/assets/primepos/logo/success.svg";
-
-const mockCards = [
-  { id: 1, title: "1", price: 14.49, server: "Server A" },
-  { id: 2, title: "2", price: 15.49, server: "Server A" },
-  { id: 3, title: "3", price: 17.49, server: "Server A" },
-  { id: 4, title: "4", price: 10.49, server: "Server B" },
-  { id: 5, title: "5", price: 17.49, server: "Server B" },
-  { id: 6, title: "6", price: 23.49, server: "Server B" },
-
-  { id: 7, title: "7", price: 19.99, server: "Server C" },
-  { id: 8, title: "8", price: 21.49, server: "Server C" },
-  { id: 9, title: "9", price: 12.75, server: "Server C" },
-  { id: 10, title: "10", price: 18.25, server: "Server C" },
-
-  { id: 11, title: "11", price: 25.0, server: "Server D" },
-  { id: 12, title: "12", price: 9.99, server: "Server D" },
-  { id: 13, title: "13", price: 14.75, server: "Server D" },
-  { id: 14, title: "14", price: 16.3, server: "Server D" },
-
-  { id: 15, title: "15", price: 22.1, server: "Server E" },
-  { id: 16, title: "16", price: 13.49, server: "Server E" },
-  { id: 17, title: "17", price: 11.99, server: "Server E" },
-  { id: 18, title: "18", price: 27.49, server: "Server E" },
-
-  { id: 19, title: "19", price: 30.0, server: "Server F" },
-  { id: 20, title: "20", price: 8.49, server: "Server F" },
-];
+import { useGetTablesQuery, useGetTableCashierSummaryQuery, useCompleteCashierCheckoutMutation } from "@/redux/features/restaurant/table/tableApi";
+import { Table, CashierItem, PaymentMethod } from "@/redux/features/restaurant/table/table.type";
 
 export default function CashierHub() {
   const [activeTab, setActiveTab] = useState("Table");
-  const [selectedCard, setSelectedCard] = useState<
-    (typeof mockCards)[0] | null
-  >(null);
-  const [paymentMethod, setPaymentMethod] = useState<"cash" | "card" | null>(
-    null,
-  );
+  const [selectedCard, setSelectedCard] = useState<Table | null>(null);
+  const [paymentMethod, setPaymentMethod] = useState<PaymentMethod | null>(null);
   const [paymentSuccess, setPaymentSuccess] = useState(false);
+
+  // Fetch real tables
+  const { data: tablesData } = useGetTablesQuery({ page: 1, limit: 100 });
+  const tables = tablesData?.data || [];
+
+  const [completeCheckout] = useCompleteCashierCheckoutMutation();
 
   const closeModal = () => {
     setSelectedCard(null);
     setPaymentMethod(null);
   };
 
-  const handlePayment = () => {
-    if (!paymentMethod) return;
+  const handlePayment = async () => {
+    if (!paymentMethod || !selectedCard) return;
 
-    // simulate success
-    setTimeout(() => {
+    try {
+      await completeCheckout({
+        id: selectedCard.id,
+        method: paymentMethod,
+      }).unwrap();
+
       closeModal();
       setPaymentSuccess(true);
-    }, 500);
+    } catch {
+      // keep modal open on error
+    }
   };
 
   const closeSuccessModal = () => {
@@ -78,9 +61,8 @@ export default function CashierHub() {
             <button
               key={tab}
               onClick={() => setActiveTab(tab)}
-              className={`px-4 py-2 rounded-full cursor-pointer text-sm font-medium ${
-                activeTab === tab ? "bg-[#061E49] text-white" : "text-gray-600"
-              }`}
+              className={`px-4 py-2 rounded-full cursor-pointer text-sm font-medium ${activeTab === tab ? "bg-[#061E49] text-white" : "text-gray-600"
+                }`}
             >
               {tab}
             </button>
@@ -90,30 +72,29 @@ export default function CashierHub() {
 
       {/* CARDS */}
       <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
-        {mockCards.map((card) => (
+        {tables.map((table) => (
           <div
-            key={card.id}
-            onClick={() => setSelectedCard(card)}
-            className={`cursor-pointer bg-[#E9EAEB] rounded-2xl shadow p-4 hover:shadow-lg transition border-2 ${
-              selectedCard?.id === card.id
+            key={table.id}
+            onClick={() => table.served && setSelectedCard(table)}
+            className={`cursor-pointer bg-[#E9EAEB] rounded-2xl shadow p-4 hover:shadow-lg transition border-2 ${selectedCard?.id === table.id
                 ? "border-blue-600"
                 : "border-transparent"
-            }`}
+              } ${!table.served ? "opacity-60 cursor-default" : ""}`}
           >
             <div className="flex items-center">
               <h2 className="w-12 h-12 flex items-center justify-center text-lg font-semibold bg-gray-300 rounded-full">
-                {card.title}
+                {table.tableNumber}
               </h2>
               <h3 className="ml-2 text-lg font-semibold">Table</h3>
             </div>
 
             <p className="mt-2 text-xl font-bold text-[#061E49] text-center">
-              ${card.price}
+              {table.served ? "Served" : "Empty"}
             </p>
 
             <div className="flex justify-center mt-2">
               <span className="px-3 py-1 text-xs font-medium text-blue-700 bg-white rounded-full border border-blue-200">
-                {card.server}
+                {table.seatCount} Seat
               </span>
             </div>
           </div>
@@ -122,85 +103,13 @@ export default function CashierHub() {
 
       {/* CHECKOUT MODAL */}
       {selectedCard && (
-        <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50">
-          <div className="bg-white w-[520px] rounded-2xl shadow-xl p-6">
-            <div className="flex justify-between items-center mb-5">
-              <h2 className="text-xl font-bold">Checkout</h2>
-              <button
-                onClick={closeModal}
-                className="text-gray-500 hover:text-black cursor-pointer"
-              >
-                ✕
-              </button>
-            </div>
-
-            {/* ITEMS */}
-            <div className="space-y-3 text-gray-700 mb-6 p-4 rounded-2xl bg-gray-100">
-              <div className="flex justify-between">
-                <span>4x Chicken Biryani</span>
-                <span>$40</span>
-              </div>
-              <div className="flex justify-between">
-                <span>4x Mango Lassi</span>
-                <span>$20</span>
-              </div>
-              <div className="flex justify-between">
-                <span>Extra Item</span>
-                <span>$40</span>
-              </div>
-            </div>
-
-            {/* TOTAL */}
-            <div className="flex justify-between text-lg font-bold mb-6">
-              <span>Total</span>
-              <span>$100</span>
-            </div>
-
-            {/* PAYMENT */}
-            <p className="text-sm text-gray-500 mb-3">Select Payment Method</p>
-
-            <div className="flex gap-4 mb-6">
-              <div
-                onClick={() => setPaymentMethod("cash")}
-                className={`w-full p-5 rounded-xl border flex flex-col items-center gap-2 cursor-pointer transition ${
-                  paymentMethod === "cash"
-                    ? "bg-green-100 border-green-500"
-                    : "bg-gray-100"
-                }`}
-              >
-                <IoCardOutline className="text-2xl text-gray-700" />
-                <span className="text-sm font-medium">Cash</span>
-              </div>
-
-              <div
-                onClick={() => setPaymentMethod("card")}
-                className={`w-full p-5 rounded-xl border flex flex-col items-center gap-2 cursor-pointer transition ${
-                  paymentMethod === "card"
-                    ? "bg-blue-100 border-blue-500"
-                    : "bg-gray-100"
-                }`}
-              >
-                <PiCreditCardThin className="text-2xl text-gray-700" />
-                <span className="text-sm font-medium">Card</span>
-              </div>
-            </div>
-
-            {/* PAY BUTTON */}
-            <button
-              onClick={handlePayment}
-              disabled={!paymentMethod}
-              className={`w-full py-3 rounded-full cursor-pointer font-semibold transition ${
-                paymentMethod
-                  ? "bg-[#042452] text-white hover:bg-[#031f46]"
-                  : "bg-gray-300 text-gray-500 cursor-not-allowed"
-              }`}
-            >
-              {paymentMethod
-                ? `Pay with ${paymentMethod.toUpperCase()}`
-                : "Select Payment Method"}
-            </button>
-          </div>
-        </div>
+        <CheckoutModal
+          table={selectedCard}
+          paymentMethod={paymentMethod}
+          setPaymentMethod={setPaymentMethod}
+          onClose={closeModal}
+          onPay={handlePayment}
+        />
       )}
 
       {/* SUCCESS MODAL */}
@@ -239,6 +148,105 @@ export default function CashierHub() {
           </div>
         </div>
       )}
+    </div>
+  );
+}
+
+// Inline sub-component to fetch summary and render modal
+function CheckoutModal({
+  table,
+  paymentMethod,
+  setPaymentMethod,
+  onClose,
+  onPay,
+}: {
+  table: Table;
+  paymentMethod: PaymentMethod | null;
+  setPaymentMethod: (m: PaymentMethod) => void;
+  onClose: () => void;
+  onPay: () => void;
+}) {
+  const { data: summary, isLoading } = useGetTableCashierSummaryQuery(table.id);
+
+  return (
+    <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50">
+      <div className="bg-white w-[520px] rounded-2xl shadow-xl p-6">
+        <div className="flex justify-between items-center mb-5">
+          <h2 className="text-xl font-bold">Checkout</h2>
+          <button
+            onClick={onClose}
+            className="text-gray-500 hover:text-black cursor-pointer"
+          >
+            ✕
+          </button>
+        </div>
+
+        {/* ITEMS */}
+        <div className="space-y-3 text-gray-700 mb-6 p-4 rounded-2xl bg-gray-100">
+          {isLoading ? (
+            <div className="text-center text-gray-400">Loading...</div>
+          ) : (summary?.items?.length ?? 0) > 0 ? (
+            summary!.items.map((item: CashierItem) => (
+              <div key={item.itemId} className="flex justify-between">
+                <span>{item.quantity}x {item.name}</span>
+                <span>${item.lineTotal}</span>
+              </div>
+            ))
+          ) : (
+            <div className="flex justify-between">
+              <span>No items</span>
+              <span>$0</span>
+            </div>
+          )}
+        </div>
+
+        {/* TOTAL */}
+        <div className="flex justify-between text-lg font-bold mb-6">
+          <span>Total</span>
+          <span>${isLoading ? "..." : (summary?.meta?.totalAmount ?? 0)}</span>
+        </div>
+
+        {/* PAYMENT */}
+        <p className="text-sm text-gray-500 mb-3">Select Payment Method</p>
+
+        <div className="flex gap-4 mb-6">
+          <div
+            onClick={() => setPaymentMethod("CASH")}
+            className={`w-full p-5 rounded-xl border flex flex-col items-center gap-2 cursor-pointer transition ${paymentMethod === "CASH"
+                ? "bg-green-100 border-green-500"
+                : "bg-gray-100"
+              }`}
+          >
+            <IoCardOutline className="text-2xl text-gray-700" />
+            <span className="text-sm font-medium">Cash</span>
+          </div>
+
+          <div
+            onClick={() => setPaymentMethod("CARD")}
+            className={`w-full p-5 rounded-xl border flex flex-col items-center gap-2 cursor-pointer transition ${paymentMethod === "CARD"
+                ? "bg-blue-100 border-blue-500"
+                : "bg-gray-100"
+              }`}
+          >
+            <PiCreditCardThin className="text-2xl text-gray-700" />
+            <span className="text-sm font-medium">Card</span>
+          </div>
+        </div>
+
+        {/* PAY BUTTON */}
+        <button
+          onClick={onPay}
+          disabled={!paymentMethod}
+          className={`w-full py-3 rounded-full cursor-pointer font-semibold transition ${paymentMethod
+              ? "bg-[#042452] text-white hover:bg-[#031f46]"
+              : "bg-gray-300 text-gray-500 cursor-not-allowed"
+            }`}
+        >
+          {paymentMethod
+            ? `Pay with ${paymentMethod}`
+            : "Select Payment Method"}
+        </button>
+      </div>
     </div>
   );
 }

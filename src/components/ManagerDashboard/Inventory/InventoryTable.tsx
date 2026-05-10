@@ -18,11 +18,14 @@ const InventoryTable = () => {
   const [isEditDialogOpen, setIsEditDialogOpen] = useState(false);
 
   const {
-    data: products = [],
+    data: response,
     refetch,
     isLoading,
     error,
   } = useGetAllInventoryQuery();
+  
+  const products = Array.isArray(response) ? response : response?.data || [];
+  const meta = !Array.isArray(response) ? response?.meta : null;
   const [deleteInventory] = useDeleteInventoryMutation();
 
   // Filter products based on search term
@@ -275,14 +278,14 @@ const InventoryTable = () => {
           <div className="text-sm text-gray-600">
             Showing{" "}
             <span className="font-medium">{filteredProducts.length}</span> of{" "}
-            <span className="font-medium">{products.length}</span> products
+            <span className="font-medium">{meta?.total || products.length}</span> products
           </div>
           <div className="flex items-center gap-2">
             <button className="cursor-pointer rounded-lg border px-3 py-1.5 text-sm font-medium text-gray-600 hover:bg-gray-100">
               Prev
             </button>
             <div className="min-w-[50px] rounded-md border border-[#E3E3E4] bg-gray-50 px-3 py-1.5 text-center text-sm font-medium text-gray-700 shadow-sm">
-              1 / 1
+              {meta?.page || 1} / {meta?.totalPages || 1}
             </div>
             <button className="cursor-pointer rounded-lg border px-3 py-1.5 text-sm font-medium text-gray-600 hover:bg-gray-100">
               Next

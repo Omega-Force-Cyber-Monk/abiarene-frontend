@@ -1,8 +1,13 @@
 // components/MenuItemCard.tsx
 
-import { MenuItem } from "@/pages/Server/DammyData";
+export interface MenuItemCardProps {
+  name: string;
+  description: string;
+  price: number;
+  image: string;
+}
 
-export const MenuItemCard = ({ name, description, price, image }: MenuItem) => {
+export const MenuItemCard = ({ name, description, price, image }: MenuItemCardProps) => {
   return (
     <div className="flex gap-4 p-4 bg-white rounded-2xl shadow-sm hover:shadow-md transition-shadow">
       <img

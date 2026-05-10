@@ -21,7 +21,27 @@ export const MenuForm = ({
     image: initialData?.image || "",
     category: initialData?.category || "",
     isActive: initialData?.isActive ?? true,
+    options: initialData?.options || [],
   });
+
+  const [optionInput, setOptionInput] = useState("");
+
+  const handleAddOption = () => {
+    if (optionInput.trim() && !formData.options.includes(optionInput.trim())) {
+      setFormData({
+        ...formData,
+        options: [...formData.options, optionInput.trim()],
+      });
+      setOptionInput("");
+    }
+  };
+
+  const handleRemoveOption = (opt: string) => {
+    setFormData({
+      ...formData,
+      options: formData.options.filter((o: string) => o !== opt),
+    });
+  };
 
   return (
     <form
@@ -98,6 +118,52 @@ export const MenuForm = ({
           className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#0A2540] focus:border-transparent"
           required
         />
+      </div>
+      <div>
+        <label className="block text-sm font-medium text-gray-700 mb-1">
+          Customization Options
+        </label>
+        <div className="flex gap-2 mb-2">
+          <input
+            type="text"
+            value={optionInput}
+            onChange={(e) => setOptionInput(e.target.value)}
+            onKeyDown={(e) => {
+              if (e.key === "Enter") {
+                e.preventDefault();
+                handleAddOption();
+              }
+            }}
+            placeholder="e.g. Extra Spicy"
+            className="flex-1 px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#0A2540] focus:border-transparent"
+          />
+          <button
+            type="button"
+            onClick={handleAddOption}
+            className="px-4 py-2 bg-gray-100 text-gray-700 rounded-lg font-medium hover:bg-gray-200"
+          >
+            Add
+          </button>
+        </div>
+        {formData.options.length > 0 && (
+          <div className="flex flex-wrap gap-2 mt-2">
+            {formData.options.map((opt: string) => (
+              <span
+                key={opt}
+                className="inline-flex items-center gap-1 px-2.5 py-1 rounded-full text-xs font-medium bg-[#EEF2FF] text-[#6366F1] border border-[#E0E7FF]"
+              >
+                {opt}
+                <button
+                  type="button"
+                  onClick={() => handleRemoveOption(opt)}
+                  className="w-4 h-4 rounded-full flex items-center justify-center text-red-500 hover:bg-red-100 transition-colors"
+                >
+                  &times;
+                </button>
+              </span>
+            ))}
+          </div>
+        )}
       </div>
       <div className="flex gap-3 pt-4">
         <button

@@ -11,18 +11,18 @@ interface StaffCardProps {
 }
 
 const roleColors: Record<string, string> = {
-  Manager: "bg-purple-100 text-purple-600",
-  Server: "bg-blue-100 text-blue-600",
-  Kitchen: "bg-orange-100 text-orange-600",
-  Cashier: "bg-gray-200 text-gray-600",
+  MANAGER: "bg-purple-100 text-purple-600",
+  SERVER: "bg-blue-100 text-blue-600",
+  KITCHEN: "bg-orange-100 text-orange-600",
+  CASHIER: "bg-gray-200 text-gray-600",
 };
 
 const StaffCard = ({ user, onEdit, onDelete }: StaffCardProps) => {
   // Get role name from the role object
   const roleName = user.role?.name || "Unknown";
 
-  // Get color based on role name
-  const colorClass = roleColors[roleName] || "bg-gray-100 text-gray-600";
+  // Get color based on role name (case insensitive matching)
+  const colorClass = roleColors[roleName.toUpperCase()] || "bg-gray-100 text-gray-600";
 
   return (
     <div className="bg-white rounded-2xl shadow-md p-5 flex flex-col justify-between hover:shadow-lg transition">
@@ -35,13 +35,14 @@ const StaffCard = ({ user, onEdit, onDelete }: StaffCardProps) => {
 
           <div>
             <h2 className="font-semibold text-gray-800">{user.name}</h2>
-            <p className="text-sm text-gray-400">PIN: **** (Hidden)</p>
+            <p className="text-xs text-gray-500">{user.email}</p>
+            <p className="text-xs text-gray-400 mt-1">PIN: **** (Hidden)</p>
           </div>
         </div>
 
         {/* Role Badge */}
         <span
-          className={`text-xs px-3 py-1 rounded-full font-medium ${colorClass}`}
+          className={`text-[10px] px-2 py-1 rounded-full font-medium uppercase ${colorClass}`}
         >
           {roleName}
         </span>

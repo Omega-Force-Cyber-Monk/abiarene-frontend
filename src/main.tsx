@@ -8,12 +8,15 @@ import { store } from "./store/store.ts";
 import ReduxProviderWrapper from "./redux/readux-provider/reduxProviderWrapper.tsx";
 import { DashboardToaster } from "./components/ui/Toaster.tsx";
 
+import { Toaster } from "react-hot-toast";
+
 createRoot(document.getElementById("root")!).render(
   <StrictMode>
     <Provider store={store}>
       <ReduxProviderWrapper>
         <RouterProvider router={routes} />
         <DashboardToaster />
+        <Toaster position="top-right" />
       </ReduxProviderWrapper>
     </Provider>
   </StrictMode>,
