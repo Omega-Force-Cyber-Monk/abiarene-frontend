@@ -39,7 +39,7 @@ export const MenuForm = ({
   const handleRemoveOption = (opt: string) => {
     setFormData({
       ...formData,
-      options: formData.options.filter((o) => o !== opt),
+      options: formData.options.filter((o: string) => o !== opt),
     });
   };
 
@@ -146,8 +146,8 @@ export const MenuForm = ({
           </button>
         </div>
         {formData.options.length > 0 && (
-          <div className="flex flex-wrap gap-2">
-            {formData.options.map((opt) => (
+          <div className="flex flex-wrap gap-2 mt-2">
+            {formData.options.map((opt: string) => (
               <span
                 key={opt}
                 className="inline-flex items-center gap-1 px-2.5 py-1 rounded-full text-xs font-medium bg-[#EEF2FF] text-[#6366F1] border border-[#E0E7FF]"

@@ -1,13 +1,18 @@
 // components/CurrentOrderItem.tsx
 
-import { OrderItem } from "@/pages/Server/DammyData";
+export interface CurrentOrderItemProps {
+  name: string;
+  price: number;
+  quantity: number;
+  customizations?: string[];
+}
 
 export const CurrentOrderItem = ({
   name,
   price,
   quantity,
   customizations,
-}: OrderItem) => {
+}: CurrentOrderItemProps) => {
   return (
     <div className="mb-4 pb-4 border-b border-gray-200 last:border-0">
       <div className="flex justify-between items-start">
