@@ -1,16 +1,15 @@
-type TableStatus = "AVAILABLE" | "OCCUPIED" | "RESERVED" | "CLEANING";
-type TableSubStatus = "SERVED" | "ORDERING" | "BILLING" | null;
+import { TableStatus } from "@/redux/features/restaurant/table/table.type";
 
 export interface TableCardProps {
-  id: number | string;
-  capacity: number;
-  status: TableStatus;
-  subStatus?: TableSubStatus;
+  tableNumber: number;
+  seatCount: number;
+  status: TableStatus | string;
+  subStatus?: string | null;
 }
 
 export const TableCard = ({
-  id,
-  capacity,
+  tableNumber,
+  seatCount,
   status,
   subStatus,
 }: TableCardProps) => {
@@ -23,12 +22,12 @@ export const TableCard = ({
     >
       {/* Table Number Badge */}
       <div className="w-9 h-9 rounded-full bg-white/80 flex items-center justify-center text-sm font-bold text-gray-400 mb-4 shadow-sm">
-        {id}
+        {tableNumber}
       </div>
 
       <div className="space-y-1 mb-6">
         <h3 className="text-2xl font-bold text-[#1A1C20]">Table</h3>
-        <p className="text-gray-400 font-medium">{capacity} Seat</p>
+        <p className="text-gray-400 font-medium">{seatCount} Seat</p>
       </div>
 
       {/* Status Badges */}

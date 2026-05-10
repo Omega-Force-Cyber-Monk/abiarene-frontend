@@ -60,7 +60,15 @@ export const orderApi = baseApi.injectEndpoints({
         url: `/orders/${id}/send-to-kitchen`,
         method: "POST",
       }),
-      invalidatesTags: (_result, _error, id) => [{ type: "Order", id }],
+      invalidatesTags: (_result, _error, id) => [{ type: "Order", id }, "Order"],
+    }),
+
+    cancelOrder: builder.mutation<any, string>({
+      query: (id) => ({
+        url: `/orders/${id}/cancel`,
+        method: "POST",
+      }),
+      invalidatesTags: (_result, _error, id) => [{ type: "Order", id }, "Order"],
     }),
   }),
 });
@@ -73,4 +81,5 @@ export const {
   useDeleteOrderMutation,
   useAddItemsToOrderMutation,
   useSendToKitchenMutation,
+  useCancelOrderMutation,
 } = orderApi;

@@ -246,7 +246,7 @@ export const ProductManageTable = () => {
 
     return (
       <CommonTable
-        columns={getOrderColumns(handlers)}
+        columns={getOrderColumns()}
         data={ordersData?.data || []}
         isLoading={isOrdersLoading}
         emptyMessage="No orders found."
