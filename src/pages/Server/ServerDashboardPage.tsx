@@ -32,6 +32,7 @@ const ServerDashboardPage = () => {
             {tables.map((table) => (
               <div key={table.id} onClick={() => setSelectedTableId(table.id)}>
                 <TableCard 
+                  id={table.id}
                   tableNumber={table.tableNumber}
                   seatCount={table.seatCount}
                   status={table.status}

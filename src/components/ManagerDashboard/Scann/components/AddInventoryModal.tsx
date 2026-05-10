@@ -40,6 +40,16 @@ export const AddInventoryModal: React.FC<AddInventoryModalProps> = ({
       
       const result = await createInventory(payload).unwrap();
       toast.success("Item added to inventory!");
+      
+      // Reset form
+      setFormData({
+        name: "",
+        sku: "",
+        price: 0,
+        stock: 0,
+        lowStockThreshold: 5,
+      });
+
       onSuccess(result);
       onClose();
     } catch (err: any) {
@@ -129,7 +139,16 @@ export const AddInventoryModal: React.FC<AddInventoryModalProps> = ({
           <div className="pt-4 flex gap-3">
             <button 
               type="button"
-              onClick={onClose}
+              onClick={() => {
+                setFormData({
+                  name: "",
+                  sku: "",
+                  price: 0,
+                  stock: 0,
+                  lowStockThreshold: 5,
+                });
+                onClose();
+              }}
               className="flex-1 py-2.5 border border-gray-200 text-gray-600 rounded-xl font-semibold hover:bg-gray-50 transition-all text-sm"
             >
               Cancel
