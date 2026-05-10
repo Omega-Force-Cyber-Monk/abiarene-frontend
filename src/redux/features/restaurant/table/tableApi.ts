@@ -3,6 +3,9 @@ import {
   Table,
   CreateTableRequest,
   UpdateTableRequest,
+  CashierSummaryResponse,
+  CashierCheckoutResponse,
+  PaymentMethod,
 } from "./table.type";
 import { PaginatedResponse } from "../restaurant.type";
 
@@ -128,6 +131,22 @@ export const tableApi = baseApi.injectEndpoints({
       }),
       invalidatesTags: (_result, _error, { id }) => [{ type: "Table", id }],
     }),
+
+    getTableCashierSummary: builder.query<CashierSummaryResponse, string>({
+      query: (id) => ({
+        url: `/tables/${id}/cashier-summary`,
+        method: "GET",
+      }),
+    }),
+
+    completeCashierCheckout: builder.mutation<CashierCheckoutResponse, { id: string; method: PaymentMethod }>({
+      query: ({ id, method }) => ({
+        url: `/tables/${id}/cashier-checkout`,
+        method: "POST",
+        body: { method },
+      }),
+      invalidatesTags: ["Table"],
+    }),
   }),
 });
 
@@ -146,4 +165,6 @@ export const {
   useAdminDeleteTableMutation,
   useAdminGetTableItemsQuery,
   useAdminAssignItemsToTableMutation,
+  useGetTableCashierSummaryQuery,
+  useCompleteCashierCheckoutMutation,
 } = tableApi;
