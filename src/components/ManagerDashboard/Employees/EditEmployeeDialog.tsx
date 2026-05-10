@@ -68,7 +68,7 @@ const EditEmployeeDialog = ({
       name: formData.name,
       email: formData.email,
       pin: formData.pin,
-      roleId: formData.roleId,
+      // roleId: formData.roleId,
       status: formData.status,
     };
 
