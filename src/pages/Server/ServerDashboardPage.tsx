@@ -36,6 +36,7 @@ const ServerDashboardPage = () => {
                   tableNumber={table.tableNumber}
                   seatCount={table.seatCount}
                   status={table.status}
+                  served={table.served}
                 />
               </div>
             ))}
