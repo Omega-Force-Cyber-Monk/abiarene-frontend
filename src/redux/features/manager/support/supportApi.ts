@@ -9,13 +9,13 @@ import {
 
 export const supportApi = baseApi.injectEndpoints({
   endpoints: (builder) => ({
-    // Get all support tickets with pagination
+    // Get all support tickets with pagination and optional status filter
     getSupportTickets: builder.query<
       SupportTicketsResponse,
-      { page?: number; limit?: number }
+      { page?: number; limit?: number; status?: string }
     >({
-      query: ({ page = 1, limit = 20 }) => ({
-        url: `/support?page=${page}&limit=${limit}`,
+      query: ({ page = 1, limit = 20, status }) => ({
+        url: `/support?page=${page}&limit=${limit}${status ? `&status=${status}` : ""}`,
         method: "GET",
       }),
       providesTags: ["Support"],
@@ -75,6 +75,22 @@ export const supportApi = baseApi.injectEndpoints({
       ],
     }),
 
+    // Update support ticket status (Admin only)
+    updateSupportTicketStatus: builder.mutation<
+      SupportTicket,
+      { id: string; data: { status: "OPEN" | "CLOSED" } }
+    >({
+      query: ({ id, data }) => ({
+        url: `/support/${id}/status`,
+        method: "PATCH",
+        body: data,
+      }),
+      invalidatesTags: (_result, _error, { id }) => [
+        "Support",
+        { type: "Support", id },
+      ],
+    }),
+
     // Delete support ticket
     deleteSupportTicket: builder.mutation<void, string>({
       query: (id) => ({
@@ -92,6 +108,7 @@ export const {
   useCreateSupportTicketMutation,
   useAddSupportMessageMutation,
   useUpdateSupportTicketMutation,
+  useUpdateSupportTicketStatusMutation,
   useDeleteSupportTicketMutation,
 } = supportApi;
 
