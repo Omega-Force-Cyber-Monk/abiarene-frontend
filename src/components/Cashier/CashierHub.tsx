@@ -72,33 +72,43 @@ export default function CashierHub() {
 
       {/* CARDS */}
       <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
-        {tables.map((table) => (
-          <div
-            key={table.id}
-            onClick={() => table.served && setSelectedCard(table)}
-            className={`cursor-pointer bg-[#E9EAEB] rounded-2xl shadow p-4 hover:shadow-lg transition border-2 ${selectedCard?.id === table.id
-                ? "border-blue-600"
-                : "border-transparent"
-              } ${!table.served ? "opacity-60 cursor-default" : ""}`}
-          >
-            <div className="flex items-center">
-              <h2 className="w-12 h-12 flex items-center justify-center text-lg font-semibold bg-gray-300 rounded-full">
-                {table.tableNumber}
-              </h2>
-              <h3 className="ml-2 text-lg font-semibold">Table</h3>
-            </div>
+        {tables
+          .filter((table) => table.status === "OCCUPIED")
+          .map((table) => {
+            const isServed = table.served;
+            return (
+              <div
+                key={table.id}
+                onClick={() => !isServed && setSelectedCard(table)}
+                className={`bg-[#E9EAEB] rounded-2xl shadow p-4 transition border-2 ${
+                  selectedCard?.id === table.id
+                    ? "border-blue-600"
+                    : "border-transparent"
+                } ${
+                  isServed
+                    ? "opacity-50 cursor-not-allowed"
+                    : "cursor-pointer hover:shadow-lg"
+                }`}
+              >
+                <div className="flex items-center">
+                  <h2 className="w-12 h-12 flex items-center justify-center text-lg font-semibold bg-gray-300 rounded-full">
+                    {table.tableNumber}
+                  </h2>
+                  <h3 className="ml-2 text-lg font-semibold">Table</h3>
+                </div>
 
-            <p className="mt-2 text-xl font-bold text-[#061E49] text-center">
-              {table.served ? "Served" : "Empty"}
-            </p>
+                <p className={`mt-2 text-xl font-bold text-center ${isServed ? "text-green-600" : "text-[#061E49]"}`}>
+                  {isServed ? "Served" : "Occupied"}
+                </p>
 
-            <div className="flex justify-center mt-2">
-              <span className="px-3 py-1 text-xs font-medium text-blue-700 bg-white rounded-full border border-blue-200">
-                {table.seatCount} Seat
-              </span>
-            </div>
-          </div>
-        ))}
+                <div className="flex justify-center mt-2">
+                  <span className="px-3 py-1 text-xs font-medium text-blue-700 bg-white rounded-full border border-blue-200">
+                    {table.seatCount} Seat
+                  </span>
+                </div>
+              </div>
+            );
+          })}
       </div>
 
       {/* CHECKOUT MODAL */}

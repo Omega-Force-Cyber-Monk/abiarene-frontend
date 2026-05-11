@@ -25,9 +25,15 @@ export interface OrderItem {
 
 export interface TicketItem {
   id: string;
-  ticketId: string;
-  orderItemId: string;
-  orderItem: OrderItem;
+  ticketId?: string;
+  orderItemId?: string;
+  quantity: number;
+  notes: string;
+  selectedOptions: string[];
+  // API returns .item (not .orderItem)
+  item: Pick<MenuItem, "id" | "name" | "category" | "image">;
+  // legacy fallback
+  orderItem?: OrderItem;
 }
 
 export interface Table {
@@ -43,13 +49,13 @@ export interface Table {
 
 export interface Order {
   id: string;
-  tenantId: string;
-  tableId: string;
+  tenantId?: string;
+  tableId?: string;
   status: "PREPARING" | "READY" | "COMPLETED" | "CANCELLED" | string;
-  createdBy: string;
+  createdBy?: string;
   createdAt: string;
-  updatedAt: string;
-  table: Table;
+  updatedAt?: string;
+  table?: Table;
 }
 
 export interface Ticket {
@@ -57,9 +63,16 @@ export interface Ticket {
   ticketCode: string;
   orderId: string;
   tenantId: string;
-  status: "ACTIVE" | "READY" | "ARCHIVED" | string;
+  // API returns "PREPARING" | "READY" | "ARCHIVED" (not "ACTIVE")
+  status: "PREPARING" | "READY" | "ARCHIVED" | string;
   createdAt: string;
   updatedAt: string;
   order: Order;
+  // table is at root level (NOT inside order)
+  table: Table;
   items: TicketItem[];
+  meta?: {
+    itemCount: number;
+    totalQuantity: number;
+  };
 }

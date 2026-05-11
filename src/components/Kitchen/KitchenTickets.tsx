@@ -20,7 +20,7 @@ export default function KitchenTickets() {
     skip: activeTab !== "Active",
   });
   
-  const { data: archivedTicketsResp, isLoading: isArchivedLoading, isError: isArchivedError, refetch: refetchArchived } = useGetAllTicketsQuery({ status: "ARCHIVED" }, {
+  const { data: archivedTicketsResp, isLoading: isArchivedLoading, isError: isArchivedError, refetch: refetchArchived } = useGetAllTicketsQuery({ status: "COMPLETED" }, {
     skip: activeTab !== "Archive",
   });
 
@@ -53,13 +53,12 @@ export default function KitchenTickets() {
   const ticketsToDisplay = activeTab === "Active" ? activeTickets : archivedTickets;
 
   const filteredTickets = ticketsToDisplay.filter((ticket: Ticket) => {
-    // If order is cancelled, we should treat the ticket as archived/discarded
-    const isCancelled = ticket.order?.status === "CANCELLED";
-    
     if (activeTab === "Active") {
-      return (ticket.status === "ACTIVE" || ticket.status === "READY") && !isCancelled;
+      // API returns "PREPARING" and "READY" for active tickets
+      return ticket.status === "PREPARING" || ticket.status === "READY";
     } else {
-      return ticket.status === "ARCHIVED" || isCancelled; 
+      // Archive tab fetches status=COMPLETED from API
+      return ticket.status === "COMPLETED";
     }
   });
 
@@ -119,9 +118,11 @@ export default function KitchenTickets() {
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
           {filteredTickets.map((ticket: Ticket) => {
             const time = new Date(ticket.createdAt).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit', hour12: false });
-            const tableNo = ticket.order?.table?.tableNumber || "?";
+            // table is at root level of ticket (not inside ticket.order)
+            const tableNo = ticket.table?.tableNumber ?? ticket.order?.table?.tableNumber ?? "?";
             const isReady = ticket.status === "READY";
-            const isPreparing = ticket.status === "ACTIVE";
+            // API returns "PREPARING" (not "ACTIVE")
+            const isPreparing = ticket.status === "PREPARING";
 
             return (
               <div
@@ -158,38 +159,45 @@ export default function KitchenTickets() {
                   {/* Items */}
                   <div className="space-y-5">
                     {ticket.items.map((itemObj: any) => {
-                      const item = itemObj.orderItem;
-                      return (
-                        <div key={item.id} className="flex flex-col">
-                          <div className="flex items-start gap-2.5">
-                            <span className="font-bold text-[18px] text-[#1E293B] leading-none mt-0.5">{item.quantity}</span>
-                            <span className="font-medium text-[16px] text-[#1E293B] uppercase tracking-wide leading-tight">
-                              {item.menuItem?.name || "Unknown Item"}
-                            </span>
-                          </div>
+                        // API structure:
+                        // itemObj = { id, quantity, notes, selectedOptions, item: { id, name, category, image } }
+                        const menuItem = itemObj.item || itemObj.orderItem?.menuItem;
+                        const quantity = itemObj.quantity ?? itemObj.orderItem?.quantity;
+                        const notes = itemObj.notes ?? itemObj.orderItem?.notes;
+                        const selectedOptions: string[] = itemObj.selectedOptions ?? itemObj.orderItem?.selectedOptions ?? [];
+                        const itemName = menuItem?.name || "Unknown Item";
 
-                          {/* Options & Notes */}
-                          {(item.selectedOptions?.length > 0 || item.notes) && (
-                            <ul className="mt-2.5 ml-5 space-y-2">
-                              {item.selectedOptions?.map((opt: string, i: number) => (
-                                <li key={i} className="flex items-center gap-2.5">
-                                  <div className="w-[5px] h-[5px] bg-[#9CA3AF] shrink-0 rounded-sm" />
-                                  <span className="text-[14px] font-medium text-[#6B7280]">{opt}</span>
-                                </li>
-                              ))}
-                              {item.notes && (
-                                <li className="flex items-start gap-2.5 mt-2">
-                                  <div className="w-[5px] h-[5px] bg-[#9CA3AF] shrink-0 rounded-sm mt-2" />
-                                  <span className="text-[14px] font-medium text-[#6B7280] italic leading-tight">
-                                    {item.notes}
-                                  </span>
-                                </li>
-                              )}
-                            </ul>
-                          )}
-                        </div>
-                      );
-                    })}
+                        return (
+                          <div key={itemObj.id} className="flex flex-col">
+                            <div className="flex items-start gap-2.5">
+                              <span className="font-bold text-[18px] text-[#1E293B] leading-none mt-0.5">{quantity}</span>
+                              <span className="font-medium text-[16px] text-[#1E293B] uppercase tracking-wide leading-tight">
+                                {itemName}
+                              </span>
+                            </div>
+
+                            {/* Options & Notes */}
+                            {(selectedOptions.length > 0 || notes) && (
+                              <ul className="mt-2.5 ml-5 space-y-2">
+                                {selectedOptions.map((opt: string, i: number) => (
+                                  <li key={i} className="flex items-center gap-2.5">
+                                    <div className="w-[5px] h-[5px] bg-[#9CA3AF] shrink-0 rounded-sm" />
+                                    <span className="text-[14px] font-medium text-[#6B7280]">{opt}</span>
+                                  </li>
+                                ))}
+                                {notes && (
+                                  <li className="flex items-start gap-2.5 mt-2">
+                                    <div className="w-[5px] h-[5px] bg-[#9CA3AF] shrink-0 rounded-sm mt-2" />
+                                    <span className="text-[14px] font-medium text-[#6B7280] italic leading-tight">
+                                      {notes}
+                                    </span>
+                                  </li>
+                                )}
+                              </ul>
+                            )}
+                          </div>
+                        );
+                      })}
                   </div>
                 </div>
 
