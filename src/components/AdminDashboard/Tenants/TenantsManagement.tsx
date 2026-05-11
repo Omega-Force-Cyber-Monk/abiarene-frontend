@@ -1,13 +1,7 @@
 // pages/admin/tenants/TenantsManagement.tsx
 import { useState } from "react";
 import { CiSearch } from "react-icons/ci";
-import {
-
-  FaUsersCog,
-  FaUserPlus,
-  FaEdit,
-  FaTrash,
-} from "react-icons/fa";
+import { FaUsersCog, FaUserPlus, FaEdit, FaTrash } from "react-icons/fa";
 import { useNavigate } from "react-router-dom";
 import {
   useGetTenantsQuery,
@@ -25,7 +19,6 @@ import RolesManagementModal from "./RolesManagementModal";
 import { CreateTenantUserModal } from "./CreateTenantUserModal";
 import { EditTenantUserModal } from "./EditTenantUserModal";
 import DeleteConfirmationModal from "./DeleteConfirmationModal";
-
 
 const TenantsManagement = () => {
   const navigate = useNavigate();
@@ -45,6 +38,12 @@ const TenantsManagement = () => {
   } | null>(null);
   const [selectedTenantForUsers, setSelectedTenantForUsers] =
     useState<Tenant | null>(null);
+
+  // const { data, isLoading, error, refetch } = useGetTenantsQuery({
+  //   page,
+  //   limit: 10,
+  //   search: searchTerm,
+  // });
 
   const { data, isLoading, error, refetch } = useGetTenantsQuery({
     page,
@@ -70,8 +69,11 @@ const TenantsManagement = () => {
   );
 
   const tenants = data?.data || [];
-  const total = data?.total || 0;
-  const totalPages = Math.ceil(total / 10);
+  const total = data?.meta?.total || 0;
+  const totalPages = data?.meta?.totalPages || 0;
+  // const tenants = data?.data || [];
+  // const total = data?.total || 0;
+  // const totalPages = Math.ceil(total / 10);
   const roles = rolesData?.data || [];
 
   const handleSearch = () => {
@@ -351,9 +353,35 @@ const TenantsManagement = () => {
 
         {/* Pagination */}
         {totalPages > 0 && (
+          // <div className="mt-6 flex items-center justify-between px-2 sm:px-4 py-3 flex-wrap gap-3">
+          //   <div className="text-sm text-gray-600">
+          //     Showing <span className="font-medium">{tenants.length}</span> of{" "}
+          //     <span className="font-medium">{total}</span> tenants
+          //   </div>
+          //   <div className="flex items-center gap-2">
+          //     <button
+          //       onClick={() => setPage((p) => Math.max(1, p - 1))}
+          //       disabled={page === 1}
+          //       className="cursor-pointer rounded-lg border px-3 py-1.5 text-sm font-medium text-gray-600 hover:bg-gray-100 disabled:opacity-50 disabled:cursor-not-allowed transition"
+          //     >
+          //       Previous
+          //     </button>
+          //     <div className="min-w-[50px] rounded-md border border-[#E3E3E4] bg-gray-50 px-3 py-1.5 text-center text-sm font-medium text-gray-700 shadow-sm">
+          //       {page} / {totalPages}
+          //     </div>
+          //     <button
+          //       onClick={() => setPage((p) => Math.min(totalPages, p + 1))}
+          //       disabled={page === totalPages}
+          //       className="cursor-pointer rounded-lg border px-3 py-1.5 text-sm font-medium text-gray-600 hover:bg-gray-100 disabled:opacity-50 disabled:cursor-not-allowed transition"
+          //     >
+          //       Next
+          //     </button>
+          //   </div>
+          // </div>
           <div className="mt-6 flex items-center justify-between px-2 sm:px-4 py-3 flex-wrap gap-3">
             <div className="text-sm text-gray-600">
-              Showing <span className="font-medium">{tenants.length}</span> of{" "}
+              Showing{" "}
+              <span className="font-medium">{data?.meta?.count || 0}</span> of{" "}
               <span className="font-medium">{total}</span> tenants
             </div>
             <div className="flex items-center gap-2">

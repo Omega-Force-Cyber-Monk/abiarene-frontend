@@ -13,12 +13,40 @@ import {
   TenantUser,
   CreateTenantUserRequest,
   UpdateTenantUserRequest,
+  TenantsListResponse,
 } from "./adminTenant.types";
 
 export const adminTenantApi = baseApi.injectEndpoints({
   endpoints: (builder) => ({
     // Get all tenants with pagination and search
-    getTenants: builder.query<ApiResponse<Tenant[]>, GetTenantsQueryParams>({
+    // getTenants: builder.query<ApiResponse<Tenant[]>, GetTenantsQueryParams>({
+    //   query: ({ page = 1, limit = 10, search = "" }) => ({
+    //     url: "/tenant/all",
+    //     method: "GET",
+    //     params: {
+    //       page,
+    //       limit,
+    //       ...(search && { search }),
+    //     },
+    //   }),
+    //   transformResponse: (response: Tenant[]) => {
+    //     return {
+    //       data: response,
+    //       total: response.length,
+    //       page: 1,
+    //       limit: response.length,
+    //     };
+    //   },
+    //   providesTags: (result) =>
+    //     result
+    //       ? [
+    //           ...result.data.map(({ id }) => ({ type: "Tenant" as const, id })),
+    //           { type: "Tenant", id: "LIST" },
+    //         ]
+    //       : [{ type: "Tenant", id: "LIST" }],
+    // }),
+
+    getTenants: builder.query<TenantsListResponse, GetTenantsQueryParams>({
       query: ({ page = 1, limit = 10, search = "" }) => ({
         url: "/tenant/all",
         method: "GET",
@@ -28,16 +56,11 @@ export const adminTenantApi = baseApi.injectEndpoints({
           ...(search && { search }),
         },
       }),
-      transformResponse: (response: Tenant[]) => {
-        return {
-          data: response,
-          total: response.length,
-          page: 1,
-          limit: response.length,
-        };
+      transformResponse: (response: TenantsListResponse) => {
+        return response; // API already returns { data: [], meta: {} }
       },
       providesTags: (result) =>
-        result
+        result?.data
           ? [
               ...result.data.map(({ id }) => ({ type: "Tenant" as const, id })),
               { type: "Tenant", id: "LIST" },
@@ -163,7 +186,6 @@ export const {
   useCreateTenantUserMutation,
   useUpdateTenantUserMutation,
 } = adminTenantApi;
-
 
 // import { baseApi } from "@/redux/hooks/baseApi";
 // import {
