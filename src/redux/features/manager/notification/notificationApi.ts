@@ -2,6 +2,7 @@ import { baseApi } from "@/redux/hooks/baseApi";
 
 import {
   Notification,
+  NotificationListResponse,
   CreateNotificationRequest,
   UpdateNotificationRequest,
 } from "./notification";
@@ -9,19 +10,32 @@ import {
 export const notificationApi = baseApi.injectEndpoints({
   endpoints: (builder) => ({
     // Get all notifications
-    getNotifications: builder.query<Notification[], void>({
+    getNotifications: builder.query<NotificationListResponse, void>({
       query: () => ({
         url: "/notifications",
         method: "GET",
       }),
       providesTags: ["Notification"],
-      transformResponse: (response: Notification[]) => {
-        // Sort by createdAt (newest first)
-        return response.sort(
-          (a, b) =>
-            new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime(),
-        );
+      transformResponse: (response: NotificationListResponse) => {
+        // Sort data by createdAt (newest first)
+        if (response.data) {
+          response.data.sort(
+            (a, b) =>
+              new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime(),
+          );
+        }
+        return response;
       },
+    }),
+
+
+    // Get unread notification count
+    getUnreadCount: builder.query<{ unreadCount: number }, void>({
+      query: () => ({
+        url: "/notifications/unread-count",
+        method: "GET",
+      }),
+      providesTags: ["Notification"],
     }),
 
     // Get single notification
@@ -46,7 +60,7 @@ export const notificationApi = baseApi.injectEndpoints({
       invalidatesTags: ["Notification"],
     }),
 
-    // Update notification
+    // Update notification (general update if needed)
     updateNotification: builder.mutation<
       Notification,
       { id: string; data: UpdateNotificationRequest }
@@ -70,21 +84,20 @@ export const notificationApi = baseApi.injectEndpoints({
       invalidatesTags: ["Notification"],
     }),
 
-    // Mark notification as read (using update)
+    // Mark notification as read (using specific endpoint)
     markAsRead: builder.mutation<Notification, string>({
       query: (id) => ({
-        url: `/notifications/${id}`,
+        url: `/notifications/${id}/read`,
         method: "PATCH",
-        body: { isRead: true },
       }),
-      invalidatesTags: (result, error, id) => [{ type: "Notification", id }],
+      invalidatesTags: ["Notification"],
     }),
 
-    // Mark all as read
-    markAllAsRead: builder.mutation<void, void>({
+    // Mark all as read (using specific endpoint)
+    markAllAsRead: builder.mutation<{ count: number }, void>({
       query: () => ({
-        url: "/notifications/mark-all-read",
-        method: "POST",
+        url: "/notifications/read-all",
+        method: "PATCH",
       }),
       invalidatesTags: ["Notification"],
     }),
@@ -93,6 +106,7 @@ export const notificationApi = baseApi.injectEndpoints({
 
 export const {
   useGetNotificationsQuery,
+  useGetUnreadCountQuery,
   useGetNotificationByIdQuery,
   useCreateNotificationMutation,
   useUpdateNotificationMutation,
@@ -100,3 +114,4 @@ export const {
   useMarkAsReadMutation,
   useMarkAllAsReadMutation,
 } = notificationApi;
+

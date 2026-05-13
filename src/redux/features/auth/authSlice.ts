@@ -64,8 +64,9 @@ const authSlice = createSlice({
         state.user = {
           id: payload.user.sub,
           email: payload.user.email,
-          name: payload.user.email.split('@')[0], // Extract name from email or use empty string
+          name: payload.user.email.split('@')[0],
           role: payload.user.role.toUpperCase(),
+          tenantId: payload.user.tenantId,
         };
         Cookies.set("token", payload.accessToken, {
           expires: 1,
@@ -130,6 +131,7 @@ const authSlice = createSlice({
           email: "", // no email in response
           name: payload.user.name,
           role: payload.user.role.toUpperCase(),
+          tenantId: payload.user.tenantId,
         };
 
         Cookies.set("token", payload.accessToken, {

@@ -81,9 +81,10 @@ export default function NotificationPanel() {
 
   const isRead = (notificationId: string) => {
     if (localReadStatus.has(notificationId)) return true;
-    const notification = notifications?.find((n) => n.id === notificationId);
+    const notification = notifications?.data?.find((n) => n.id === notificationId);
     return notification?.isRead || false;
   };
+
 
   if (isLoading) {
     return (
@@ -107,7 +108,7 @@ export default function NotificationPanel() {
     );
   }
 
-  const unreadCount = notifications?.filter((n) => !isRead(n.id)).length || 0;
+  const unreadCount = notifications?.meta?.unreadCount ?? notifications?.data?.filter((n) => !isRead(n.id)).length ?? 0;
 
   return (
     <div className="w-80 bg-white rounded-2xl shadow-2xl border border-gray-100 overflow-hidden">
@@ -141,14 +142,14 @@ export default function NotificationPanel() {
 
       {/* Body */}
       <div className="max-h-72 overflow-y-auto">
-        {!notifications || notifications.length === 0 ? (
+        {!notifications?.data || notifications.data.length === 0 ? (
           <div className="text-center py-8">
             <IoMdNotificationsOutline className="text-4xl text-gray-300 mx-auto mb-2" />
             <p className="text-sm text-gray-500">No notifications</p>
             <p className="text-xs text-gray-400 mt-1">You're all caught up!</p>
           </div>
         ) : (
-          notifications.map((notification) => {
+          notifications.data.map((notification) => {
             const read = isRead(notification.id);
             return (
               <div
@@ -175,7 +176,7 @@ export default function NotificationPanel() {
                     <h4
                       className={`text-sm font-semibold ${!read ? "text-gray-900" : "text-gray-700"}`}
                     >
-                      {notification.name}
+                      {notification.title}
                     </h4>
 
                     <span className="text-[11px] text-gray-400 whitespace-nowrap ml-2">
@@ -189,6 +190,7 @@ export default function NotificationPanel() {
                     {notification.message}
                   </p>
                 </div>
+
 
                 {/* Delete button */}
                 <button
