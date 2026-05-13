@@ -84,7 +84,7 @@ export const notificationApi = baseApi.injectEndpoints({
       invalidatesTags: ["Notification"],
     }),
 
-    // Mark notification as read (using specific endpoint)
+    // Mark notification as read
     markAsRead: builder.mutation<Notification, string>({
       query: (id) => ({
         url: `/notifications/${id}/read`,
@@ -93,7 +93,7 @@ export const notificationApi = baseApi.injectEndpoints({
       invalidatesTags: ["Notification"],
     }),
 
-    // Mark all as read (using specific endpoint)
+    // Mark all as read
     markAllAsRead: builder.mutation<{ count: number }, void>({
       query: () => ({
         url: "/notifications/read-all",
@@ -103,6 +103,7 @@ export const notificationApi = baseApi.injectEndpoints({
     }),
   }),
 });
+
 
 export const {
   useGetNotificationsQuery,

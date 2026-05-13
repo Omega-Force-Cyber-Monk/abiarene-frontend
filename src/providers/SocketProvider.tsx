@@ -6,7 +6,6 @@ import { notificationApi } from "@/redux/features/manager/notification/notificat
 import { Notification } from "@/redux/features/manager/notification/notification";
 import { toast } from "react-hot-toast";
 
-
 interface SocketContextType {
   socket: Socket | null;
 }
@@ -20,53 +19,53 @@ export const SocketProvider: React.FC<{ children: React.ReactNode }> = ({ childr
   const dispatch = useAppDispatch();
   const { token, user } = useAppSelector((state) => state.auth);
   
-  // Minimal setup: Use the base API URL without the /api prefix
+  // According to backend: Namespace is /notifications
   const SOCKET_URL = import.meta.env.VITE_API_ENDPOINT?.replace("/api", "") || "http://localhost:5000";
+  const NOTIFICATION_NAMESPACE = `${SOCKET_URL}/notifications`;
 
   useEffect(() => {
     if (token && user) {
-      const socket = io(SOCKET_URL, {
-        auth: { token },
+      // Connect to the specific namespace with auth token
+      const socket = io(NOTIFICATION_NAMESPACE, {
         transports: ["websocket"],
+        auth: {
+          token: token, // Backend strips "Bearer " automatically
+        },
       });
 
       socketRef.current = socket;
 
       socket.on("connect", () => {
-        console.log("✅ Connected to socket server");
-        if (user.tenantId) {
-          socket.emit("join", `tenant_${user.tenantId}`);
-        }
+        console.log("✅ Notifications socket connected:", socket.id);
       });
 
-      socket.on("notification", (data: any) => {
+      // 1. Listen for new notifications
+      socket.on("notification:new", (data: Notification) => {
         console.log("🔔 New notification received:", data);
         
-        // Push notification directly into RTK Query cache
+        // Update getNotifications list
         dispatch(
           notificationApi.util.updateQueryData("getNotifications", undefined, (draft) => {
-            const newNotif: Notification = {
-              id: data.id || Date.now().toString(),
-              type: data.type || "INFO",
-              title: data.title || "New Notification",
-              message: data.message || "",
-              payload: data.payload || {},
-              tenantId: data.tenantId || user.tenantId || "",
-              isRead: false,
-              createdAt: new Date().toISOString(),
-              updatedAt: new Date().toISOString(),
-            };
-            
-            // Add to the beginning of the data array
-            if (draft.data) {
-              draft.data.unshift(newNotif);
-              // Update meta count if needed
-              draft.meta.total += 1;
-              draft.meta.unreadCount += 1;
+            if (draft && draft.data) {
+              // Prepend to list
+              draft.data.unshift(data);
+              // Update meta
+              if (draft.meta) {
+                draft.meta.total += 1;
+                draft.meta.unreadCount += 1;
+              }
             }
           })
         );
 
+        // Update unread count
+        dispatch(
+          notificationApi.util.updateQueryData("getUnreadCount", undefined, (draft) => {
+            if (draft) {
+              draft.unreadCount += 1;
+            }
+          })
+        );
 
         toast.success(data.message || "New notification", {
           icon: "🔔",
@@ -74,8 +73,63 @@ export const SocketProvider: React.FC<{ children: React.ReactNode }> = ({ childr
         });
       });
 
-      socket.on("disconnect", () => {
-        console.log("❌ Disconnected from socket server");
+      // 2. Listen for single read update
+      socket.on("notification:read", (payload: { id: string }) => {
+        console.log("📖 Notification marked as read:", payload.id);
+        
+        dispatch(
+          notificationApi.util.updateQueryData("getNotifications", undefined, (draft) => {
+            if (draft && draft.data) {
+              const item = draft.data.find(n => n.id === payload.id);
+              if (item && !item.isRead) {
+                item.isRead = true;
+                if (draft.meta && draft.meta.unreadCount > 0) {
+                  draft.meta.unreadCount -= 1;
+                }
+              }
+            }
+          })
+        );
+
+        dispatch(
+          notificationApi.util.updateQueryData("getUnreadCount", undefined, (draft) => {
+            if (draft && draft.unreadCount > 0) {
+              draft.unreadCount -= 1;
+            }
+          })
+        );
+      });
+
+      // 3. Listen for read-all update
+      socket.on("notification:read-all", () => {
+        console.log("📖 All notifications marked as read via socket");
+        
+        dispatch(
+          notificationApi.util.updateQueryData("getNotifications", undefined, (draft) => {
+            if (draft && draft.data) {
+              draft.data.forEach(n => n.isRead = true);
+              if (draft.meta) {
+                draft.meta.unreadCount = 0;
+              }
+            }
+          })
+        );
+
+        dispatch(
+          notificationApi.util.updateQueryData("getUnreadCount", undefined, (draft) => {
+            if (draft) {
+              draft.unreadCount = 0;
+            }
+          })
+        );
+      });
+
+      socket.on("connect_error", (err) => {
+        console.error("❌ Notifications socket connection error:", err.message);
+      });
+
+      socket.on("disconnect", (reason) => {
+        console.log("❌ Notifications socket disconnected:", reason);
       });
 
       return () => {
@@ -83,7 +137,7 @@ export const SocketProvider: React.FC<{ children: React.ReactNode }> = ({ childr
         socketRef.current = null;
       };
     }
-  }, [token, user, dispatch, SOCKET_URL]);
+  }, [token, user, dispatch, NOTIFICATION_NAMESPACE]);
 
   return (
     <SocketContext.Provider value={{ socket: socketRef.current }}>
@@ -91,4 +145,3 @@ export const SocketProvider: React.FC<{ children: React.ReactNode }> = ({ childr
     </SocketContext.Provider>
   );
 };
-
