@@ -1,29 +1,33 @@
 export interface Notification {
   id: string;
-  title: string;
-  name: string;
-  message: string;
   tenantId: string;
-  isRead?: boolean;
+  type: string;
+  title: string;
+  message: string;
+  payload: any;
+  isRead: boolean;
   createdAt: string;
   updatedAt: string;
+}
+
+export interface NotificationListResponse {
+  data: Notification[];
+  meta: {
+    page: number;
+    limit: number;
+    total: number;
+    count: number;
+    totalPages: number;
+    unreadCount: number;
+  };
 }
 
 export interface CreateNotificationRequest {
-  name: string;
+  title: string;
   message: string;
+  type: string;
 }
 
 export interface UpdateNotificationRequest {
-  name?: string;
-  message?: string;
-}
-
-export interface NotificationResponse {
-  id: string;
-  name: string;
-  message: string;
-  tenantId: string;
-  createdAt: string;
-  updatedAt: string;
+  isRead?: boolean;
 }

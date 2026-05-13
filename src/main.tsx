@@ -9,15 +9,19 @@ import ReduxProviderWrapper from "./redux/readux-provider/reduxProviderWrapper.t
 import { DashboardToaster } from "./components/ui/Toaster.tsx";
 
 import { Toaster } from "react-hot-toast";
+import { SocketProvider } from "./providers/SocketProvider.tsx";
 
 createRoot(document.getElementById("root")!).render(
   <StrictMode>
     <Provider store={store}>
       <ReduxProviderWrapper>
-        <RouterProvider router={routes} />
-        <DashboardToaster />
-        <Toaster position="top-right" />
+        <SocketProvider>
+          <RouterProvider router={routes} />
+          <DashboardToaster />
+          <Toaster position="top-right" />
+        </SocketProvider>
       </ReduxProviderWrapper>
     </Provider>
   </StrictMode>,
 );
+

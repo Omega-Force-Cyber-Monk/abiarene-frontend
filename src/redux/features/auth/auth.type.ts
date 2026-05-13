@@ -12,6 +12,7 @@ export type User = {
   email: string;
   name?: string;
   role: Role;
+  tenantId?: string;
   status?: string;
   createdAt?: string;
 };
@@ -37,6 +38,7 @@ export type LoginResponse = {
     sub: string;
     email: string;
     role: string;
+    tenantId?: string;
   };
 };
 

@@ -25,8 +25,7 @@ const ManagerDashboardNavbar: React.FC<NavbarProps> = ({
   console.log(imgUrl);
 
   const { data: notifications } = useGetNotificationsQuery();
-
-  const unreadCount = notifications?.filter((n) => !n.isRead).length || 0;
+  const unreadCount = notifications?.meta?.unreadCount ?? notifications?.data?.filter((n) => !n.isRead).length ?? 0;
 
   useEffect(() => {
     function handleClickOutside(event: MouseEvent) {

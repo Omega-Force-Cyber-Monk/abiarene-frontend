@@ -30,6 +30,11 @@ import ManagerProductManagePage from "@/pages/Manager/ManagerProductManagePage";
 import LoginPin from "@/pages/LoginPin";
 import ProtectedRoute from "@/components/Shared/ProtectedRoute";
 import Login from "@/pages/Login";
+import PaymentSelectionPage from "@/pages/Payment/PaymentSelectionPage";
+import PaymentSuccessPage from "@/pages/Payment/PaymentSuccessPage";
+import PaystackCallbackPage from "@/pages/Payment/PaystackCallbackPage";
+
+
 
 const routes = createBrowserRouter([
   {
@@ -56,7 +61,34 @@ const routes = createBrowserRouter([
     ],
   },
 
+  {
+    path: "/payment-selection",
+    element: (
+      <ProtectedRoute requiredRole="MANAGER">
+        <PaymentSelectionPage />
+      </ProtectedRoute>
+    ),
+  },
+  {
+    path: "/subscription/success",
+    element: (
+      <ProtectedRoute requiredRole="MANAGER">
+        <PaymentSuccessPage />
+      </ProtectedRoute>
+    ),
+  },
+  {
+    path: "/subscription/paystack/callback",
+    element: (
+      <ProtectedRoute requiredRole="MANAGER">
+        <PaystackCallbackPage />
+      </ProtectedRoute>
+    ),
+  },
+
+
   /* Admin Dashboard */
+
   {
     path: "/admin-dashboard",
     element: (

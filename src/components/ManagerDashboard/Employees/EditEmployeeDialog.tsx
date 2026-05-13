@@ -39,7 +39,7 @@ const EditEmployeeDialog = ({
   const [formData, setFormData] = useState({
     name: user.name,
     email: user.email,
-    roleId: user.roleId,
+    role: (user.role?.name || "") as "SERVER" | "KITCHEN" | "CASHIER" | "MANAGER",
     pin: user.pin,
     status: user.status,
   });
@@ -49,7 +49,7 @@ const EditEmployeeDialog = ({
       setFormData({
         name: user.name,
         email: user.email,
-        roleId: user.roleId,
+        role: (user.role?.name || "") as any,
         pin: user.pin,
         status: user.status,
       });
@@ -68,7 +68,7 @@ const EditEmployeeDialog = ({
       name: formData.name,
       email: formData.email,
       pin: formData.pin,
-      // roleId: formData.roleId,
+      role: formData.role,
       status: formData.status,
     };
 
@@ -142,9 +142,9 @@ const EditEmployeeDialog = ({
               </label>
 
               <Select
-                value={formData.roleId}
-                onValueChange={(value) =>
-                  setFormData({ ...formData, roleId: value })
+                value={formData.role}
+                onValueChange={(value: any) =>
+                  setFormData({ ...formData, role: value })
                 }
               >
                 <SelectTrigger className="w-full mt-1 cursor-pointer rounded-xl border border-gray-300 bg-white px-4 py-2.5 text-sm shadow-sm focus:ring-2 focus:ring-[#061E49] transition-all duration-200">
@@ -152,18 +152,28 @@ const EditEmployeeDialog = ({
                 </SelectTrigger>
 
                 <SelectContent className="rounded-xl border bg-white border-gray-200 shadow-lg">
-                  {roles?.map((role) => (
-                    <SelectItem
-                      key={role.id}
-                      value={role.id}
-                      className="cursor-pointer rounded-md px-3 py-2 text-sm transition-all duration-200 hover:bg-[#061E49]/10 focus:bg-[#061E49]/20"
-                    >
-                      {role.name}
-                    </SelectItem>
-                  ))}
+                  <SelectItem
+                    value="SERVER"
+                    className="cursor-pointer rounded-md px-3 py-2 text-sm hover:bg-[#061E49]/10"
+                  >
+                    Server
+                  </SelectItem>
+                  <SelectItem
+                    value="KITCHEN"
+                    className="cursor-pointer rounded-md px-3 py-2 text-sm hover:bg-[#061E49]/10"
+                  >
+                    Kitchen
+                  </SelectItem>
+                  <SelectItem
+                    value="CASHIER"
+                    className="cursor-pointer rounded-md px-3 py-2 text-sm hover:bg-[#061E49]/10"
+                  >
+                    Cashier
+                  </SelectItem>
                 </SelectContent>
               </Select>
             </div>
+
 
             <div>
               <label className="text-sm text-[#4D5665]">

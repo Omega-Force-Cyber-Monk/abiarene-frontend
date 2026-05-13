@@ -3,6 +3,7 @@ import { configureStore } from "@reduxjs/toolkit";
 import { baseApi } from "./hooks/baseApi";
 import authReducer from "@/redux/features/auth/authSlice";
 
+
 import {
   persistReducer,
   persistStore,
@@ -29,6 +30,7 @@ export const store = configureStore({
     [baseApi.reducerPath]: baseApi.reducer,
     auth: persistedReducer,
   },
+
   middleware: (getDefaultMiddleware) =>
     getDefaultMiddleware({
       serializableCheck: {
