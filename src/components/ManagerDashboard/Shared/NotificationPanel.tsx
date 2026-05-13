@@ -49,9 +49,10 @@ export default function NotificationPanel() {
   const handleMarkAllRead = async () => {
     try {
       await markAllAsRead().unwrap();
-      if (notifications) {
-        setLocalReadStatus(new Set(notifications.map((n) => n.id)));
+      if (notifications?.data) {
+        setLocalReadStatus(new Set(notifications.data.map((n) => n.id)));
       }
+
       toast.success("All notifications marked as read");
     } catch (error) {
       console.error("Failed to mark all as read:", error);
