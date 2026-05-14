@@ -1,12 +1,14 @@
 import AccountDetails from "./AccountDetails";
-import DeviceActivation from "./DeviceActivation";
+import TanentSubscribtion from "./TanentSubscribtion";
+// import DeviceActivation from "./DeviceActivation";
 // import DeviceActivation from "./DeviceActivation";
 
 const Settings = () => {
   return (
     <div className="space-y-8">
       <AccountDetails />
-      <DeviceActivation />
+      <TanentSubscribtion />
+      {/* <DeviceActivation /> */}
     </div>
   );
 };
