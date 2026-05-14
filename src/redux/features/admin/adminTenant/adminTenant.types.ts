@@ -123,6 +123,34 @@ export interface TenantUsersResponse {
   limit: number;
 }
 
+export interface DashboardResponse {
+  tenants: {
+    total: number;
+    previousMonthTotal: number;
+    changePercentage: number;
+  };
+
+  support: {
+    activeTickets: number;
+    closedIssues: number;
+    previousMonthClosedIssues: number;
+    closedIssuesChangePercentage: number;
+  };
+
+  revenue: {
+    monthly: number;
+    previousMonth: number;
+    changePercentage: number;
+  };
+
+  meta: {
+    comparedMonthStart: string;
+    currentMonthStart: string;
+    comparedAt: string;
+  };
+}
+
+
 // // redux/features/admin/adminTenant/adminTenant.types.ts
 
 // export interface ApiResponse<T> {

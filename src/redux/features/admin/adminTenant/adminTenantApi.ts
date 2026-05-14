@@ -14,6 +14,7 @@ import {
   CreateTenantUserRequest,
   UpdateTenantUserRequest,
   TenantsListResponse,
+  DashboardResponse,
 } from "./adminTenant.types";
 
 export const adminTenantApi = baseApi.injectEndpoints({
@@ -119,6 +120,15 @@ export const adminTenantApi = baseApi.injectEndpoints({
       ],
     }),
 
+     getAdminDashboard: builder.query<DashboardResponse, void>({
+      query: () => ({
+        url: "/admin/dashboard",
+        method: "GET",
+      }),
+      providesTags: ["Support", "Tenant"],
+    }),
+  
+
     // Get single user by ID (GET /api/users/tenant/{tenantId}/{id})
     getTenantUserById: builder.query<
       TenantUser,
@@ -185,6 +195,7 @@ export const {
   useGetTenantUserByIdQuery,
   useCreateTenantUserMutation,
   useUpdateTenantUserMutation,
+  useGetAdminDashboardQuery,
 } = adminTenantApi;
 
 // import { baseApi } from "@/redux/hooks/baseApi";
