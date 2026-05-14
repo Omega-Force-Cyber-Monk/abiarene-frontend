@@ -208,7 +208,7 @@ export default function NotificationPanel() {
       </div>
 
       {/* Footer */}
-      {notifications && notifications.length > 0 && (
+      {notifications?.data && notifications.data.length > 0 && (
         <div className="px-5 py-3 border-t border-[#DBE0E5] bg-gray-50 text-center">
           <button
             onClick={() => refetch()}
