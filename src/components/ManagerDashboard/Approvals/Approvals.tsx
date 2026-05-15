@@ -1,92 +1,81 @@
-const RequestCard = () => {
-  return (
-    <div className="bg-[#F9FAFB] p-4 sm:p-5 rounded-2xl shadow-md space-y-4">
-      {/* Item Header */}
-      <div className="flex flex-col sm:flex-row sm:justify-between sm:items-center gap-3">
-        {/* Left */}
-        <div>
-          <h2 className="text-base sm:text-lg font-semibold text-gray-800">
-            Whole Milk
-          </h2>
-          <p className="text-xs text-gray-400 uppercase tracking-wide">
-            Requested by John
-          </p>
-        </div>
-
-        {/* Price Section */}
-        <div className="text-xs sm:text-sm flex flex-col sm:flex-row sm:items-center gap-1 sm:gap-3">
-          <span className="text-gray-500">Original: $3.50</span>
-          <span className="text-red-500">Discount: -$0.50</span>
-          <span className="text-green-600 font-semibold">Final: $3.00</span>
-        </div>
-      </div>
-
-      {/* Action Buttons */}
-      <div className="flex flex-col sm:flex-row gap-3">
-        {/* Reject */}
-        <button className="w-full cursor-pointer border border-[#0B2A5B] text-[#0B2A5B] py-2 rounded-full hover:bg-[#0B2A5B] hover:text-white transition duration-300">
-          Reject
-        </button>
-
-        {/* Approve */}
-        <button className="w-full cursor-pointer bg-gradient-to-r from-[#0B2A5B] to-[#123B7A] text-white py-2 rounded-full hover:opacity-90 transition duration-300">
-          Approve
-        </button>
-      </div>
-    </div>
-  );
-};
+/* eslint-disable @typescript-eslint/no-explicit-any */
+import { useState } from "react";
+import AddVoucherDialog from "./AddVoucherDialog";
+import VoucherCard from "./VoucherCard";
+import EditVoucherModal from "./EditVoucherModal";
+import { useGetDiscountsQuery, useDeleteDiscountMutation, Discount } from "@/redux/features/restaurant/discount/discountApi";
+import { toast } from "react-hot-toast";
+import { Skeleton } from "@/components/ui/skeleton";
 
 export default function Approvals() {
+  const { data: discounts, isLoading, isError } = useGetDiscountsQuery();
+  const [deleteDiscount] = useDeleteDiscountMutation();
+  
+  const [editingVoucher, setEditingVoucher] = useState<Discount | null>(null);
+
+  const handleEdit = (voucher: Discount) => {
+    setEditingVoucher(voucher);
+  };
+
+  const handleDelete = async (id: string) => {
+    if (window.confirm("Are you sure you want to delete this voucher?")) {
+      try {
+        await deleteDiscount(id).unwrap();
+        toast.success("Voucher deleted successfully");
+      } catch (error: any) {
+        console.error("Failed to delete voucher:", error);
+        toast.error(error?.data?.message || "Failed to delete voucher");
+      }
+    }
+  };
+
+  if (isLoading) {
+    return (
+      <div className="space-y-4 sm:space-y-6 w-full mx-auto">
+        <AddVoucherDialog />
+        {[1, 2, 3].map((i) => (
+          <Skeleton key={i} className="h-40 w-full rounded-2xl" />
+        ))}
+      </div>
+    );
+  }
+
+  if (isError) {
+    return (
+      <div className="text-center py-12">
+        <p className="text-red-500">Failed to load vouchers. Please try again.</p>
+      </div>
+    );
+  }
+
   return (
     <div className=" space-y-4 sm:space-y-6 w-full mx-auto">
-      <RequestCard />
-      <RequestCard />
+      <AddVoucherDialog />
+      
+      {discounts?.data && discounts.data.length > 0 ? (
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-2 gap-6">
+          {discounts.data.map((voucher) => (
+            <VoucherCard 
+              key={voucher.id} 
+              voucher={voucher} 
+              onEdit={handleEdit}
+              onDelete={handleDelete}
+            />
+          ))}
+        </div>
+      ) : (
+        <div className="text-center py-12 bg-white rounded-2xl border border-dashed border-gray-200">
+          <p className="text-gray-400">No vouchers found. Create one to get started!</p>
+        </div>
+      )}
+
+      {editingVoucher && (
+        <EditVoucherModal 
+          voucher={editingVoucher} 
+          isOpen={!!editingVoucher} 
+          onClose={() => setEditingVoucher(null)} 
+        />
+      )}
     </div>
   );
 }
-
-// const RequestCard = () => {
-//   return (
-//     <div className="bg-[#F9FAFB] p-4 rounded-2xl shadow-md space-y-4">
-//       {/* Item Header */}
-//       <div className="flex justify-between items-center">
-//         <div>
-//           <h2 className="text-lg font-semibold text-gray-800">Whole Milk</h2>
-//           <p className="text-xs text-gray-400 uppercase tracking-wide">
-//             Requested by John
-//           </p>
-//         </div>
-
-//         {/* Price Section */}
-//         <div className="text-sm space-x-3">
-//           <span className="text-gray-500">Original: $3.50</span>
-//           <span className="text-red-500">Discount: -$0.50</span>
-//           <span className="text-green-600 font-semibold">Final: $3.00</span>
-//         </div>
-//       </div>
-
-//       {/* Action Buttons */}
-//       <div className="flex gap-4">
-//         {/* Reject */}
-//         <button className="w-full cursor-pointer border border-[#0B2A5B] text-[#0B2A5B] py-2 rounded-full hover:bg-[#0B2A5B] hover:text-white transition duration-300">
-//           Reject
-//         </button>
-
-//         {/* Approve */}
-//         <button className="w-full cursor-pointer bg-gradient-to-r from-[#0B2A5B] to-[#123B7A] text-white py-2 rounded-full hover:opacity-90 transition duration-300">
-//           Approve
-//         </button>
-//       </div>
-//     </div>
-//   );
-// };
-
-// export default function Approvals() {
-//   return (
-//     <div className=" space-y-6 ">
-//       <RequestCard />
-//       <RequestCard />
-//     </div>
-//   );
-// }
