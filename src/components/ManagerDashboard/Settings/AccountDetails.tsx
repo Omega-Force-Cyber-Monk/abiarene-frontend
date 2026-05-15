@@ -8,6 +8,7 @@ import {
   useUpdateCurrentUserMutation,
 } from "@/redux/features/manager/settings/settingApi";
 import { toast } from "react-hot-toast"; // Assuming you have toast installed
+import Loader from "@/components/AdminDashboard/Shared/Loader";
 
 export default function AccountDetails() {
   const {
@@ -68,8 +69,8 @@ export default function AccountDetails() {
 
   if (isLoading) {
     return (
-      <div className="w-full bg-white border-[#DDDDDD] p-6">
-        <div className="text-center">Loading profile...</div>
+      <div>
+        <Loader />
       </div>
     );
   }
