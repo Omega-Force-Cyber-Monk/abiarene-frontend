@@ -65,7 +65,7 @@ const TenantSubscription = () => {
   const isExpiringSoon = daysRemaining <= 7 && daysRemaining > 0;
 
   return (
-    <div className="space-y-4 p-6 bg-gray-300 rounded-2xl">
+    <div className="space-y-4 p-6 bg-[#e6e7eb] rounded-2xl">
       <div className="flex justify-between items-center">
         <div className="flex justify-between items-center space-x-3">
           <div>
