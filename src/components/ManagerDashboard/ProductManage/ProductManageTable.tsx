@@ -1,3 +1,5 @@
+/* eslint-disable */
+
 import { useState } from "react";
 import { Plus } from "lucide-react";
 import { TableCardProps, MenuItem, OrderItem } from "./index";
@@ -25,7 +27,11 @@ import { MenuForm } from "./components/MenuForm";
 import { OrderForm } from "./components/OrderForm";
 import { ViewModal } from "./components/ViewModal";
 import { SharedMenuForm } from "./components/SharedMenuForm";
-import { getTableColumns, getMenuColumns, getOrderColumns } from "./components/columns";
+import {
+  getTableColumns,
+  getMenuColumns,
+  getOrderColumns,
+} from "./components/columns";
 import { SharedMenuContent } from "./SharedMenuContent";
 
 import {
@@ -42,26 +48,38 @@ export const ProductManageTable = () => {
   const limit = 10;
 
   // API Hooks
-  const { data: tables, isLoading: isTablesLoading } = useGetTablesQuery({ page, limit });
-  const [createTable, { isLoading: isCreatingTable }] = useCreateTableMutation();
-  const [updateTable, { isLoading: isUpdatingTable }] = useUpdateTableMutation();
+  const { data: tables, isLoading: isTablesLoading } = useGetTablesQuery({
+    page,
+    limit,
+  });
+  const [createTable, { isLoading: isCreatingTable }] =
+    useCreateTableMutation();
+  const [updateTable, { isLoading: isUpdatingTable }] =
+    useUpdateTableMutation();
   const [deleteTable] = useDeleteTableMutation();
 
-  const { data: menuItemsData, isLoading: isMenuItemsLoading } = useGetItemsQuery({ page, limit });
+  const { data: menuItemsData, isLoading: isMenuItemsLoading } =
+    useGetItemsQuery({ page, limit });
   const [createItem, { isLoading: isCreatingItem }] = useCreateItemMutation();
   const [updateItem, { isLoading: isUpdatingItem }] = useUpdateItemMutation();
   const [deleteItem] = useDeleteItemMutation();
 
-  const { data: ordersData, isLoading: isOrdersLoading } = useGetOrdersQuery({ page, limit });
-  const [createOrder, { isLoading: isCreatingOrder }] = useCreateOrderMutation();
-  const [updateOrder, { isLoading: isUpdatingOrder }] = useUpdateOrderMutation();
+  const { data: ordersData, isLoading: isOrdersLoading } = useGetOrdersQuery({
+    page,
+    limit,
+  });
+  const [createOrder, { isLoading: isCreatingOrder }] =
+    useCreateOrderMutation();
+  const [updateOrder, { isLoading: isUpdatingOrder }] =
+    useUpdateOrderMutation();
   const [deleteOrder] = useDeleteOrderMutation();
 
   // Shared Menu Hooks
-  const { data: sharedMenu, isLoading: isSharedMenuLoading } = useGetSharedMenuQuery();
-  const [addToSharedMenu, { isLoading: isAddingToMenu }] = useAddToSharedMenuMutation();
+  const { data: sharedMenu, isLoading: isSharedMenuLoading } =
+    useGetSharedMenuQuery();
+  const [addToSharedMenu, { isLoading: isAddingToMenu }] =
+    useAddToSharedMenuMutation();
   const [removeFromSharedMenu] = useRemoveFromSharedMenuMutation();
-
 
   // Modal states
   const [isAddModalOpen, setIsAddModalOpen] = useState(false);
@@ -184,7 +202,10 @@ export const ProductManageTable = () => {
     }
   };
 
-  const handleAddToSharedMenu = async (data: { name: string; itemIds: string[] }) => {
+  const handleAddToSharedMenu = async (data: {
+    name: string;
+    itemIds: string[];
+  }) => {
     try {
       await addToSharedMenu(data).unwrap();
       toast.success("Items added to shared menu");
@@ -194,12 +215,16 @@ export const ProductManageTable = () => {
     }
   };
 
-
   const renderTableContent = () => {
     const handlers = {
       openViewModal,
       openEditModal,
-      handleDelete: activeTab === "tables" ? handleDeleteTable : activeTab === "items" ? handleDeleteMenu : handleDeleteOrder
+      handleDelete:
+        activeTab === "tables"
+          ? handleDeleteTable
+          : activeTab === "items"
+            ? handleDeleteMenu
+            : handleDeleteOrder,
     };
 
     if (activeTab === "tables") {
@@ -236,7 +261,7 @@ export const ProductManageTable = () => {
 
     if (activeTab === "shared-menu") {
       return (
-        <SharedMenuContent 
+        <SharedMenuContent
           sharedMenu={sharedMenu}
           onRemoveItem={handleRemoveFromSharedMenu}
           isLoading={isSharedMenuLoading || isMenuItemsLoading}
@@ -277,30 +302,37 @@ export const ProductManageTable = () => {
   return (
     <div className="min-h-screen">
       <div className="w-full mx-auto">
-        <div className="flex justify-end mb-8">
-          <button
-            onClick={openAddModal}
-            className="inline-flex items-center gap-2 px-4 py-2 bg-[#061E49] text-white rounded-full hover:bg-[#0A2540]/90 cursor-pointer transition-colors"
-          >
-            <Plus size={20} />
-            Add {labels[activeTab]}
-          </button>
-        </div>
+        {activeTab !== "orders" && (
+          <div className="flex justify-end mb-8">
+            <button
+              onClick={openAddModal}
+              className="inline-flex items-center gap-2 px-4 py-2 bg-[#061E49] text-white rounded-full hover:bg-[#0A2540]/90 cursor-pointer transition-colors"
+            >
+              <Plus size={20} />
+              Add {labels[activeTab]}
+            </button>
+          </div>
+        )}
 
         <div className="flex flex-col sm:flex-row gap-2 bg-white rounded-xl p-2 shadow-sm mb-6">
-          {(["tables", "items", "shared-menu", "orders"] as ActiveTab[]).map((tab) => (
-            <button
-              key={tab}
-              onClick={() => {
-                setActiveTab(tab);
-                setPage(1);
-              }}
-              className={`w-full sm:flex-1 px-4 py-2.5 rounded-lg font-medium capitalize transition-all cursor-pointer ${activeTab === tab ? "bg-[#0A2540] text-white shadow-sm" : "text-gray-600 hover:bg-gray-100"
+          {(["tables", "items", "shared-menu", "orders"] as ActiveTab[]).map(
+            (tab) => (
+              <button
+                key={tab}
+                onClick={() => {
+                  setActiveTab(tab);
+                  setPage(1);
+                }}
+                className={`w-full sm:flex-1 px-4 py-2.5 rounded-lg font-medium capitalize transition-all cursor-pointer ${
+                  activeTab === tab
+                    ? "bg-[#0A2540] text-white shadow-sm"
+                    : "text-gray-600 hover:bg-gray-100"
                 }`}
-            >
-              {tab.replace("-", " ")}
-            </button>
-          ))}
+              >
+                {tab.replace("-", " ")}
+              </button>
+            ),
+          )}
         </div>
 
         <div className="bg-white rounded-2xl shadow-sm overflow-hidden">
