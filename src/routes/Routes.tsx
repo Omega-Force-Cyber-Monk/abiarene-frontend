@@ -33,6 +33,7 @@ import Login from "@/pages/Login";
 import PaymentSelectionPage from "@/pages/Payment/PaymentSelectionPage";
 import PaymentSuccessPage from "@/pages/Payment/PaymentSuccessPage";
 import PaystackCallbackPage from "@/pages/Payment/PaystackCallbackPage";
+import SubscribtionVouchersPage from "@/pages/Admin/SubscribtionVouchersPage";
 
 
 
@@ -86,7 +87,6 @@ const routes = createBrowserRouter([
     ),
   },
 
-
   /* Admin Dashboard */
 
   {
@@ -99,6 +99,7 @@ const routes = createBrowserRouter([
     children: [
       { index: true, element: <AdminDashboardPage /> },
       { path: "dashboard", element: <AdminDashboardPage /> },
+      { path: "subscription-vouchers", element: <SubscribtionVouchersPage /> },
       { path: "ticket-queue", element: <TicketQueuePage /> },
       { path: "ticket-queue/:id", element: <TicketQueueDetails /> },
       { path: "tenants", element: <TenantsPage /> },

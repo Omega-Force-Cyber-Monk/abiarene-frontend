@@ -35,6 +35,11 @@ const defaultSidebarItems: SidebarItem[] = [
     label: "Overview",
     href: "/admin-dashboard",
   },
+  {
+    icon: LuUsers,
+    label: "Subscribers Vouchers",
+    href: "/admin-dashboard/subscription-vouchers",
+  },
 
   {
     icon: LuUsers,

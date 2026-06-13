@@ -55,6 +55,7 @@ const AdminDashboardNavBar: React.FC<NavbarProps> = ({
   }, []);
   const pathTitleMap: Record<string, string> = {
     "admin-dashboard": "Overview",
+    "subscription-vouchers": "Subscription Vouchers",
     "ticket-queue": "Ticket Queue",
     tenants: "Tenants",
     "new-business": "New Business",
