@@ -156,7 +156,7 @@ const VoucherDialog: React.FC<VoucherDialogProps> = ({
                 render={({ field }) => (
                   <div>
                     <label className="mb-2 block text-sm font-semibold text-gray-700">
-                      Discount Amount ($)
+                      Discount Amount (CFA)
                     </label>
 
                     <input

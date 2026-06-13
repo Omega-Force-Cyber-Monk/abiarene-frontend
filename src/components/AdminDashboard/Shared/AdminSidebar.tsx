@@ -52,11 +52,11 @@ const defaultSidebarItems: SidebarItem[] = [
     href: "/admin-dashboard/ticket-queue",
   },
 
-  {
-    icon: MdOutlineAddCircleOutline,
-    label: "New Business",
-    href: "/admin-dashboard/new-business",
-  },
+  // {
+  //   icon: MdOutlineAddCircleOutline,
+  //   label: "New Business",
+  //   href: "/admin-dashboard/new-business",
+  // },
 ];
 
 const AdminSidebar: React.FC<SidebarProps> = ({

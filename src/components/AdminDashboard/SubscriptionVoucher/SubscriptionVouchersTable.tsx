@@ -199,7 +199,7 @@ const SubscriptionVouchersTable = () => {
           </div>
           {/* Buttons */}
 
-          <button
+          {/* <button
             onClick={handleCreate}
             className="group w-full cursor-pointer sm:w-auto bg-[#052350] hover:bg-[#061E49] active:scale-[0.98] text-white px-5 py-2.5 rounded-xl flex items-center justify-center gap-2 transition-all duration-200 shadow-md hover:shadow-lg"
           >
@@ -207,7 +207,7 @@ const SubscriptionVouchersTable = () => {
             <span className="font-medium tracking-wide whitespace-nowrap">
               Create Voucher
             </span>
-          </button>
+          </button> */}
           <button
             onClick={() => refetch()}
             className="w-full sm:w-auto border border-gray-300 text-gray-700 px-4 py-2 rounded-lg flex items-center justify-center gap-2 hover:bg-gray-50 transition-colors"
@@ -255,9 +255,9 @@ const SubscriptionVouchersTable = () => {
                   <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
                     Usage
                   </th>
-                  <th className="px-6 py-3 text-center text-xs font-medium text-gray-500 uppercase tracking-wider">
+                  {/* <th className="px-6 py-3 text-center text-xs font-medium text-gray-500 uppercase tracking-wider">
                     Actions
-                  </th>
+                  </th> */}
                 </tr>
               </thead>
               <tbody className="bg-white divide-y divide-gray-200">
@@ -282,7 +282,7 @@ const SubscriptionVouchersTable = () => {
                       </td>
                       <td className="px-6 py-4 whitespace-nowrap">
                         <span className="px-2 py-1 text-xs font-medium bg-[#052350] text-white rounded-full">
-                          ${voucher.amountOff} OFF
+                          CFA {voucher.amountOff} OFF
                         </span>
                       </td>
                       <td className="px-6 py-4 whitespace-nowrap">
@@ -316,9 +316,9 @@ const SubscriptionVouchersTable = () => {
                           </span>
                         )}
                       </td>
-                      <td className="px-6 py-4 whitespace-nowrap text-center">
+                      {/* <td className="px-6 py-4 whitespace-nowrap text-center">
                         <div className="flex items-center justify-center gap-3">
-                          {/* Edit Button */}
+                         
                           <button
                             onClick={() => handleEdit(voucher)}
                             disabled={voucher.usedAt !== null}
@@ -345,7 +345,7 @@ const SubscriptionVouchersTable = () => {
                             </svg>
                           </button>
 
-                          {/* Delete Button */}
+                       
                           <button
                             onClick={() => handleDelete(voucher.id)}
                             disabled={voucher.usedAt !== null}
@@ -372,7 +372,7 @@ const SubscriptionVouchersTable = () => {
                             </svg>
                           </button>
                         </div>
-                      </td>
+                      </td> */}
                     </tr>
                   ))
                 )}

@@ -23,7 +23,7 @@ const SubscriptionDialog: React.FC<SubscriptionDialogProps> = ({
     planType: "MONTHLY" as PlanType,
     description: "",
     amount: 0,
-    currency: "USD",
+    currency: "CFA",
     isActive: true,
   });
 
@@ -43,7 +43,7 @@ const SubscriptionDialog: React.FC<SubscriptionDialogProps> = ({
         planType: "MONTHLY",
         description: "",
         amount: 0,
-        currency: "USD",
+        currency: "CFA",
         isActive: true,
       });
     }
