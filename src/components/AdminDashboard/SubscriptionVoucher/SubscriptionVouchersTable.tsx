@@ -282,7 +282,7 @@ const SubscriptionVouchersTable = () => {
                       </td>
                       <td className="px-6 py-4 whitespace-nowrap">
                         <span className="px-2 py-1 text-xs font-medium bg-[#052350] text-white rounded-full">
-                          CFA {voucher.amountOff} OFF
+                           {voucher.amountOff}% OFF
                         </span>
                       </td>
                       <td className="px-6 py-4 whitespace-nowrap">

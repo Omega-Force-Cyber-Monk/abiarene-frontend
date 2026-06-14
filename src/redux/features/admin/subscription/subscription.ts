@@ -10,6 +10,10 @@ export interface SubscriptionPrice {
   isActive: boolean;
   createdAt: string;
   updatedAt: string;
+  originalAmount?: number;
+  originalCurrency?: string;
+  exchangeRate?: number;
+  conversionUnavailable?: boolean;
 }
 
 export interface CreateSubscriptionPriceRequest {

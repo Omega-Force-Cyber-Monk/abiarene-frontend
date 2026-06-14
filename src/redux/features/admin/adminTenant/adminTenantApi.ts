@@ -93,10 +93,11 @@ export const adminTenantApi = baseApi.injectEndpoints({
       ],
     }),
 
-     getAdminDashboard: builder.query<DashboardResponse, void>({
-      query: () => ({
+     getAdminDashboard: builder.query<DashboardResponse, { currency?: string } | void>({
+      query: (params) => ({
         url: "/admin/dashboard",
         method: "GET",
+        params: params && params.currency ? { currency: params.currency } : undefined,
       }),
       providesTags: ["Support", "Tenant"],
     }),
@@ -154,6 +155,21 @@ export const adminTenantApi = baseApi.injectEndpoints({
       }),
       invalidatesTags: ["TenantUser"],
     }),
+
+    // Reset supervisor credentials (PATCH /api/users/tenant/{tenantId}/{id}/reset-supervisor-credentials)
+    resetSupervisorCredentials: builder.mutation<
+      TenantUser,
+      { tenantId: string; userId: string; data: { email: string; pin: string } }
+    >({
+      query: ({ tenantId, userId, data }) => ({
+        url: `/users/tenant/${tenantId}/${userId}/reset-supervisor-credentials`,
+        method: "PATCH",
+        body: data,
+      }),
+      invalidatesTags: (_result, _error, { tenantId }) => [
+        { type: "TenantUser", id: tenantId },
+      ],
+    }),
   }),
 });
 
@@ -169,4 +185,5 @@ export const {
   useCreateTenantUserMutation,
   useUpdateTenantUserMutation,
   useGetAdminDashboardQuery,
+  useResetSupervisorCredentialsMutation,
 } = adminTenantApi;

@@ -9,10 +9,11 @@ import {
 export const subscriptionApi = baseApi.injectEndpoints({
   endpoints: (builder) => ({
     // Get all subscription prices
-    getAllSubscriptionPrices: builder.query<SubscriptionPrice[], void>({
-      query: () => ({
+    getAllSubscriptionPrices: builder.query<SubscriptionPrice[], { currency?: string } | void>({
+      query: (params) => ({
         url: "/admin/subscription-prices",
         method: "GET",
+        params: params && params.currency ? { currency: params.currency } : undefined,
       }),
       providesTags: ["Subscription"],
     }),

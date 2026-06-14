@@ -1,5 +1,6 @@
 import React, { useState } from "react";
 import { SubscriptionPrice } from "@/redux/features/admin/subscription/subscription";
+import { getCurrencySymbol } from "@/hooks/useCurrencies";
 
 interface SubscriptionCardProps {
   plan: SubscriptionPrice;
@@ -31,7 +32,8 @@ const SubscriptionCard: React.FC<SubscriptionCardProps> = ({
     if (plan.planType === "FREE") {
       return "FREE";
     }
-    return `${plan.currency} ${plan.amount.toFixed(2)}`;
+    const symbol = getCurrencySymbol(plan.currency);
+    return `${symbol}${plan.amount.toFixed(2)}`;
   };
 
   const getDurationDisplay = () => {

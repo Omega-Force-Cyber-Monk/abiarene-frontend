@@ -3,6 +3,7 @@ import {
   PlanType,
   SubscriptionPrice,
 } from "@/redux/features/admin/subscription/subscription";
+import { useCurrencies } from "@/hooks/useCurrencies";
 
 interface SubscriptionDialogProps {
   open: boolean;
@@ -23,9 +24,11 @@ const SubscriptionDialog: React.FC<SubscriptionDialogProps> = ({
     planType: "MONTHLY" as PlanType,
     description: "",
     amount: 0,
-    currency: "CFA",
+    currency: "USD",
     isActive: true,
   });
+
+  const { currencies } = useCurrencies();
 
   const [errors, setErrors] = useState<Record<string, string>>({});
 
@@ -43,7 +46,7 @@ const SubscriptionDialog: React.FC<SubscriptionDialogProps> = ({
         planType: "MONTHLY",
         description: "",
         amount: 0,
-        currency: "CFA",
+        currency: "USD",
         isActive: true,
       });
     }
@@ -169,17 +172,23 @@ const SubscriptionDialog: React.FC<SubscriptionDialogProps> = ({
               <label className="text-sm font-medium text-gray-700">
                 Currency
               </label>
-              <input
+              <select
                 value={formData.currency}
                 onChange={(e) =>
                   setFormData({
                     ...formData,
-                    currency: e.target.value.toUpperCase(),
+                    currency: e.target.value,
                   })
                 }
                 className="mt-2 w-full px-4 py-2.5 border border-gray-200 rounded-lg 
                          focus:ring-2 focus:ring-[#052350] outline-none"
-              />
+              >
+                {currencies.map((curr) => (
+                  <option key={curr.code} value={curr.code}>
+                    {curr.code} - {curr.name}
+                  </option>
+                ))}
+              </select>
             </div>
           </div>
 

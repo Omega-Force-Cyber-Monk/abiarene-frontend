@@ -2,6 +2,7 @@
 import { configureStore } from "@reduxjs/toolkit";
 import { baseApi } from "./hooks/baseApi";
 import authReducer from "@/redux/features/auth/authSlice";
+import currencyReducer from "@/redux/features/admin/settings/currencySlice";
 
 
 import {
@@ -25,10 +26,22 @@ const persistConfig = {
 
 const persistedReducer = persistReducer(persistConfig, authReducer);
 
+// Persist config for currency
+const currencyPersistConfig = {
+  key: "currency",
+  storage,
+};
+
+const persistedCurrencyReducer = persistReducer(
+  currencyPersistConfig,
+  currencyReducer
+);
+
 export const store = configureStore({
   reducer: {
     [baseApi.reducerPath]: baseApi.reducer,
     auth: persistedReducer,
+    currency: persistedCurrencyReducer,
   },
 
   middleware: (getDefaultMiddleware) =>

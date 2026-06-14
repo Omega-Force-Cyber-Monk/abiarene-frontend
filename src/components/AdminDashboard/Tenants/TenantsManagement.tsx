@@ -8,6 +8,7 @@ import {
   FaTrash,
   FaTicketAlt,
   FaEye,
+  FaKey,
 } from "react-icons/fa";
 import { useNavigate } from "react-router-dom";
 import {
@@ -29,6 +30,7 @@ import DeleteConfirmationModal from "./DeleteConfirmationModal";
 
 import { CreateVoucherModals } from "./CreateVoucherModals";
 import { ViewVouchersModals } from "./ViewVouchersModals";
+import { ResetSupervisorPasswordModal } from "./ResetSupervisorPasswordModal";
 
 const TenantsManagement = () => {
   const navigate = useNavigate();
@@ -53,6 +55,11 @@ const TenantsManagement = () => {
   const [showCreateVoucherModal, setShowCreateVoucherModal] = useState(false);
   const [showViewVouchersModal, setShowViewVouchersModal] = useState(false);
   const [selectedTenantForVoucher, setSelectedTenantForVoucher] =
+    useState<Tenant | null>(null);
+
+  // States for Reset Password
+  const [showResetPasswordModal, setShowResetPasswordModal] = useState(false);
+  const [selectedTenantForReset, setSelectedTenantForReset] =
     useState<Tenant | null>(null);
 
   const { data, isLoading, error, refetch } = useGetTenantsQuery({
@@ -151,6 +158,11 @@ const TenantsManagement = () => {
 
   const handleVoucherSuccess = () => {
     refetch(); // Refresh tenant data if needed
+  };
+
+  const handleResetPassword = (tenant: Tenant) => {
+    setSelectedTenantForReset(tenant);
+    setShowResetPasswordModal(true);
   };
 
   const getStatusBadge = (status: string) => {
@@ -325,7 +337,6 @@ const TenantsManagement = () => {
                       </td>
                       <td className="px-6 py-5">
                         <div className="flex items-center justify-center gap-2">
-                          {/* Add Voucher Button */}
                           <button
                             onClick={() => handleAddVoucher(tenant)}
                             className="flex items-center gap-2 px-4 py-2 text-sm font-medium text-white bg-green-600 rounded-lg cursor-pointer whitespace-nowrap hover:bg-green-700 transition duration-200 shadow-sm"
@@ -333,6 +344,15 @@ const TenantsManagement = () => {
                           >
                             <FaTicketAlt className="text-white" />
                             <span>Add Voucher</span>
+                          </button>
+
+                          {/* Reset Password Button */}
+                          <button
+                            onClick={() => handleResetPassword(tenant)}
+                            className="p-2 text-sm font-medium text-yellow-600 bg-yellow-50 rounded-lg cursor-pointer hover:bg-yellow-100 transition duration-200"
+                            title="Reset Supervisor Password"
+                          >
+                            <FaKey className="w-4 h-4" />
                           </button>
 
                           {/* View Vouchers Button */}
@@ -652,6 +672,19 @@ const TenantsManagement = () => {
           }}
           tenantId={selectedTenantForVoucher.id}
           tenantName={selectedTenantForVoucher.name}
+        />
+      )}
+
+      {/* Reset Supervisor Password Modal */}
+      {selectedTenantForReset && showResetPasswordModal && (
+        <ResetSupervisorPasswordModal
+          isOpen={showResetPasswordModal}
+          onClose={() => {
+            setShowResetPasswordModal(false);
+            setSelectedTenantForReset(null);
+          }}
+          tenantId={selectedTenantForReset.id}
+          tenantName={selectedTenantForReset.name}
         />
       )}
     </>
