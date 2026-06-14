@@ -144,6 +144,7 @@ export interface DashboardResponse {
   };
 
   meta: {
+    currency?: string;
     comparedMonthStart: string;
     currentMonthStart: string;
     comparedAt: string;

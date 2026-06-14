@@ -10,9 +10,13 @@ import {
 } from "@/components/ui/dropdown-menu";
 import { Link, useLocation, useNavigate } from "react-router-dom";
 import { useEffect, useRef, useState } from "react";
-import { useDispatch } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
 import { logOut } from "@/redux/features/auth/authSlice";
+import { setCurrency } from "@/redux/features/admin/settings/currencySlice";
+import { AppRootState } from "@/redux/store";
+import { ChevronDown } from "lucide-react";
 import { CiSearch } from "react-icons/ci";
+import { useCurrencies } from "@/hooks/useCurrencies";
 // import { useAuthMeQuery } from "@/redux/features/auth/authApi";
 
 export interface NavbarProps {
@@ -34,6 +38,8 @@ const AdminDashboardNavBar: React.FC<NavbarProps> = ({
 
   const navigate = useNavigate();
   const dispatch = useDispatch();
+  const selectedCurrency = useSelector((state: AppRootState) => state.currency.selectedCurrency);
+  const { currencies } = useCurrencies();
 
   const handleLogout = () => {
     dispatch(logOut());
@@ -101,6 +107,33 @@ const AdminDashboardNavBar: React.FC<NavbarProps> = ({
             />
             <CiSearch className="w-4 h-4 absolute left-3 top-1/2 -translate-y-1/2 text-gray-500" />
           </div>
+
+          {/* Currency Dropdown */}
+          <DropdownMenu>
+            <DropdownMenuTrigger asChild>
+              <Button
+                variant="outline"
+                className="flex items-center gap-2 border-gray-200 rounded-full cursor-pointer hover:bg-gray-50 transition-colors"
+              >
+                <span className="font-medium text-gray-700">{selectedCurrency}</span>
+                <ChevronDown className="w-4 h-4 text-gray-500" />
+              </Button>
+            </DropdownMenuTrigger>
+            <DropdownMenuContent align="end" className="bg-white text-black w-48 max-h-80 overflow-y-auto rounded-2xl shadow-xl border border-gray-100 custom-scrollbar">
+              {currencies.map((currency) => (
+                <DropdownMenuItem
+                  key={currency.code}
+                  onClick={() => dispatch(setCurrency(currency.code))}
+                  className={`px-4 py-2 cursor-pointer font-medium hover:bg-gray-100 ${
+                    selectedCurrency === currency.code ? "text-blue-600 bg-blue-50" : "text-gray-700"
+                  }`}
+                >
+                  <span className="w-10 font-bold">{currency.code}</span>
+                  <span className="text-sm font-normal text-gray-500 ml-2">{currency.name}</span>
+                </DropdownMenuItem>
+              ))}
+            </DropdownMenuContent>
+          </DropdownMenu>
 
           {/* User Dropdown */}
           <DropdownMenu>

@@ -93,10 +93,11 @@ export const adminTenantApi = baseApi.injectEndpoints({
       ],
     }),
 
-     getAdminDashboard: builder.query<DashboardResponse, void>({
-      query: () => ({
+     getAdminDashboard: builder.query<DashboardResponse, { currency?: string } | void>({
+      query: (params) => ({
         url: "/admin/dashboard",
         method: "GET",
+        params: params && params.currency ? { currency: params.currency } : undefined,
       }),
       providesTags: ["Support", "Tenant"],
     }),

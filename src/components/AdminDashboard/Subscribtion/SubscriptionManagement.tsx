@@ -11,14 +11,33 @@ import { SubscriptionPrice } from "@/redux/features/admin/subscription/subscript
 import SubscriptionCard from "./SubscribtionCard";
 import SectionTitle from "@/common/SectionTitle";
 import Loader from "../Shared/Loader";
+import { useSelector } from "react-redux";
+import { AppRootState } from "@/redux/store";
 
 const SubscriptionManagement = () => {
+  const selectedCurrency = useSelector((state: AppRootState) => state.currency.selectedCurrency);
   const {
-    data: plans,
-    isLoading,
-    error,
-    refetch,
-  } = useGetAllSubscriptionPricesQuery();
+    data: plansWithCurrency,
+    isLoading: isPlansLoading,
+    error: plansError,
+    refetch: refetchPlans,
+  } = useGetAllSubscriptionPricesQuery({ currency: selectedCurrency });
+
+  // Fallback if the backend crashes due to invalid currency in the DB
+  const {
+    data: rawPlans,
+    refetch: refetchRawPlans,
+  } = useGetAllSubscriptionPricesQuery(undefined, { skip: !plansError });
+
+  const plans = plansError ? rawPlans : plansWithCurrency;
+  const isLoading = isPlansLoading && !plansError;
+  const error = plansError && !rawPlans;
+
+  const refetch = () => {
+    refetchPlans();
+    refetchRawPlans();
+  };
+
   const [createSubscription] = useCreateSubscriptionPriceMutation();
   const [updateSubscription] = useUpdateSubscriptionPriceMutation();
   const [deleteSubscription] = useDeleteSubscriptionPriceMutation();
