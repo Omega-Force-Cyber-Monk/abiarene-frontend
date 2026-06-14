@@ -145,6 +145,7 @@ export interface DashboardResponse {
 
   meta: {
     currency?: string;
+    conversionUnavailable?: boolean;
     comparedMonthStart: string;
     currentMonthStart: string;
     comparedAt: string;
