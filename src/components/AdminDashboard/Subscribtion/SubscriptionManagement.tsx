@@ -1,4 +1,5 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
+import { toast } from "sonner";
 import {
   useGetAllSubscriptionPricesQuery,
   useCreateSubscriptionPriceMutation,
@@ -11,14 +12,30 @@ import { SubscriptionPrice } from "@/redux/features/admin/subscription/subscript
 import SubscriptionCard from "./SubscribtionCard";
 import SectionTitle from "@/common/SectionTitle";
 import Loader from "../Shared/Loader";
+import { useDispatch, useSelector } from "react-redux";
+import { AppRootState } from "@/redux/store";
+import { setCurrency } from "@/redux/features/admin/settings/currencySlice";
 
 const SubscriptionManagement = () => {
+  const dispatch = useDispatch();
+  const selectedCurrency = useSelector((state: AppRootState) => state.currency.selectedCurrency);
   const {
     data: plans,
     isLoading,
     error,
     refetch,
-  } = useGetAllSubscriptionPricesQuery();
+  } = useGetAllSubscriptionPricesQuery({ currency: selectedCurrency });
+
+  useEffect(() => {
+    if (plans && plans.length > 0) {
+      const hasUnavailable = plans.some((p) => p.conversionUnavailable);
+      if (hasUnavailable) {
+        toast.error(`Currency conversion for ${selectedCurrency} is currently unavailable for some plans. Falling back to USD.`);
+        dispatch(setCurrency("USD"));
+      }
+    }
+  }, [plans, selectedCurrency, dispatch]);
+
   const [createSubscription] = useCreateSubscriptionPriceMutation();
   const [updateSubscription] = useUpdateSubscriptionPriceMutation();
   const [deleteSubscription] = useDeleteSubscriptionPriceMutation();

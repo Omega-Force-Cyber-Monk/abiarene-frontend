@@ -1,6 +1,12 @@
 import { TrendingUp, Eye, TriangleAlert, TicketCheck } from "lucide-react";
 import { LuUserCheck } from "react-icons/lu";
 import { useGetAdminDashboardQuery } from "@/redux/features/admin/adminTenant/adminTenantApi";
+import { useDispatch, useSelector } from "react-redux";
+import { AppRootState } from "@/redux/store";
+import { getCurrencySymbol } from "@/hooks/useCurrencies";
+import { useEffect } from "react";
+import { toast } from "sonner";
+import { setCurrency } from "@/redux/features/admin/settings/currencySlice";
 
 function StatCard({
   icon,
@@ -35,7 +41,16 @@ function StatCard({
 }
 
 export default function DashboardCard() {
-  const { data, isLoading } = useGetAdminDashboardQuery();
+  const dispatch = useDispatch();
+  const selectedCurrency = useSelector((state: AppRootState) => state.currency.selectedCurrency);
+  const { data, isLoading } = useGetAdminDashboardQuery({ currency: selectedCurrency });
+
+  useEffect(() => {
+    if (data?.meta?.conversionUnavailable) {
+      toast.error(`Currency conversion for ${data.meta.currency} is currently unavailable. Falling back to USD.`);
+      dispatch(setCurrency("USD"));
+    }
+  }, [data?.meta?.conversionUnavailable, data?.meta?.currency, dispatch]);
 
   if (isLoading) {
     return <div className="p-6 text-gray-500">Loading dashboard...</div>;
@@ -72,7 +87,7 @@ export default function DashboardCard() {
       bgColor: "bg-[#EBE9FE]",
       borderColor: "border-l-[#8B5CF6]",
       label: "Monthly Revenue",
-      value: `$${data.revenue.monthly}`,
+      value: `${getCurrencySymbol(data.meta?.currency)}${data.revenue.monthly}`,
       valueColor: "text-violet-600",
       change: `${data.revenue.changePercentage}%`,
     },
