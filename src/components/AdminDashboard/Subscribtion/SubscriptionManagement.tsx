@@ -11,7 +11,7 @@ import DeleteConfirmationDialog from "./DeleteConfirmationDialog";
 import { SubscriptionPrice } from "@/redux/features/admin/subscription/subscription";
 import SubscriptionCard from "./SubscribtionCard";
 import SectionTitle from "@/common/SectionTitle";
-import Loader from "../Shared/Loader";
+import { SubscriptionPlansSkeleton } from "../Shared/AdminSkeletons";
 import { useDispatch, useSelector } from "react-redux";
 import { AppRootState } from "@/redux/store";
 import { setCurrency } from "@/redux/features/admin/settings/currencySlice";
@@ -114,11 +114,7 @@ const SubscriptionManagement = () => {
   };
 
   if (isLoading) {
-    return (
-      <div>
-        <Loader />
-      </div>
-    );
+    return <SubscriptionPlansSkeleton />;
   }
 
   if (error) {

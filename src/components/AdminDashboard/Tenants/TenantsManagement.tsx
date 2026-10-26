@@ -1,5 +1,4 @@
-// pages/admin/tenants/TenantsManagement.tsx (updated version)
-import { useState } from "react";
+import { useState, useEffect, useMemo } from "react";
 import { CiSearch } from "react-icons/ci";
 import {
   FaUsersCog,
@@ -10,6 +9,7 @@ import {
   FaEye,
   FaKey,
 } from "react-icons/fa";
+import { LuDownload, LuArrowUpDown } from "react-icons/lu";
 import { useNavigate } from "react-router-dom";
 import {
   useGetTenantsQuery,
@@ -22,7 +22,8 @@ import {
   TenantUser,
 } from "@/redux/features/admin/adminTenant/adminTenant.types";
 import { toast } from "sonner";
-import Loader from "../Shared/Loader";
+import { TableSkeleton } from "../Shared/AdminSkeletons";
+import { useDebounce } from "@/hooks/useDebounce";
 import RolesManagementModal from "./RolesManagementModal";
 import { CreateTenantUserModal } from "./CreateTenantUserModal";
 import { EditTenantUserModal } from "./EditTenantUserModal";
@@ -62,6 +63,18 @@ const TenantsManagement = () => {
   const [selectedTenantForReset, setSelectedTenantForReset] =
     useState<Tenant | null>(null);
 
+  const [statusFilter, setStatusFilter] = useState<string>("ALL");
+  const [sortField, setSortField] = useState<"name" | "createdAt">("name");
+  const [sortOrder, setSortOrder] = useState<"asc" | "desc">("asc");
+
+  // Automatically debounce user search input by 350ms
+  const debouncedSearchInput = useDebounce(searchInput, 350);
+
+  useEffect(() => {
+    setSearchTerm(debouncedSearchInput);
+    setPage(1);
+  }, [debouncedSearchInput]);
+
   const { data, isLoading, error, refetch } = useGetTenantsQuery({
     page,
     limit: 10,
@@ -85,19 +98,70 @@ const TenantsManagement = () => {
     { skip: !selectedTenantForUsers?.id },
   );
 
-  const tenants = data?.data || [];
+  const rawTenants = data?.data || [];
   const total = data?.meta?.total || 0;
   const totalPages = data?.meta?.totalPages || 0;
   const roles = rolesData?.data || [];
 
-  const handleSearch = () => {
-    setSearchTerm(searchInput);
-    setPage(1);
+  // Client-side filtering & sorting for the current fetched dataset
+  const filteredAndSortedTenants = useMemo(() => {
+    let list = [...rawTenants];
+
+    if (statusFilter !== "ALL") {
+      list = list.filter((t) => (t.status || "").toUpperCase() === statusFilter);
+    }
+
+    list.sort((a, b) => {
+      if (sortField === "name") {
+        const nameA = (a.name || "").toLowerCase();
+        const nameB = (b.name || "").toLowerCase();
+        return sortOrder === "asc"
+          ? nameA.localeCompare(nameB)
+          : nameB.localeCompare(nameA);
+      } else {
+        const dateA = new Date(a.createdAt || 0).getTime();
+        const dateB = new Date(b.createdAt || 0).getTime();
+        return sortOrder === "asc" ? dateA - dateB : dateB - dateA;
+      }
+    });
+
+    return list;
+  }, [rawTenants, statusFilter, sortField, sortOrder]);
+
+  const handleExportCSV = () => {
+    if (!filteredAndSortedTenants.length) {
+      toast.error("No tenants to export");
+      return;
+    }
+
+    const headers = ["Business Name", "Industry", "Status", "Created At"];
+    const rows = filteredAndSortedTenants.map((t) => [
+      `"${(t.name || "").replace(/"/g, '""')}"`,
+      `"${(t.industry || "General").replace(/"/g, '""')}"`,
+      `"${t.status || "ACTIVE"}"`,
+      `"${t.createdAt ? new Date(t.createdAt).toLocaleDateString() : ""}"`,
+    ]);
+
+    const csvContent =
+      "data:text/csv;charset=utf-8," +
+      [headers.join(","), ...rows.map((e) => e.join(","))].join("\n");
+
+    const encodedUri = encodeURI(csvContent);
+    const link = document.createElement("a");
+    link.setAttribute("href", encodedUri);
+    link.setAttribute("download", `tenants_export_${new Date().toISOString().slice(0, 10)}.csv`);
+    document.body.appendChild(link);
+    link.click();
+    document.body.removeChild(link);
+    toast.success("Tenants exported successfully");
   };
 
-  const handleKeyPress = (e: React.KeyboardEvent) => {
-    if (e.key === "Enter") {
-      handleSearch();
+  const toggleSort = (field: "name" | "createdAt") => {
+    if (sortField === field) {
+      setSortOrder(sortOrder === "asc" ? "desc" : "asc");
+    } else {
+      setSortField(field);
+      setSortOrder("asc");
     }
   };
 
@@ -216,11 +280,7 @@ const TenantsManagement = () => {
   };
 
   if (isLoading) {
-    return (
-      <div className="p-6 shadow-2xl rounded-3xl">
-        <Loader />
-      </div>
-    );
+    return <TableSkeleton rows={6} columns={7} />;
   }
 
   if (error) {
@@ -244,27 +304,52 @@ const TenantsManagement = () => {
   return (
     <>
       <div className="p-6 shadow-2xl rounded-3xl">
-        {/* Search Row */}
-        <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4 mb-6">
-          <div className="flex-1 w-full sm:max-w-md">
-            <div className="relative w-full">
+        {/* Search & Actions Row */}
+        <div className="flex flex-col lg:flex-row lg:items-center lg:justify-between gap-4 mb-6">
+          <div className="flex flex-col sm:flex-row sm:items-center gap-3 flex-1 w-full">
+            <div className="relative w-full sm:max-w-md">
               <input
                 type="text"
-                placeholder="Search by business name..."
+                placeholder="Search businesses (auto-filtered)..."
                 value={searchInput}
                 onChange={(e) => setSearchInput(e.target.value)}
-                onKeyPress={handleKeyPress}
-                className="w-full pl-10 pr-3 py-3 shadow-sm rounded-full outline-none focus:ring-2 focus:ring-[#052350] border border-gray-200"
+                className="w-full pl-10 pr-3 py-2.5 shadow-sm rounded-xl outline-none focus:ring-2 focus:ring-[#052350] border border-gray-200 text-sm"
               />
               <CiSearch
-                onClick={handleSearch}
-                className="w-5 h-5 absolute left-3 top-1/2 -translate-y-1/2 text-gray-500 cursor-pointer hover:text-[#052350]"
+                className="w-5 h-5 absolute left-3 top-1/2 -translate-y-1/2 text-gray-500 cursor-pointer"
               />
+            </div>
+
+            {/* Quick Status Filters */}
+            <div className="flex items-center gap-1.5 bg-gray-100 p-1 rounded-xl text-xs font-medium text-gray-600">
+              {["ALL", "ACTIVE", "INACTIVE", "PENDING"].map((st) => (
+                <button
+                  key={st}
+                  onClick={() => setStatusFilter(st)}
+                  className={`px-3 py-1.5 rounded-lg transition-all ${
+                    statusFilter === st
+                      ? "bg-white text-[#052350] font-semibold shadow-sm"
+                      : "hover:text-gray-900"
+                  }`}
+                >
+                  {st}
+                </button>
+              ))}
             </div>
           </div>
 
-          <div className="text-sm text-gray-600">
-            Total Businesses: <span className="font-semibold">{total}</span>
+          <div className="flex items-center gap-3">
+            <button
+              onClick={handleExportCSV}
+              className="flex items-center gap-2 px-3.5 py-2 text-xs font-semibold text-[#052350] bg-white border border-gray-300 rounded-xl hover:bg-gray-50 transition shadow-sm"
+              title="Download filtered tenants as CSV"
+            >
+              <LuDownload className="w-4 h-4" />
+              <span>Export CSV</span>
+            </button>
+            <div className="text-sm text-gray-600 whitespace-nowrap">
+              Total Businesses: <span className="font-semibold text-gray-900">{total}</span>
+            </div>
           </div>
         </div>
 
@@ -275,8 +360,14 @@ const TenantsManagement = () => {
               <table className="min-w-[1000px] w-full text-sm">
                 <thead className="border-b border-[#DBE0E5] bg-[#F8F8F8]">
                   <tr>
-                    <th className="px-6 py-4 text-left whitespace-nowrap text-[#6A6A65] text-base font-semibold">
-                      Business Name
+                    <th
+                      onClick={() => toggleSort("name")}
+                      className="px-6 py-4 text-left whitespace-nowrap text-[#6A6A65] text-base font-semibold cursor-pointer select-none hover:text-[#052350] transition"
+                    >
+                      <div className="flex items-center gap-1.5">
+                        <span>Business Name</span>
+                        <LuArrowUpDown className="w-3.5 h-3.5 opacity-60" />
+                      </div>
                     </th>
                     <th className="px-6 py-4 text-left text-[#6A6A65] text-base font-semibold">
                       Industry
@@ -290,8 +381,14 @@ const TenantsManagement = () => {
                     <th className="px-6 py-4 text-left whitespace-nowrap text-[#6A6A65] text-base font-semibold">
                       Last Sync
                     </th>
-                    <th className="px-6 py-4 text-left text-[#6A6A65] text-base font-semibold">
-                      Created At
+                    <th
+                      onClick={() => toggleSort("createdAt")}
+                      className="px-6 py-4 text-left text-[#6A6A65] text-base font-semibold cursor-pointer select-none hover:text-[#052350] transition"
+                    >
+                      <div className="flex items-center gap-1.5">
+                        <span>Created At</span>
+                        <LuArrowUpDown className="w-3.5 h-3.5 opacity-60" />
+                      </div>
                     </th>
                     <th className="px-6 py-4 text-center text-[#6A6A65] text-base font-semibold">
                       Actions
@@ -300,7 +397,7 @@ const TenantsManagement = () => {
                 </thead>
 
                 <tbody>
-                  {tenants.map((tenant: Tenant) => (
+                  {filteredAndSortedTenants.map((tenant: Tenant) => (
                     <tr
                       key={tenant.id}
                       className="border-b border-gray-100 hover:bg-gray-50 transition"
@@ -387,23 +484,25 @@ const TenantsManagement = () => {
                       </td>
                     </tr>
                   ))}
-                  {tenants.length === 0 && (
+                  {filteredAndSortedTenants.length === 0 && (
                     <tr>
                       <td
                         colSpan={7}
                         className="px-6 py-12 text-center text-gray-500"
                       >
                         <div className="flex flex-col items-center gap-2">
-                          <p>No tenants found</p>
-                          {searchTerm && (
+                          <p className="text-base font-medium text-gray-700">No businesses match your filter</p>
+                          <p className="text-xs text-gray-400">Try adjusting your search query or status filter</p>
+                          {(searchTerm || statusFilter !== "ALL") && (
                             <button
                               onClick={() => {
                                 setSearchInput("");
                                 setSearchTerm("");
+                                setStatusFilter("ALL");
                               }}
-                              className="text-[#052350] underline"
+                              className="mt-2 text-xs font-semibold px-3 py-1.5 rounded-lg bg-gray-100 hover:bg-gray-200 text-[#052350] transition"
                             >
-                              Clear search
+                              Reset filters
                             </button>
                           )}
                         </div>

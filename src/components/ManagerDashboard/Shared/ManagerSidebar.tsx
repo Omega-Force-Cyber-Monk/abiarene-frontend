@@ -1,9 +1,7 @@
 // AdminSidebar.tsx
 import logoIcon from "@/assets/primepos/logo/logo.svg";
-import user from "@/assets/primepos/logo/user.svg";
+import { ChevronDown, User as UserIcon } from "lucide-react";
 import { Badge } from "@/components/ui/badge";
-
-import { ChevronDown } from "lucide-react";
 import { Link, useLocation, useNavigate } from "react-router-dom";
 import { useState } from "react";
 import { IconType } from "react-icons";
@@ -14,8 +12,9 @@ import { BsBoxSeam } from "react-icons/bs";
 import { AiOutlineScan } from "react-icons/ai";
 import { HiOutlineSupport } from "react-icons/hi";
 import { IoSettingsOutline } from "react-icons/io5";
-import { useDispatch } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
 import { logOut } from "@/redux/features/auth/authSlice";
+import { AppRootState } from "@/redux/store";
 
 // Types
 export interface SidebarItem {
@@ -86,6 +85,7 @@ const ManagerSidebar: React.FC<SidebarProps> = ({
 
   const navigate = useNavigate();
   const dispatch = useDispatch();
+  const currentUser = useSelector((state: AppRootState) => state.auth.user);
 
   const toggleMenu = (label: string) => {
     setOpenMenu(openMenu === label ? null : label);
@@ -220,18 +220,24 @@ const ManagerSidebar: React.FC<SidebarProps> = ({
         className="flex items-center justify-between p-4 m-4 bg-[#F8F9FA] border border-[#CED4DA] rounded-2xl hover:shadow-sm transition-all duration-200 cursor-pointer"
       >
         {/* Left Side */}
-        <div className="flex items-center gap-3">
-          <img
-            src={user}
-            alt="User"
-            className="w-12 h-12 rounded-full object-cover border"
-          />
+        <div className="flex items-center gap-3 min-w-0">
+          {currentUser?.name ? (
+            <div className="w-10 h-10 rounded-full bg-[#052350] text-white flex-shrink-0 flex items-center justify-center font-bold text-sm uppercase shadow-sm">
+              {currentUser.name.slice(0, 2)}
+            </div>
+          ) : (
+            <div className="w-10 h-10 rounded-full bg-gray-200 text-gray-700 flex-shrink-0 flex items-center justify-center">
+              <UserIcon className="w-5 h-5" />
+            </div>
+          )}
 
-          <div>
-            <h2 className="text-base font-semibold text-gray-800">
-              Olivia Rhye
+          <div className="min-w-0">
+            <h2 className="text-sm font-semibold text-gray-800 truncate">
+              {currentUser?.name || "Manager"}
             </h2>
-            <p className="text-sm text-gray-500">olivia@gmail.com</p>
+            <p className="text-xs text-gray-500 truncate">
+              {currentUser?.email || "manager@system.local"}
+            </p>
           </div>
         </div>
 

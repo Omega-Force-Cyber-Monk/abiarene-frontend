@@ -47,6 +47,11 @@ const Login: React.FC = () => {
       return;
     }
 
+    if (!/^\d{4}$/.test(pin)) {
+      setError("PIN must be exactly 4 digits (e.g. 1234)");
+      return;
+    }
+
     try {
       // Send login request with email and pin (matching Swagger)
       const result = await login({ email, pin }).unwrap();
@@ -130,9 +135,11 @@ const Login: React.FC = () => {
                 <input
                   id="pin"
                   type={showPin ? "text" : "password"}
-                  placeholder="Enter your PIN"
+                  placeholder="Enter 4-digit PIN"
+                  maxLength={4}
+                  inputMode="numeric"
                   value={pin}
-                  onChange={(e) => setPin(e.target.value)}
+                  onChange={(e) => setPin(e.target.value.replace(/\D/g, "").slice(0, 4))}
                   className="w-full px-4 py-3 border border-gray-300 pr-12 rounded-xl bg-white text-gray-800 placeholder-gray-400 focus:ring-2 focus:ring-[#FFB004] focus:border-transparent outline-none transition-all"
                   required
                   disabled={isLoading}

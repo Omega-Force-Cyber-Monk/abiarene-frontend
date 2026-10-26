@@ -7,6 +7,18 @@ import { getCurrencySymbol } from "@/hooks/useCurrencies";
 import { useEffect } from "react";
 import { toast } from "sonner";
 import { setCurrency } from "@/redux/features/admin/settings/currencySlice";
+import { DashboardCardsSkeleton } from "../Shared/AdminSkeletons";
+
+interface StatCardProps {
+  icon: React.ReactNode;
+  iconBgColor: string;
+  bgColor: string;
+  borderColor: string;
+  label: string;
+  value: string | number;
+  valueColor: string;
+  change: string;
+}
 
 function StatCard({
   icon,
@@ -17,7 +29,7 @@ function StatCard({
   value,
   valueColor,
   change,
-}: any) {
+}: StatCardProps) {
   return (
     <div
       className={`rounded-3xl p-5 shadow-sm border-l-4 ${bgColor} ${borderColor}`}
@@ -53,7 +65,7 @@ export default function DashboardCard() {
   }, [data?.meta?.conversionUnavailable, data?.meta?.currency, dispatch]);
 
   if (isLoading) {
-    return <div className="p-6 text-gray-500">Loading dashboard...</div>;
+    return <DashboardCardsSkeleton />;
   }
 
   if (!data) {

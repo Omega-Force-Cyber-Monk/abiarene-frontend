@@ -1,6 +1,5 @@
 import { Menu, User } from "lucide-react";
 import { Button } from "@/components/ui/button";
-import imgUrl from "@/assets/webvixxen/icon/user.png";
 
 import {
   DropdownMenu,
@@ -34,10 +33,9 @@ const AdminDashboardNavBar: React.FC<NavbarProps> = ({
   const [_isOpen, setIsOpen] = useState(false);
   const dropdownRef = useRef<HTMLDivElement>(null);
 
-  console.log(imgUrl);
-
   const navigate = useNavigate();
   const dispatch = useDispatch();
+  const user = useSelector((state: AppRootState) => state.auth.user);
   const selectedCurrency = useSelector((state: AppRootState) => state.currency.selectedCurrency);
   const { currencies } = useCurrencies();
 
@@ -141,16 +139,16 @@ const AdminDashboardNavBar: React.FC<NavbarProps> = ({
               <Button
                 variant="ghost"
                 size="icon"
-                className="text-gray-600 hover:text-green-600 cursor-pointer"
+                className="text-gray-600 hover:text-[#052350] cursor-pointer rounded-full"
               >
-                {imgUrl ? (
-                  <img
-                    src={imgUrl}
-                    alt="User"
-                    className="w-8 h-8 rounded-full object-cover"
-                  />
+                {user?.name ? (
+                  <div className="w-8 h-8 rounded-full bg-[#052350] text-white flex items-center justify-center font-bold text-xs uppercase shadow-sm">
+                    {user.name.slice(0, 2)}
+                  </div>
                 ) : (
-                  <User className="w-6 h-6" />
+                  <div className="w-8 h-8 rounded-full bg-gray-100 flex items-center justify-center text-gray-700">
+                    <User className="w-4 h-4" />
+                  </div>
                 )}
               </Button>
             </DropdownMenuTrigger>

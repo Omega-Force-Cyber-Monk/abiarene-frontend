@@ -144,6 +144,15 @@ const authSlice = createSlice({
         state.isLoading = false;
       },
     );
+
+    // Handle Logout
+    builder.addMatcher(authApi.endpoints.logout.matchFulfilled, (state) => {
+      state.user = null;
+      state.token = null;
+      state.isLoading = false;
+      Cookies.remove("token");
+      localStorage.removeItem("user");
+    });
   },
 });
 

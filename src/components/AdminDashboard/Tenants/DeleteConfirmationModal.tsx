@@ -1,5 +1,5 @@
 
-// components/DeleteConfirmationModal.tsx
+import { useEffect } from "react";
 import { FaExclamationTriangle, FaTimes, FaTrash } from "react-icons/fa";
 
 interface DeleteConfirmationModalProps {
@@ -17,6 +17,15 @@ const DeleteConfirmationModal = ({
   onCancel,
   isLoading = false,
 }: DeleteConfirmationModalProps) => {
+  useEffect(() => {
+    const handleKeyDown = (e: KeyboardEvent) => {
+      if (e.key === "Escape" && !isLoading) {
+        onCancel();
+      }
+    };
+    window.addEventListener("keydown", handleKeyDown);
+    return () => window.removeEventListener("keydown", handleKeyDown);
+  }, [onCancel, isLoading]);
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center bg-black bg-opacity-50 backdrop-blur-sm transition-all duration-200">
       <div className="bg-white rounded-2xl shadow-2xl w-full max-w-md mx-4 transform transition-all duration-200 scale-100">

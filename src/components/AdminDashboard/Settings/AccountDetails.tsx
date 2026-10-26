@@ -1,7 +1,7 @@
 // components/AccountDetails.tsx
 
 import { useEffect, useState } from "react";
-import user from "@/assets/primepos/logo/user.png";
+import { User as UserIcon } from "lucide-react";
 import { IoIosSave } from "react-icons/io";
 import {
   useGetCurrentUserQuery,
@@ -96,11 +96,21 @@ export default function AccountDetails() {
           </div>
           <div className="flex justify-baseline items-center space-x-3 mb-4">
             <div>
-              <img
-                src={userData?.image || user}
-                alt="Profile"
-                className="w-12 h-12 rounded-full object-cover"
-              />
+              {userData?.image ? (
+                <img
+                  src={userData.image}
+                  alt="Profile"
+                  className="w-12 h-12 rounded-full object-cover shadow-sm"
+                />
+              ) : formData.name ? (
+                <div className="w-12 h-12 rounded-full bg-[#052350] text-white flex items-center justify-center font-bold text-base uppercase shadow-sm">
+                  {formData.name.slice(0, 2)}
+                </div>
+              ) : (
+                <div className="w-12 h-12 rounded-full bg-gray-200 text-gray-600 flex items-center justify-center shadow-sm">
+                  <UserIcon className="w-6 h-6" />
+                </div>
+              )}
             </div>
             <div className="">
               <h2 className="mb-2 font-semibold">{formData.role} Profile</h2>
