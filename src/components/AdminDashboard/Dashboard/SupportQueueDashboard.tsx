@@ -11,6 +11,7 @@ import {
   SupportTicket,
 } from "@/redux/features/admin/support/adminsupportTypes";
 import { useState } from "react";
+import { TableSkeleton } from "../Shared/AdminSkeletons";
 
 const SupportQueueDashboard = () => {
   const navigate = useNavigate();
@@ -124,13 +125,7 @@ const SupportQueueDashboard = () => {
   };
 
   if (isLoading) {
-    return (
-      <div className="bg-white rounded-2xl shadow-md w-full mx-auto p-8">
-        <div className="flex justify-center items-center">
-          <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-purple-600"></div>
-        </div>
-      </div>
-    );
+    return <TableSkeleton rows={5} columns={6} />;
   }
 
   if (error) {

@@ -100,12 +100,21 @@ const SubscriptionCard: React.FC<SubscriptionCardProps> = ({
       </div>
 
       <div className="p-6 text-center">
-        {/* Plan Type Badge */}
-        <div className="mb-4">
+        {/* Badges */}
+        <div className="mb-4 flex items-center justify-center gap-2">
           <span
             className={`inline-flex px-3 py-1 rounded-full text-xs font-semibold ${getPlanColor()}`}
           >
             {plan.planType}
+          </span>
+          <span
+            className={`inline-flex px-2.5 py-0.5 rounded-full text-xs font-medium ${
+              plan.isActive
+                ? "bg-green-100 text-green-800"
+                : "bg-amber-100 text-amber-800"
+            }`}
+          >
+            {plan.isActive ? "Active" : "Inactive"}
           </span>
         </div>
 
@@ -121,26 +130,16 @@ const SubscriptionCard: React.FC<SubscriptionCardProps> = ({
         </div>
 
         {/* Description */}
-        <p className="text-gray-600 text-sm mb-4">{plan.description}</p>
+        <p className="text-gray-600 text-sm mb-4 min-h-[40px] flex items-center justify-center">
+          {plan.description || "No description provided"}
+        </p>
 
-        {/* Active Status */}
-        {!plan.isActive && (
-          <div className="mt-2">
-            <span className="inline-flex px-2 py-1 rounded text-xs font-medium bg-yellow-100 text-yellow-800">
-              Inactive
-            </span>
-          </div>
-        )}
-
-        {/* Select Button */}
+        {/* Edit Action Button */}
         <button
-          className={`mt-6 w-full py-3 px-4 rounded-xl font-medium transition-all duration-200 ${
-            plan.planType === "FREE"
-              ? "bg-gray-100 text-gray-700 hover:bg-gray-200"
-              : "bg-[#052350] text-white hover:bg-[#061E49]"
-          }`}
+          onClick={() => onEdit(plan)}
+          className="mt-6 w-full py-2.5 px-4 rounded-xl font-medium cursor-pointer border border-[#052350] text-[#052350] hover:bg-[#052350] hover:text-white transition-all duration-200"
         >
-          Select Plan
+          Edit Plan
         </button>
       </div>
     </div>
@@ -148,88 +147,3 @@ const SubscriptionCard: React.FC<SubscriptionCardProps> = ({
 };
 
 export default SubscriptionCard;
-
-// import React from "react";
-
-// const plans = [
-//   {
-//     id: 1,
-//     name: "BEGINNER",
-//     price: 1500,
-//     duration: "MO",
-//     popular: false,
-//   },
-//   {
-//     id: 2,
-//     name: "THE HEADLINER",
-//     price: 3200,
-//     duration: "MO",
-//     popular: true,
-//   },
-//   {
-//     id: 3,
-//     name: "THE PRODUCTION",
-//     price: 7500,
-//     duration: "MO",
-//     popular: false,
-//   },
-// ];
-
-// const SubscribtionCard = () => {
-//   return (
-//     <section className="w-full ">
-//       <div>
-//         <button>Create New Subscription Plan</button>
-//       </div>
-//       <div className=" w-full grid md:grid-cols-3 gap-8">
-//         {plans.map((plan) => (
-//           <div
-//             key={plan.id}
-//             className={`relative rounded-2xl p-8 text-center shadow-lg transition
-//             ${
-//               plan.popular
-//                 ? "bg-gradient-to-b from-orange-50 to-white scale-105 border-2 border-orange-300"
-//                 : "bg-white border border-gray-200"
-//             }`}
-//           >
-//             {/* Badge */}
-//             {plan.popular && (
-//               <div className="absolute -top-3 left-1/2 -translate-x-1/2 bg-blue-900 text-white text-xs px-4 py-1 rounded-full">
-//                 MOST POPULAR
-//               </div>
-//             )}
-
-//             {/* Title */}
-//             <h2 className="text-lg font-semibold tracking-wider text-gray-500">
-//               {plan.name}
-//             </h2>
-
-//             {/* Price */}
-//             <div className="mt-6 flex items-end justify-center gap-1">
-//               <span className="text-4xl font-bold text-gray-700">
-//                 ${plan.price}
-//               </span>
-//               <span className="text-gray-400 font-medium">
-//                 /{plan.duration}
-//               </span>
-//             </div>
-
-//             {/* Button */}
-//             <button
-//               className={`mt-8 px-6 py-3 rounded-full w-full font-medium transition
-//               ${
-//                 plan.popular
-//                   ? "bg-blue-900 text-white hover:bg-blue-800"
-//                   : "bg-orange-50 text-gray-700 hover:bg-orange-100"
-//               }`}
-//             >
-//               Select
-//             </button>
-//           </div>
-//         ))}
-//       </div>
-//     </section>
-//   );
-// };
-
-// export default SubscribtionCard;

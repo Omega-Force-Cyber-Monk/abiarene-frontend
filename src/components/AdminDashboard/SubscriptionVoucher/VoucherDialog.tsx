@@ -12,12 +12,19 @@ const voucherSchema = z.object({
   amountOff: z
     .number()
     .min(1, "Amount must be at least 1")
-    .max(9999, "Amount too high"),
+    .max(999999, "Amount too high"),
 
   expiresAt: z.string().min(1, "Expiry date is required"),
 
   isActive: z.boolean(),
+
+  tenantId: z.string().optional(),
 });
+
+interface TenantOption {
+  id: string;
+  name: string;
+}
 
 interface VoucherDialogProps {
   open: boolean;
@@ -26,6 +33,7 @@ interface VoucherDialogProps {
   initialData?: VoucherFormData;
   title: string;
   loading?: boolean;
+  tenants?: TenantOption[];
 }
 
 const VoucherDialog: React.FC<VoucherDialogProps> = ({
@@ -35,7 +43,10 @@ const VoucherDialog: React.FC<VoucherDialogProps> = ({
   initialData,
   title,
   loading = false,
+  tenants = [],
 }) => {
+  const isEditing = Boolean(initialData);
+
   const {
     control,
     handleSubmit,
@@ -51,8 +62,20 @@ const VoucherDialog: React.FC<VoucherDialogProps> = ({
         .toISOString()
         .slice(0, 16),
       isActive: true,
+      tenantId: tenants[0]?.id || "",
     },
   });
+
+  // Close on ESC key
+  useEffect(() => {
+    const handleKeyDown = (e: KeyboardEvent) => {
+      if (e.key === "Escape" && !loading) {
+        onClose();
+      }
+    };
+    if (open) window.addEventListener("keydown", handleKeyDown);
+    return () => window.removeEventListener("keydown", handleKeyDown);
+  }, [open, onClose, loading]);
 
   useEffect(() => {
     if (initialData) {
@@ -68,9 +91,10 @@ const VoucherDialog: React.FC<VoucherDialogProps> = ({
           .toISOString()
           .slice(0, 16),
         isActive: true,
+        tenantId: tenants[0]?.id || "",
       });
     }
-  }, [initialData, reset, open]);
+  }, [initialData, reset, open, tenants]);
 
   const onFormSubmit = (data: VoucherFormData) => {
     onSubmit({
@@ -118,6 +142,32 @@ const VoucherDialog: React.FC<VoucherDialogProps> = ({
           {/* Form */}
           <form onSubmit={handleSubmit(onFormSubmit)}>
             <div className="space-y-5 px-6 py-6">
+              {/* Tenant Selector (Only on creation) */}
+              {!isEditing && tenants.length > 0 && (
+                <Controller
+                  name="tenantId"
+                  control={control}
+                  render={({ field }) => (
+                    <div>
+                      <label className="mb-2 block text-sm font-semibold text-gray-700">
+                        Target Tenant <span className="text-red-500">*</span>
+                      </label>
+                      <select
+                        {...field}
+                        disabled={loading}
+                        className="w-full rounded-xl border border-gray-200 bg-gray-50 px-4 py-3 text-sm outline-none transition-all duration-200 focus:bg-white focus:border-[#052350] focus:ring-4 focus:ring-[#052350]/10"
+                      >
+                        {tenants.map((t) => (
+                          <option key={t.id} value={t.id}>
+                            {t.name}
+                          </option>
+                        ))}
+                      </select>
+                    </div>
+                  )}
+                />
+              )}
+
               {/* Voucher Code */}
               <Controller
                 name="code"
