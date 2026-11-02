@@ -44,4 +44,5 @@ export interface VoucherFormData {
   amountOff: number;
   expiresAt: string;
   isActive: boolean;
+  tenantId?: string;
 }

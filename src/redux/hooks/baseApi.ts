@@ -31,6 +31,7 @@ const baseQueryWithErrorHandler: typeof rawBaseQuery = async (
     if (result.error?.status === 401) {
       Cookies.remove("token");
       if (typeof window !== "undefined") {
+        localStorage.removeItem("user");
         window.location.href = "/login";
       }
     }

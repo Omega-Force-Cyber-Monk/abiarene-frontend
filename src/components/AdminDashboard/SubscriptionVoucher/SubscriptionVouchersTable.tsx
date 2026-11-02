@@ -11,8 +11,10 @@ import {
   SubscriptionVoucher,
   VoucherFormData,
 } from "@/redux/features/admin/subscriptionVoucher/subscriptionVoucher";
+import { useGetTenantsQuery } from "@/redux/features/admin/adminTenant/adminTenantApi";
 import VoucherDialog from "./VoucherDialog";
-import Loader from "../Shared/Loader";
+import DeleteConfirmationDialog from "../Subscribtion/DeleteConfirmationDialog";
+import { TableSkeleton } from "../Shared/AdminSkeletons";
 
 const SubscriptionVouchersTable = () => {
   const [page, setPage] = useState(0);
@@ -21,6 +23,8 @@ const SubscriptionVouchersTable = () => {
   const [dialogOpen, setDialogOpen] = useState(false);
   const [editingVoucher, setEditingVoucher] =
     useState<SubscriptionVoucher | null>(null);
+  const [deleteModalOpen, setDeleteModalOpen] = useState(false);
+  const [voucherToDelete, setVoucherToDelete] = useState<SubscriptionVoucher | null>(null);
   const [snackbar, setSnackbar] = useState<{
     open: boolean;
     message: string;
@@ -36,6 +40,11 @@ const SubscriptionVouchersTable = () => {
     isLoading,
     refetch,
   } = useGetAllSubscriptionVouchersQuery();
+
+  // Fetch tenants for voucher creation selector
+  const { data: tenantsResponse } = useGetTenantsQuery({ limit: 100 });
+  const tenantOptions = tenantsResponse?.data?.map((t) => ({ id: t.id, name: t.name })) || [];
+
   const [createVoucher, { isLoading: isCreating }] =
     useCreateSubscriptionVoucherMutation();
   const [updateVoucher, { isLoading: isUpdating }] =
@@ -47,7 +56,7 @@ const SubscriptionVouchersTable = () => {
   const filteredVouchers = vouchers.filter(
     (voucher) =>
       voucher.code.toLowerCase().includes(searchTerm.toLowerCase()) ||
-      voucher.tenant?.name.toLowerCase().includes(searchTerm.toLowerCase()),
+      voucher.tenant?.name?.toLowerCase().includes(searchTerm.toLowerCase()),
   );
 
   const paginatedVouchers = filteredVouchers.slice(
@@ -65,22 +74,28 @@ const SubscriptionVouchersTable = () => {
     setDialogOpen(true);
   };
 
-  const handleDelete = async (id: string) => {
-    if (window.confirm("Are you sure you want to delete this voucher?")) {
-      try {
-        await deleteVoucher(id).unwrap();
-        setSnackbar({
-          open: true,
-          message: "Voucher deleted successfully",
-          severity: "success",
-        });
-      } catch (error) {
-        setSnackbar({
-          open: true,
-          message: "Failed to delete voucher",
-          severity: "error",
-        });
-      }
+  const handleDeleteClick = (voucher: SubscriptionVoucher) => {
+    setVoucherToDelete(voucher);
+    setDeleteModalOpen(true);
+  };
+
+  const handleConfirmDelete = async () => {
+    if (!voucherToDelete) return;
+    try {
+      await deleteVoucher(voucherToDelete.id).unwrap();
+      setSnackbar({
+        open: true,
+        message: "Voucher deleted successfully",
+        severity: "success",
+      });
+      setDeleteModalOpen(false);
+      setVoucherToDelete(null);
+    } catch (error) {
+      setSnackbar({
+        open: true,
+        message: "Failed to delete voucher",
+        severity: "error",
+      });
     }
   };
 
@@ -102,11 +117,10 @@ const SubscriptionVouchersTable = () => {
           severity: "success",
         });
       } else {
-        // For creation, we need a tenant ID. You might want to select a tenant
-        // For now, using first tenant or you can add a tenant selector
-        if (vouchers.length > 0 && vouchers[0].tenantId) {
+        const targetTenantId = data.tenantId || tenantOptions[0]?.id || (vouchers.length > 0 ? vouchers[0].tenantId : null);
+        if (targetTenantId) {
           await createVoucher({
-            tenantId: vouchers[0].tenantId,
+            tenantId: targetTenantId,
             data: {
               code: data.code,
               amountOff: data.amountOff,
@@ -122,18 +136,16 @@ const SubscriptionVouchersTable = () => {
         } else {
           setSnackbar({
             open: true,
-            message: "No tenant available. Please add a tenant first.",
+            message: "No tenant available. Please create a tenant first.",
             severity: "error",
           });
         }
       }
       setDialogOpen(false);
-    } catch (error) {
+    } catch (error: any) {
       setSnackbar({
         open: true,
-        message: editingVoucher
-          ? "Failed to update voucher"
-          : "Failed to create voucher",
+        message: error?.data?.message || (editingVoucher ? "Failed to update voucher" : "Failed to create voucher"),
         severity: "error",
       });
     }
@@ -154,11 +166,7 @@ const SubscriptionVouchersTable = () => {
   };
 
   if (isLoading) {
-    return (
-      <div>
-        <Loader />
-      </div>
-    );
+    return <TableSkeleton rows={6} columns={7} />;
   }
 
   return (
@@ -198,8 +206,7 @@ const SubscriptionVouchersTable = () => {
             </svg>
           </div>
           {/* Buttons */}
-
-          {/* <button
+          <button
             onClick={handleCreate}
             className="group w-full cursor-pointer sm:w-auto bg-[#052350] hover:bg-[#061E49] active:scale-[0.98] text-white px-5 py-2.5 rounded-xl flex items-center justify-center gap-2 transition-all duration-200 shadow-md hover:shadow-lg"
           >
@@ -207,7 +214,7 @@ const SubscriptionVouchersTable = () => {
             <span className="font-medium tracking-wide whitespace-nowrap">
               Create Voucher
             </span>
-          </button> */}
+          </button>
           <button
             onClick={() => refetch()}
             className="w-full sm:w-auto border border-gray-300 text-gray-700 px-4 py-2 rounded-lg flex items-center justify-center gap-2 hover:bg-gray-50 transition-colors"
@@ -255,9 +262,9 @@ const SubscriptionVouchersTable = () => {
                   <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
                     Usage
                   </th>
-                  {/* <th className="px-6 py-3 text-center text-xs font-medium text-gray-500 uppercase tracking-wider">
+                  <th className="px-6 py-3 text-center text-xs font-medium text-gray-500 uppercase tracking-wider">
                     Actions
-                  </th> */}
+                  </th>
                 </tr>
               </thead>
               <tbody className="bg-white divide-y divide-gray-200">
@@ -316,18 +323,17 @@ const SubscriptionVouchersTable = () => {
                           </span>
                         )}
                       </td>
-                      {/* <td className="px-6 py-4 whitespace-nowrap text-center">
-                        <div className="flex items-center justify-center gap-3">
-                         
+                      <td className="px-6 py-4 whitespace-nowrap text-center">
+                        <div className="flex items-center justify-center gap-2">
                           <button
                             onClick={() => handleEdit(voucher)}
                             disabled={voucher.usedAt !== null}
                             title="Edit"
-                            className={`group flex cursor-pointer items-center justify-center w-9 h-9 rounded-lg transition-all duration-200
+                            className={`group flex cursor-pointer items-center justify-center w-8 h-8 rounded-lg transition-all duration-200
       ${
         voucher.usedAt !== null
           ? "bg-gray-100 text-gray-300 cursor-not-allowed"
-          : "bg-white text-[#052350] hover:bg-[#052350] hover:text-white shadow-sm hover:shadow-md"
+          : "bg-white text-[#052350] hover:bg-[#052350] hover:text-white shadow-sm hover:shadow"
       }`}
                           >
                             <svg
@@ -345,16 +351,15 @@ const SubscriptionVouchersTable = () => {
                             </svg>
                           </button>
 
-                       
                           <button
-                            onClick={() => handleDelete(voucher.id)}
+                            onClick={() => handleDeleteClick(voucher)}
                             disabled={voucher.usedAt !== null}
                             title="Delete"
-                            className={`group flex cursor-pointer items-center justify-center w-9 h-9 rounded-lg transition-all duration-200
+                            className={`group flex cursor-pointer items-center justify-center w-8 h-8 rounded-lg transition-all duration-200
       ${
         voucher.usedAt !== null
           ? "bg-gray-100 text-gray-300 cursor-not-allowed"
-          : "bg-white text-red-600 hover:bg-red-600 hover:text-white shadow-sm hover:shadow-md"
+          : "bg-white text-red-600 hover:bg-red-600 hover:text-white shadow-sm hover:shadow"
       }`}
                           >
                             <svg
@@ -372,7 +377,7 @@ const SubscriptionVouchersTable = () => {
                             </svg>
                           </button>
                         </div>
-                      </td> */}
+                      </td>
                     </tr>
                   ))
                 )}
@@ -461,6 +466,19 @@ const SubscriptionVouchersTable = () => {
         }
         title={editingVoucher ? "Edit Voucher" : "Create New Voucher"}
         loading={isCreating || isUpdating}
+        tenants={tenantOptions}
+      />
+
+      {/* Delete Confirmation Dialog */}
+      <DeleteConfirmationDialog
+        open={deleteModalOpen}
+        onClose={() => {
+          setDeleteModalOpen(false);
+          setVoucherToDelete(null);
+        }}
+        onConfirm={handleConfirmDelete}
+        isLoading={isDeleting}
+        planName={voucherToDelete ? `voucher "${voucherToDelete.code}"` : undefined}
       />
 
       {/* Snackbar for notifications */}
