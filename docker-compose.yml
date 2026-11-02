@@ -1,0 +1,11 @@
+services:
+  web:
+    build:
+      context: .
+      args:
+        VITE_API_ENDPOINT: ${VITE_API_ENDPOINT}
+    image: softvence/aniarene-frontend:latest
+    platform: linux/amd64
+    ports:
+      - "3001:3001"
+    restart: unless-stopped

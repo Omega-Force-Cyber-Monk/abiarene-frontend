@@ -1,0 +1,15 @@
+node_modules
+dist
+dist-ssr
+.git
+.vscode
+.idea
+.vercel
+*.log
+*.local
+.env*
+.DS_Store
+README.md
+branch_structure.json
+temp_*.bat
+config.bat
